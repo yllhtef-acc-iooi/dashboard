@@ -2197,13 +2197,13 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
         帳務資料 <span style="font-size:11px;font-weight:400;color:#a08820">— Google Sheets 即時同步</span>
         <span id="sheets-status" style="font-size:11px;color:#a08820"></span>
       </div>
-      <button id="sheets-x" onclick="sheetsClose()">×</button>
+      <div style="display:flex;gap:6px;align-items:center"><button onclick="sheetsRefresh()" title="重新從 Sheets 載入" style="padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #d4c460;background:#fffef8;color:#7a6400;cursor:pointer">↻ 重新整理</button><button id="sheets-x" onclick="sheetsClose()">×</button></div>
     </div>
     <div id="sheets-controls">
       <div id="sheets-yr-filter"><span style="font-size:11px;color:#a08820">載入中…</span></div>
       <input id="sheets-search" type="text" placeholder="搜尋受贈單位、專案…" oninput="sheetsRender()">
     </div>
-    <div id="sheets-body" style="padding:32px;text-align:center;color:#a08820;font-size:13px">正在從 Google Sheets 載入資料…</div>
+    <div id="sheets-body" style="padding:32px;text-align:center;color:#a08820;font-size:13px">點擊「帳務資料」後自動載入…</div>
     <div id="sheets-footer">
       <span id="sheets-count">—</span>
       <button id="sheets-expbtn" onclick="sheetsExport()">⬇ 匯出篩選結果</button>
@@ -2219,8 +2219,9 @@ var _SUMMARY_GID='1853532145'; // 儀表板彙總工作表
 
 // 從 Google Sheets 彙總表自動載入年度數字，更新 DATA
 function loadSummaryFromSheets(){
-  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/gviz/tq?tqx=out:csv&gid='+_SUMMARY_GID;
-  fetch(url).then(r=>r.text()).then(csv=>{
+  // 加 cache:'no-store' 避免瀏覽器拿舊快取；t= 參數防 CDN 快取
+  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/gviz/tq?tqx=out:csv&gid='+_SUMMARY_GID+'&t='+Date.now();
+  fetch(url,{cache:'no-store'}).then(r=>r.text()).then(csv=>{
     var lines=csv.trim().split('\n').slice(1); // 跳過標題列
     var updated=false;
     lines.forEach(line=>{
@@ -2240,7 +2241,9 @@ function loadSummaryFromSheets(){
     });
     if(updated){
       console.log('✓ 年度數字已從 Google Sheets 彙總表更新');
-      render(); // 重新渲染儀表板
+      // 只重繪矩陣和圖表，不重跑整個 render()
+      buildMatrix();
+      buildChart();
     }
   }).catch(e=>console.warn('彙總表載入失敗（離線模式）：',e));
 }
@@ -2253,6 +2256,11 @@ var _sheetsFiltered=[];
 function sheetsOpen(){
   document.getElementById('sheets-overlay').style.display='flex';
   if(!_sheetsLoaded) sheetsLoad();
+}
+function sheetsRefresh(){
+  _sheetsLoaded=false;
+  document.getElementById('sheets-body').innerHTML='<div style="padding:32px;text-align:center;color:#a08820;font-size:13px">重新載入中…</div>';
+  sheetsLoad();
 }
 function sheetsClose(){
   document.getElementById('sheets-overlay').style.display='none';
