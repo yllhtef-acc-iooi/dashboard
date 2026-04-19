@@ -1383,9 +1383,9 @@ function buildChart(){
           // 準備文字
           let lines=[];
           if(d.is26){
-            const eT=(d.exec?.t||0)+(d.exec?.f||0);
-            const cT=(d.cert?.t||0)+(d.cert?.f||0);
-            const pT=(d.pend?.t||0)+(d.pend?.f||0);
+            const eT=(d.exec?.t||0)+(d.exec?.tf||0);
+            const cT=(d.cert?.t||0)+(d.cert?.tf||0);
+            const pT=(d.pend?.t||0)+(d.pend?.tf||0);
             lines=[yr+'預', 'A '+f(eT), 'B '+f(cT), 'C '+f(pT), '①+② '+f(eT+cT+pT)];
           } else {
             lines=[String(yr), '①直捐 '+f(r.t), '② '+f(r.f), '③ '+f(r.tf), '①+② '+f(r.t_f)];
@@ -1822,7 +1822,7 @@ function buildYrDetail(yr,showStats=true,pfxOverride=null){
   const r=t5(d);
   let statsHtml;
   if(d.is26){
-    const eT=(d.exec?.t||0)+(d.exec?.f||0)+(d.exec?.tf||0),cT=(d.cert?.t||0)+(d.cert?.f||0)+(d.cert?.tf||0),pT=(d.pend?.t||0)+(d.pend?.f||0)+(d.pend?.tf||0);
+    const eT=(d.exec?.t||0)+(d.exec?.tf||0),cT=(d.cert?.t||0)+(d.cert?.tf||0),pT=(d.pend?.t||0)+(d.pend?.tf||0);
     statsHtml=`<div style="font-size:11px;color:var(--ink3);margin-bottom:6px;padding:4px 8px;background:var(--hover);border-radius:4px;display:inline-block">
       當年度預估：A＝已執行 &nbsp;B＝確定發生 &nbsp;C＝待討論（與 ①②③ 出帳來源無關）
     </div>
@@ -2039,7 +2039,7 @@ function renderItemRow(it,d,maxA,idx){
 
 function buildStatsRow(yr,d,r){
   if(d.is26){
-    const eT=(d.exec?.t||0)+(d.exec?.f||0)+(d.exec?.tf||0),cT=(d.cert?.t||0)+(d.cert?.f||0)+(d.cert?.tf||0),pT=(d.pend?.t||0)+(d.pend?.f||0)+(d.pend?.tf||0);
+    const eT=(d.exec?.t||0)+(d.exec?.tf||0),cT=(d.cert?.t||0)+(d.cert?.tf||0),pT=(d.pend?.t||0)+(d.pend?.tf||0);
     return`<div class="yr-stat-row">
       <div class="yr-stat"><div class="yr-stat-l">A 已執行</div><div class="yr-stat-v" style="color:${CE}">${f(eT)}</div></div>
       <div class="yr-stat"><div class="yr-stat-l">B 確定</div><div class="yr-stat-v" style="color:${CD}">${f(cT)}</div></div>
@@ -2068,7 +2068,7 @@ function render(){
 }
 
 render();
-loadSummaryFromSheets(); // 從 Sheets 自動更新年度數字
+setTimeout(()=>{ if(typeof loadSummaryFromSheets==='function') loadSummaryFromSheets(); },0); // 從 Sheets 自動更新年度數字
 </script>
 
 <div id="srch-overlay" onclick="if(event.target.id==='srch-overlay')this.style.display='none'">
