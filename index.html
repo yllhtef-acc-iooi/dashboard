@@ -2482,7 +2482,7 @@ function sheetsExport(){
       <div id="qa-head-title">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c9a800" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         問與答
-        <span id="qa-head-sub">— 針對儀表板提問，Claude 即時回答</span>
+        <span id="qa-head-sub">— 輸入問題後送出，團隊收信後回覆</span>
       </div>
       <div id="qa-head-btns">
         <button onclick="qaReset()" title="清除對話" style="padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #d4c460;background:white;color:#7a6400;cursor:pointer">清除</button>
@@ -2499,24 +2499,20 @@ function sheetsExport(){
         <textarea id="qa-input" placeholder="輸入問題…（Enter 送出，Shift+Enter 換行）" rows="2"></textarea>
         <button id="qa-send" onclick="qaSend()">送出</button>
       </div>
-      <div id="qa-hint">💡 Claude 將根據儀表板資料即時回答 &nbsp;·&nbsp; 如需轉寄給團隊，點回答旁的「轉寄給團隊」</div>
+      <div id="qa-hint">💡 問題送出後將寄到團隊信箱 &nbsp;·&nbsp; 緊急事項請直接聯絡 operation@yllhtef.org</div>
     </div>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════
-//  QA 問與答功能
+//  QA 問與答功能（方案 A：Formspree 收件模式）
 // ═══════════════════════════════════════════════════════
 
-// ── Formspree 設定（填入你的 form ID 即可，例如 'xpzgkwqr'）──
-var QA_FORMSPREE_ID = 'maqabonq';  // ← 在此填入
-var QA_EMAILS = ['operation@yllhtef.org','account@yllhtef.org'];
+var QA_FORMSPREE_ID = 'maqabonq';
+var _qaMsgCount = 0;
 
-var _qaHistory = [];  // {role:'user'|'assistant', content:string}[]
-var _qaLoading = false;
-
-// 快速提問建議
+// 常見問題快速鍵
 var QA_QUICK = [
   '2026年目前已執行了多少？',
   '歷年最大單筆捐贈是哪一筆？',
@@ -2527,205 +2523,111 @@ var QA_QUICK = [
 
 function qaOpen(){
   document.getElementById('qa-overlay').style.display='flex';
-  if(_qaHistory.length===0) qaWelcome();
-  document.getElementById('qa-input').focus();
+  if(_qaMsgCount===0) qaWelcome();
+  setTimeout(function(){ document.getElementById('qa-input').focus(); }, 80);
 }
 function qaClose(){
   document.getElementById('qa-overlay').style.display='none';
 }
 function qaReset(){
-  _qaHistory=[];
+  _qaMsgCount=0;
   document.getElementById('qa-messages').innerHTML='';
   qaWelcome();
 }
 
 function qaWelcome(){
-  qaAppendMsg('bot', '您好！我是林堉璘宏泰公益儀表板的 AI 助理。<br>我熟悉 2015–2026 年的所有支出明細、成效資料與年度目標。<br>請問有什麼想了解的？');
+  qaAppendMsg('bot',
+    '您好！歡迎使用林堉璘宏泰公益儀表板問答系統。<br>' +
+    '請輸入您的問題，我們將由專人回覆。<br>' +
+    '也可以先參考下方常見問題。'
+  );
   var el=document.getElementById('qa-quick');
   el.innerHTML='';
   QA_QUICK.forEach(function(q){
     var btn=document.createElement('button');
     btn.className='qa-qbtn';
     btn.textContent=q;
-    btn.addEventListener('click',function(){ document.getElementById('qa-input').value=q; qaSend(); });
+    btn.addEventListener('click',function(){
+      document.getElementById('qa-input').value=q;
+      document.getElementById('qa-input').focus();
+    });
     el.appendChild(btn);
   });
 }
 
-
-// 把儀表板資料摘要成文字，注入給 Claude 做 context
-function qaContextSummary(){
-  var lines=['你是林堉璘宏泰公益基金會儀表板的 AI 助理，只回答關於這份儀表板資料的問題。'];
-  lines.push('以下是儀表板所有年度支出資料（①=公益信託直接捐款 ②=透過基金會執行 ③=公捐基/撥款）：');
-  lines.push('');
-
-  // Year-by-year summary
-  Object.keys(DATA).sort().forEach(function(yr){
-    var d=DATA[yr];
-    var total=d.t+d.f;
-    var note=d.note||'';
-    lines.push('【'+yr+'年】①='+d.t+' ②='+d.f+' ③='+d.tf+' 實際總支出(①+②)='+total+(d.is26?' （預估）':''));
-    if(note) lines.push('  說明：'+note);
-    // Items
-    (d.items||[]).forEach(function(it){
-      var amt=d.is26?((it.e||0)+(it.c||0)+(it.p||0)):(it.a||0);
-      if(amt>0) lines.push('  - '+it.n+'：'+amt+(it.memo?' （'+it.memo+'）':''));
-    });
-    lines.push('');
-  });
-
-  lines.push('---');
-  lines.push('回答原則：');
-  lines.push('1. 用繁體中文、口語化方式回答');
-  lines.push('2. 金額盡量換算成「萬元」或「億元」等易讀單位');
-  lines.push('3. 回答要具體，可引用年度和項目名稱');
-  lines.push('4. 如果問題超出這份資料範圍，誠實說明無法確認');
-  lines.push('5. 回答長度適中，不要過長');
-
-  return lines.join('\n');
-}
-
-function qaAppendMsg(role, html, withFwd){
+function qaAppendMsg(role, html){
   var el=document.getElementById('qa-messages');
-  var isBot=role==='bot';
-  var id='qamsg-'+Date.now()+Math.random().toString(36).slice(2,6);
-  var fwdBtn=withFwd
-    ? '<br><button class="qa-fwd-btn" id="fwd-'+id+'" onclick="qaForward(\"'+id+'\",this)">✉ 轉寄給團隊</button>'
-    : '';
+  var isBot=(role==='bot');
   var avatarBot='<div class="qa-avatar bot">林</div>';
   var avatarUser='<div class="qa-avatar user">你</div>';
-  var bubble='<div class="qa-bubble '+role+'" id="'+id+'">'+html+fwdBtn+'</div>';
+  var bubble='<div class="qa-bubble '+role+'">'+html+'</div>';
   var div=document.createElement('div');
   div.className='qa-msg '+role;
   div.innerHTML=(isBot?avatarBot:avatarUser)+bubble;
   el.appendChild(div);
   el.scrollTop=el.scrollHeight;
-  return id;
-}
-
-function qaAppendTyping(){
-  return qaAppendMsg('bot','<span>…思考中</span>');
-}
-
-function qaRemoveMsg(id){
-  var el=document.getElementById('qa-messages');
-  var divs=el.querySelectorAll('.qa-msg');
-  divs.forEach(function(d){
-    if(d.querySelector('#'+id)) d.remove();
-  });
+  _qaMsgCount++;
 }
 
 async function qaSend(){
-  if(_qaLoading) return;
   var input=document.getElementById('qa-input');
   var q=(input.value||'').trim();
   if(!q) return;
+  var name=(document.getElementById('qa-name').value||'').trim()||'（未填姓名）';
 
-  // Clear quick questions after first send
+  // 清空快速提問、顯示問題
   document.getElementById('qa-quick').innerHTML='';
-
   input.value='';
   input.style.height='auto';
-  _qaHistory.push({role:'user',content:q});
   qaAppendMsg('user', escHtml(q));
 
-  _qaLoading=true;
-  document.getElementById('qa-send').disabled=true;
-
-  var typingId=qaAppendTyping();
-
-  try{
-    // Build messages for API: system context + conversation history
-    var messages=_qaHistory.map(function(m){return{role:m.role,content:m.content};});
-
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system: qaContextSummary(),
-        messages: messages
-      })
-    });
-
-    var data=await resp.json();
-    var answer=(data.content&&data.content[0]&&data.content[0].text)||'抱歉，無法取得回應，請稍後再試。';
-
-    _qaHistory.push({role:'assistant',content:answer});
-
-    // Remove typing indicator, show answer
-    qaRemoveMsg(typingId);
-    // Convert newlines to <br> for display
-    var htmlAnswer=escHtml(answer).replace(/\n/g,'<br>');
-    qaAppendMsg('bot', htmlAnswer, true);
-
-  } catch(e){
-    qaRemoveMsg(typingId);
-    qaAppendMsg('bot','⚠ 連線失敗（'+e.message+'），您的問題已記錄，可點「轉寄給團隊」讓工作人員回覆。', true);
-    _qaHistory.push({role:'assistant',content:'[連線錯誤]'});
-  }
-
-  _qaLoading=false;
-  document.getElementById('qa-send').disabled=false;
-  document.getElementById('qa-input').focus();
-}
-
-// 轉寄問題給團隊
-async function qaForward(msgId, btn){
-  var name=(document.getElementById('qa-name').value||'').trim()||'（未填姓名）';
-  // Find the question that preceded this answer
-  // Walk back through history: last user message before this assistant message
-  var question='', answer='';
-  for(var i=_qaHistory.length-1;i>=0;i--){
-    if(_qaHistory[i].role==='assistant'&&!answer) answer=_qaHistory[i].content;
-    else if(_qaHistory[i].role==='user'&&!question){question=_qaHistory[i].content;break;}
-  }
-
-  var formId=QA_FORMSPREE_ID;
-  if(!formId||formId==='YOUR_FORMSPREE_ID'){
-    // Fallback: mailto link
-    var subject=encodeURIComponent('[儀表板問題] '+question.slice(0,40));
-    var body=encodeURIComponent('提問者：'+name+'\n\n問題：\n'+question+'\n\nClaude 回答：\n'+answer+'\n\n---\n時間：'+new Date().toLocaleString('zh-TW'));
-    window.open('mailto:'+QA_EMAILS.join(',')+' ?subject='+subject+'&body='+body);
-    btn.textContent='✓ 已開啟郵件';
-    btn.className='qa-fwd-btn sent';
-    return;
-  }
-
-  btn.textContent='傳送中…';
-  btn.disabled=true;
+  // 送出前顯示「傳送中」
+  var sendBtn=document.getElementById('qa-send');
+  sendBtn.disabled=true;
+  sendBtn.textContent='傳送中…';
 
   try{
-    var resp=await fetch('https://formspree.io/f/'+formId,{
+    var resp=await fetch('https://formspree.io/f/'+QA_FORMSPREE_ID,{
       method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json'},
       body:JSON.stringify({
-        _subject:'[林堉璘宏泰儀表板問題] '+question.slice(0,50),
+        _subject:'[林堉璘宏泰儀表板提問] '+q.slice(0,50),
         提問者: name,
-        問題: question,
-        Claude回答: answer,
+        問題: q,
         時間: new Date().toLocaleString('zh-TW'),
-        _replyto: ''
+        頁面: window.location.href
       })
     });
     if(resp.ok){
-      btn.textContent='✓ 已轉寄給團隊';
-      btn.className='qa-fwd-btn sent';
+      qaAppendMsg('bot',
+        '✅ 您的問題已送出，我們將盡快回覆。<br>' +
+        '<span style="font-size:12px;color:#a08820">回覆將寄至您的 Email，或由同仁直接聯繫您。</span>'
+      );
     } else {
       throw new Error('HTTP '+resp.status);
     }
   } catch(e){
-    btn.textContent='轉寄失敗，重試？';
-    btn.disabled=false;
+    // Fallback: mailto
+    var subject=encodeURIComponent('[林堉璘宏泰儀表板提問] '+q.slice(0,40));
+    var body=encodeURIComponent('提問者：'+name+'\n\n問題：\n'+q+'\n\n時間：'+new Date().toLocaleString('zh-TW'));
+    var mailtoLink='mailto:operation@yllhtef.org?subject='+subject+'&body='+body;
+    qaAppendMsg('bot',
+      '⚠ 自動傳送失敗，請點下方按鈕用 Email 送出：<br><br>' +
+      '<a href="'+mailtoLink+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:6px;background:#3d2e00;color:#f5ead0;font-size:12px;text-decoration:none;font-family:inherit">'+
+      '✉ 開啟 Email 送出問題</a>'
+    );
   }
+
+  sendBtn.disabled=false;
+  sendBtn.textContent='送出';
+  document.getElementById('qa-input').focus();
 }
 
 function escHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Auto-resize textarea
+// Auto-resize textarea + Enter to send
 document.addEventListener('DOMContentLoaded',function(){
   var ta=document.getElementById('qa-input');
   if(!ta) return;
