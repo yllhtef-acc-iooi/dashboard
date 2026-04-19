@@ -2004,17 +2004,17 @@ function renderItemRow(it,d,maxA,idx){
   if(d.is26){
     // ── 2026：字母標籤固定位置 + 精確金額靠右
     const tagLines=[
-      it.e>0?`<div style="display:flex;align-items:center;gap:0;margin:2px 0">
-        <span class="st-tag" style="background:#f2ede6;color:#8a7a60;font-weight:500;width:22px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px;flex-shrink:0">A</span>
-        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2);text-align:right;flex:1;padding-left:6px">${ff(it.e)}</span>
+      it.e>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.e)}</span>
+        <span class="st-tag" style="background:#f2ede6;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">A</span>
       </div>`:'',
-      it.c>0?`<div style="display:flex;align-items:center;gap:0;margin:2px 0">
-        <span class="st-tag" style="background:#ebe5dc;color:#8a7a60;font-weight:500;width:22px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px;flex-shrink:0">B</span>
-        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2);text-align:right;flex:1;padding-left:6px">${ff(it.c)}</span>
+      it.c>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.c)}</span>
+        <span class="st-tag" style="background:#ebe5dc;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">B</span>
       </div>`:'',
-      it.p>0?`<div style="display:flex;align-items:center;gap:0;margin:2px 0">
-        <span class="st-tag" style="background:#e2dbd0;color:#8a7a60;font-weight:500;width:22px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px;flex-shrink:0">C</span>
-        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2);text-align:right;flex:1;padding-left:6px">${ff(it.p)}</span>
+      it.p>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.p)}</span>
+        <span class="st-tag" style="background:#e2dbd0;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">C</span>
       </div>`:'',
       impB?`<div style="text-align:right;margin-top:4px">${impB}</div>`:'',
     ].filter(Boolean).join('');
