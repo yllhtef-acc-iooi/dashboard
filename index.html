@@ -381,11 +381,11 @@ html,body{min-height:100vh;background:var(--bg);font-family:Noto Sans TC,sans-se
 }
 /* Horizontal 5-stat row inside each year column */
 .yr-stat-row{display:flex;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--rad);overflow:visible}
-.yr-stat{flex:1;padding:9px 11px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;gap:3px;min-width:100px}
+.yr-stat{flex:1;padding:7px 9px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;gap:3px;min-width:72px}
 .yr-stat:last-child{border-right:none}
 .yr-stat.accent{background:linear-gradient(135deg,var(--card),#fffbe8)}
 .yr-stat-l{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.2px;white-space:nowrap;line-height:1.3}
-.yr-stat-v{font-size:14px;font-weight:600;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.2;white-space:nowrap}
+.yr-stat-v{font-size:13px;font-weight:600;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.2;white-space:nowrap}
 .yr-col{
   flex:0 0 auto;
   border-right:2px solid var(--border2);
@@ -866,6 +866,9 @@ const IMPACT={
   }
 };
 
+// ── 115年度目標（全域常數）──
+const G_CA=75000000,G_CB=225000000,G_CC=225000000,G_TTF=300000000,G_TF=300000000;
+
 // ═══════════════════════════════════════════════════════
 //  YEAR DATA
 // ═══════════════════════════════════════════════════════
@@ -1023,7 +1026,7 @@ const DATA={
     note:'2026 年度預算目標：①公益信託 7,500 萬、②基金會 2.25 億、③公捐基 2.25 億；①+② 實際總支出目標 3 億。截至 260419：A已執行 9,688 萬（①+②），Histotripsy B確定 5,400 萬，奉獻獎第十屆進行中。',
     exec:{t:3500000,f:93380691,tf:142370000},
     cert:{t:41810000,f:90045729,tf:0},
-    pend:{t:48090000,f:502960000,tf:65090157},
+    pend:{t:48090000,f:52960000,tf:65090157},
     items:[
       {n:'Histotripsy 癌症治療設備',u:'f',e:54000000,c:54000000,p:0,memo:'組織碎化術/高強度聚焦超音波',impact:'rongzong_talent'},
       {n:'公益信託還給基金會',u:'tf',e:142370000,c:0,p:65090157,memo:''},
@@ -1225,7 +1228,7 @@ function buildKPI(){
     }
     wrap.className='kpis';
     const is26single=selectedYrs.size===1&&DATA[[...selectedYrs][0]]?.is26;
-    const G_CA=75000000,G_CB=225000000,G_CC=225000000,G_TTF=300000000,G_TF=300000000;
+    // G_CA 等已移至全域，見下方
     // 2026 全年預估（A+B+C）
     const d26=is26single?DATA[[...selectedYrs][0]]:null;
     const full_t=d26?d26.t:0, full_f=d26?d26.f:0, full_tf=d26?d26.tf:0;
@@ -1271,12 +1274,10 @@ function buildKPI(){
       kpiCard('','①公益信託直接捐款',tv,'公益信託直接對外',is26single?G_CA:0,full_t)+
       kpiCard('','②透過基金會執行',fv,'基金會實際支出',is26single?G_CB:0,full_f)+
       kpiCard('','③公捐基',tfv,'信託→基金會撥款',is26single?G_CC:0,full_tf)+
-      kpiCard('accent','①＋③ 公益信託總支出',t_tf,'含直接及公捐基',is26single?G_TTF:0,full_t+full_tf)+
+      kpiCard('accent','①＋③ 公益信託總支出',t_tf,is26single?'含直接捐款＋已撥基金會款':'含直接及公捐基',is26single?G_TTF:0,full_t+full_tf)+
       kpiCard('accent','①＋② 實際總支出',t_f,'真正給社會的資源',is26single?G_TF:0,full_t+full_f);
     wrap.style.display='none';
     // 小圖框由 Chart.js afterDraw plugin 直接繪製在長條圖上方，不需要 DOM
-    // 仍需觸發 chart rebuild 以更新 padding
-    if(typeof buildChart==='function') buildChart();
     return;
 
     return;
@@ -1455,9 +1456,10 @@ function buildChart(){
       const mE=[r26e.t,r26e.f,r26e.tf, r26e.t+r26e.tf, r26e.t+r26e.f];
       const mC=[r26c.t,r26c.f,r26c.tf, r26c.t+r26c.tf, r26c.t+r26c.f];
       const mP=[r26p.t,r26p.f,r26p.tf, r26p.t+r26p.tf, r26p.t+r26p.f];
-      // 完成率 = A ÷ (A+B+C)，各欄計算（只在 tooltip 說明，不放 X 軸）
+      // 完成率 = A已執行 ÷ 115年目標
       const mTot=mE.map((e,i)=>e+(mC[i]||0)+(mP[i]||0));
-      const mPct=mE.map((e,i)=>mTot[i]>0?Math.round(e/mTot[i]*100):0);
+      const mGoals=[G_CA,G_CB,G_CC,G_TTF,G_TF];
+      const mPct=mE.map((e,i)=>mGoals[i]>0?Math.round(e/mGoals[i]*100):0);
       chartInst=new Chart(canvas,{type:'bar',
         data:{labels:mLabels,datasets:[
           {label:'A 已執行',data:mE,backgroundColor:CE,borderRadius:0,stack:'s'},
@@ -1471,15 +1473,15 @@ function buildChart(){
               title:function(items){
                 const i=items[0].dataIndex;
                 const pct=mPct[i];
-                return mLabels[i]+(pct>0?' （A已執行 '+pct+'%）':'');
+                return mLabels[i]+(pct>0?' （達成目標 '+pct+'%）':'');
               },
               label:function(ctx){return ctx.dataset.label+': '+ff(ctx.parsed.y);},
               afterBody:function(items){
                 const i=items[0].dataIndex;
                 const tot=mTot[i];
                 const pct=mPct[i];
-                const lines=['合計(A+B+C): '+ff(tot)];
-                if(pct>0) lines.push('完成率 = A已執行 ÷ 合計 = '+pct+'%');
+                const lines=['合計(A+B+C): '+ff(tot),'115年目標: '+ff(mGoals[i])];
+                if(pct>0) lines.push('完成率(A÷目標) = '+pct+'%');
                 return lines;
               }
             }}
@@ -1820,7 +1822,7 @@ function buildYrDetail(yr,showStats=true,pfxOverride=null){
   const r=t5(d);
   let statsHtml;
   if(d.is26){
-    const eT=sm(Object.values(d.exec)),cT=d.cert.t+d.cert.f+d.cert.tf,pT=sm(Object.values(d.pend));
+    const eT=(d.exec?.t||0)+(d.exec?.f||0)+(d.exec?.tf||0),cT=(d.cert?.t||0)+(d.cert?.f||0)+(d.cert?.tf||0),pT=(d.pend?.t||0)+(d.pend?.f||0)+(d.pend?.tf||0);
     statsHtml=`<div style="font-size:11px;color:var(--ink3);margin-bottom:6px;padding:4px 8px;background:var(--hover);border-radius:4px;display:inline-block">
       當年度預估：A＝已執行 &nbsp;B＝確定發生 &nbsp;C＝待討論（與 ①②③ 出帳來源無關）
     </div>
@@ -1970,7 +1972,7 @@ function buildColumns(){
     if(n===1){
       // 單欄：有內容多寬就多寬，最大不超過螢幕
       col.style.flex='0 0 auto';
-      col.style.width=is26yr?'min(760px,90vw)':'min(560px,80vw)';
+      col.style.width=is26yr?'min(760px,90vw)':'min(500px,80vw)';
     } else {
       // 多欄：各欄依內容自然寬度，不強制撐滿；2026 寬一點、歷年窄一點
       col.style.flex='0 0 auto';
@@ -2037,7 +2039,7 @@ function renderItemRow(it,d,maxA,idx){
 
 function buildStatsRow(yr,d,r){
   if(d.is26){
-    const eT=sm(Object.values(d.exec)),cT=d.cert.t+d.cert.f+d.cert.tf,pT=sm(Object.values(d.pend));
+    const eT=(d.exec?.t||0)+(d.exec?.f||0)+(d.exec?.tf||0),cT=(d.cert?.t||0)+(d.cert?.f||0)+(d.cert?.tf||0),pT=(d.pend?.t||0)+(d.pend?.f||0)+(d.pend?.tf||0);
     return`<div class="yr-stat-row">
       <div class="yr-stat"><div class="yr-stat-l">A 已執行</div><div class="yr-stat-v" style="color:${CE}">${f(eT)}</div></div>
       <div class="yr-stat"><div class="yr-stat-l">B 確定</div><div class="yr-stat-v" style="color:${CD}">${f(cT)}</div></div>
@@ -2066,6 +2068,7 @@ function render(){
 }
 
 render();
+loadSummaryFromSheets(); // 從 Sheets 自動更新年度數字
 </script>
 
 <div id="srch-overlay" onclick="if(event.target.id==='srch-overlay')this.style.display='none'">
@@ -2214,6 +2217,35 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 // ── Google Sheets 帳務資料即時同步 ──
 var _SHEET_ID='1FapJWRqGIC9OuABmVQuBh2HPs3kvw4qVsPvG7e9mr9Q';
 var _SHEET_GID='232592658';
+var _SUMMARY_GID='1853532145'; // 儀表板彙總工作表
+
+// 從 Google Sheets 彙總表自動載入年度數字，更新 DATA
+function loadSummaryFromSheets(){
+  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/gviz/tq?tqx=out:csv&gid='+_SUMMARY_GID;
+  fetch(url).then(r=>r.text()).then(csv=>{
+    var lines=csv.trim().split('\n').slice(1); // 跳過標題列
+    var updated=false;
+    lines.forEach(line=>{
+      var cols=line.split(',').map(s=>s.replace(/"/g,'').trim());
+      var yr=parseInt(cols[0]);
+      var ca=parseFloat(cols[1])||0;
+      var cb=parseFloat(cols[2])||0;
+      var cc=parseFloat(cols[3])||0;
+      if(yr>=2015&&yr<=2030&&DATA[yr]){
+        if(!DATA[yr].is26){ // 歷年資料直接更新
+          DATA[yr].t=ca;
+          DATA[yr].f=cb;
+          DATA[yr].tf=cc;
+        }
+        updated=true;
+      }
+    });
+    if(updated){
+      console.log('✓ 年度數字已從 Google Sheets 彙總表更新');
+      render(); // 重新渲染儀表板
+    }
+  }).catch(e=>console.warn('彙總表載入失敗（離線模式）：',e));
+}
 var _sheetsData=[];
 var _sheetsYrs=[];
 var _sheetsSelYr='all';
