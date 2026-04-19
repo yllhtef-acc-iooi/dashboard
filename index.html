@@ -1023,7 +1023,7 @@ const DATA={
     note:'2026 年度預算目標：①公益信託 7,500 萬、②基金會 2.25 億、③公捐基 2.25 億；①+② 實際總支出目標 3 億。截至 260419：A已執行 9,688 萬（①+②），Histotripsy B確定 5,400 萬，奉獻獎第十屆進行中。',
     exec:{t:3500000,f:93380691,tf:142370000},
     cert:{t:41810000,f:90045729,tf:0},
-    pend:{t:48090000,f:52960000,tf:65090157},
+    pend:{t:48090000,f:502960000,tf:65090157},
     items:[
       {n:'Histotripsy 癌症治療設備',u:'f',e:54000000,c:54000000,p:0,memo:'組織碎化術/高強度聚焦超音波',impact:'rongzong_talent'},
       {n:'公益信託還給基金會',u:'tf',e:142370000,c:0,p:65090157,memo:''},
@@ -1038,6 +1038,7 @@ const DATA={
       {n:'ATCC 競賽 2026',u:'f',e:0,c:2242400,p:3600000,memo:'',impact:'atcc_plan'},
       {n:'ATCC 落實—心路',u:'f',e:795757,c:0,p:0,memo:'心路社會福利基金會',impact:'atcc_plan'},
       {n:'ATCC 落實—弘道東石',u:'f',e:0,c:800000,p:0,memo:'弘道基金會東石社區',impact:'atcc_plan'},
+      {n:'堉璘台大人才計畫',u:'f',e:0,c:0,p:450000000,memo:'累計承諾 4.5 億，執行中',impact:'ntu_plan'},
       {n:'蒙特梭利教育',u:'f',e:189000,c:50000000,p:95000000,memo:'師資培育體系與優質幼托示範機構',impact:'montessori'},
       {n:'堉璘淡海計畫',u:'f',e:5944548,c:0,p:0,memo:'地方創生加速器'},
       {n:'CM 高中生計畫—東海大學',u:'f',e:3500000,c:0,p:0,memo:'高中生計畫 2025、2026 年',impact:'cm_highschool'},
@@ -1680,17 +1681,17 @@ function renderItemTable(d,prefix){
       const idx=`${prefix}_${i}`;
       // 字母標籤 + 精確金額，各自一行，靠右對齊
       const tagLines=[
-        it.e>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:0;margin:2px 0">
-          <span class="st-tag" style="background:#f2ede6;color:#8a7a60;font-weight:500;flex-shrink:0;width:22px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">A</span>
-          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2);text-align:right;flex:1">${ff(it.e)}</span>
+        it.e>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.e)}</span>
+          <span class="st-tag" style="background:#f2ede6;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">A</span>
         </div>`:'',
-        it.c>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:0;margin:2px 0">
-          <span class="st-tag" style="background:#ebe5dc;color:#8a7a60;font-weight:500;flex-shrink:0;width:22px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">B</span>
-          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2);text-align:right;flex:1">${ff(it.c)}</span>
+        it.c>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.c)}</span>
+          <span class="st-tag" style="background:#ebe5dc;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">B</span>
         </div>`:'',
-        it.p>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:0;margin:2px 0">
-          <span class="st-tag" style="background:#e2dbd0;color:#8a7a60;font-weight:500;flex-shrink:0;width:22px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">C</span>
-          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2);text-align:right;flex:1">${ff(it.p)}</span>
+        it.p>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.p)}</span>
+          <span class="st-tag" style="background:#e2dbd0;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">C</span>
         </div>`:'',
         it.impact?`<div style="text-align:right;margin-top:4px">${impBtn(it.impact,idx)}</div>`:'',
       ].filter(Boolean).join('');
