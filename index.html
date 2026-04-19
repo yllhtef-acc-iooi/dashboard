@@ -500,6 +500,45 @@ mark{background:#fff176;color:#3d2e00;border-radius:2px;padding:0 1px}
 .sheets-pill{font-size:10px;padding:1px 6px;border-radius:3px;white-space:nowrap;display:inline-block}
 #sheets-footer{padding:7px 18px;border-top:1px solid #e8d880;font-size:11px;color:#a08820;display:flex;justify-content:space-between;align-items:center;background:#fdf9ee}
 #sheets-expbtn{padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #d4c460;background:white;color:#7a6400;cursor:pointer}
+
+/* ── QA 問答面板 ── */
+#qa-overlay{position:fixed;inset:0;background:rgba(20,15,0,.5);z-index:950;display:none;align-items:flex-start;justify-content:center;padding-top:52px}
+#qa-panel{background:#fffef8;border-radius:12px;width:min(760px,96vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.24);overflow:hidden}
+#qa-head{padding:12px 18px;border-bottom:1px solid #e8e0c8;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#fff8dd,#fffef8);flex-shrink:0}
+#qa-head-title{font-size:14px;font-weight:600;color:#3d2e00;display:flex;align-items:center;gap:8px}
+#qa-head-sub{font-size:11px;color:#a08820;font-weight:400;margin-left:4px}
+#qa-head-btns{display:flex;gap:6px;align-items:center}
+#qa-x{width:28px;height:28px;border-radius:50%;border:1px solid #e8d880;background:white;cursor:pointer;font-size:17px;color:#7a6400;display:flex;align-items:center;justify-content:center;transition:all .12s}
+#qa-x:hover{background:#3d2e00;color:#f5ead0;border-color:#3d2e00}
+#qa-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-height:200px;max-height:calc(88vh - 200px)}
+.qa-msg{display:flex;gap:10px;align-items:flex-start;animation:qaIn .18s ease-out}
+@keyframes qaIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.qa-msg.user{flex-direction:row-reverse}
+.qa-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.qa-avatar.bot{background:#3d2e00;color:#f5ead0}
+.qa-avatar.user{background:#c9a800;color:#3d2e00}
+.qa-bubble{max-width:84%;padding:10px 13px;border-radius:10px;font-size:13px;line-height:1.65;position:relative}
+.qa-bubble.bot{background:#fff;border:1px solid #e8d880;color:#2a2000;border-radius:2px 10px 10px 10px}
+.qa-bubble.user{background:#3d2e00;color:#f5ead0;border-radius:10px 2px 10px 10px}
+.qa-bubble.typing{color:#a08820;font-style:italic}
+.qa-bubble p{margin-bottom:6px}.qa-bubble p:last-child{margin-bottom:0}
+.qa-fwd-btn{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:3px 10px;border-radius:14px;font-size:11px;border:1px solid #d4c460;background:#fffbe8;color:#7a6400;cursor:pointer;transition:all .12s;font-family:inherit}
+.qa-fwd-btn:hover{border-color:#c9a800;color:#3d2e00;background:#fff8cc}
+.qa-fwd-btn.sent{border-color:#6a9860;color:#3a7030;background:#f0f8ec;pointer-events:none}
+#qa-input-area{padding:12px 18px;border-top:1px solid #e8e0c8;background:#fffef8;flex-shrink:0}
+#qa-name-row{display:flex;gap:8px;margin-bottom:8px}
+#qa-name{flex:1;font-size:12px;padding:5px 10px;border:1.5px solid #d4c460;border-radius:5px;outline:none;font-family:inherit;color:#2a2000;background:white}
+#qa-name:focus{border-color:#c9a800}
+#qa-input-row{display:flex;gap:8px;align-items:flex-end}
+#qa-input{flex:1;font-size:13px;padding:8px 12px;border:1.5px solid #d4c460;border-radius:8px;outline:none;font-family:inherit;color:#2a2000;resize:none;max-height:120px;min-height:40px;line-height:1.5;background:white}
+#qa-input:focus{border-color:#c9a800}
+#qa-send{padding:8px 18px;font-size:13px;border-radius:7px;border:none;background:#3d2e00;color:#f5ead0;cursor:pointer;font-family:inherit;font-weight:500;transition:all .12s;white-space:nowrap;height:40px}
+#qa-send:hover{background:#5a4010}
+#qa-send:disabled{opacity:.5;cursor:not-allowed}
+#qa-hint{font-size:11px;color:#a08820;margin-top:6px;line-height:1.5}
+.qa-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.qa-qbtn{padding:4px 12px;font-size:12px;border:1px solid #d4c460;border-radius:14px;background:white;color:#7a6400;cursor:pointer;transition:all .11s;font-family:inherit}
+.qa-qbtn:hover{border-color:#c9a800;color:#3d2e00;background:#fffbe8}
 </style>
 </head>
 <body>
@@ -516,6 +555,10 @@ mark{background:#fff176;color:#3d2e00;border-radius:2px;padding:0 1px}
   <button onclick="sheetsOpen()" style="padding:5px 14px;font-size:12px;border-radius:5px;border:1px solid rgba(245,234,208,.35);background:rgba(245,234,208,.1);color:#f5ead0;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
     帳務資料
+  </button>
+  <button onclick="qaOpen()" style="padding:5px 14px;font-size:12px;border-radius:5px;border:1px solid rgba(245,234,208,.35);background:rgba(245,234,208,.1);color:#f5ead0;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    問與答
   </button>
   <div class="top-meta">
     <div class="top-leg" title="出帳來源：&#10;■ 公益信託&#10;■ 透過基金會執行&#10;■ 公捐基" style="cursor:help">
@@ -2425,6 +2468,276 @@ function sheetsExport(){
   XLSX.utils.book_append_sheet(wb,'帳務資料',ws);
   XLSX.writeFile(wb,'帳務資料_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
+</script>
+
+
+<!-- ── QA 問與答面板 ── -->
+<div id="qa-overlay" onclick="if(event.target.id==='qa-overlay')qaClose()">
+  <div id="qa-panel">
+    <div id="qa-head">
+      <div id="qa-head-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c9a800" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        問與答
+        <span id="qa-head-sub">— 針對儀表板提問，Claude 即時回答</span>
+      </div>
+      <div id="qa-head-btns">
+        <button onclick="qaReset()" title="清除對話" style="padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #d4c460;background:white;color:#7a6400;cursor:pointer">清除</button>
+        <button id="qa-x" onclick="qaClose()">×</button>
+      </div>
+    </div>
+    <div id="qa-messages"></div>
+    <div id="qa-input-area">
+      <div class="qa-quick" id="qa-quick"></div>
+      <div id="qa-name-row">
+        <input id="qa-name" type="text" placeholder="您的姓名（選填，方便團隊回覆）" maxlength="30">
+      </div>
+      <div id="qa-input-row">
+        <textarea id="qa-input" placeholder="輸入問題…（Enter 送出，Shift+Enter 換行）" rows="2"></textarea>
+        <button id="qa-send" onclick="qaSend()">送出</button>
+      </div>
+      <div id="qa-hint">💡 Claude 將根據儀表板資料即時回答 &nbsp;·&nbsp; 如需轉寄給團隊，點回答旁的「轉寄給團隊」</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  QA 問與答功能
+// ═══════════════════════════════════════════════════════
+
+// ── Formspree 設定（填入你的 form ID 即可，例如 'xpzgkwqr'）──
+var QA_FORMSPREE_ID = 'YOUR_FORMSPREE_ID';  // ← 在此填入
+var QA_EMAILS = ['operation@yllhtef.org','account@yllhtef.org'];
+
+var _qaHistory = [];  // {role:'user'|'assistant', content:string}[]
+var _qaLoading = false;
+
+// 快速提問建議
+var QA_QUICK = [
+  '2026年目前已執行了多少？',
+  '歷年最大單筆捐贈是哪一筆？',
+  '消防急救教育累計捐了多少？',
+  '台大人才計畫進度如何？',
+  '奉獻獎今年預計頒發多少？',
+];
+
+function qaOpen(){
+  document.getElementById('qa-overlay').style.display='flex';
+  if(_qaHistory.length===0) qaWelcome();
+  document.getElementById('qa-input').focus();
+}
+function qaClose(){
+  document.getElementById('qa-overlay').style.display='none';
+}
+function qaReset(){
+  _qaHistory=[];
+  document.getElementById('qa-messages').innerHTML='';
+  qaWelcome();
+}
+
+function qaWelcome(){
+  qaAppendMsg('bot', '您好！我是林堉璘宏泰公益儀表板的 AI 助理。<br>我熟悉 2015–2026 年的所有支出明細、成效資料與年度目標。<br>請問有什麼想了解的？');
+  var el=document.getElementById('qa-quick');
+  el.innerHTML='';
+  QA_QUICK.forEach(function(q){
+    var btn=document.createElement('button');
+    btn.className='qa-qbtn';
+    btn.textContent=q;
+    btn.addEventListener('click',function(){ document.getElementById('qa-input').value=q; qaSend(); });
+    el.appendChild(btn);
+  });
+}
+
+
+// 把儀表板資料摘要成文字，注入給 Claude 做 context
+function qaContextSummary(){
+  var lines=['你是林堉璘宏泰公益基金會儀表板的 AI 助理，只回答關於這份儀表板資料的問題。'];
+  lines.push('以下是儀表板所有年度支出資料（①=公益信託直接捐款 ②=透過基金會執行 ③=公捐基/撥款）：');
+  lines.push('');
+
+  // Year-by-year summary
+  Object.keys(DATA).sort().forEach(function(yr){
+    var d=DATA[yr];
+    var total=d.t+d.f;
+    var note=d.note||'';
+    lines.push('【'+yr+'年】①='+d.t+' ②='+d.f+' ③='+d.tf+' 實際總支出(①+②)='+total+(d.is26?' （預估）':''));
+    if(note) lines.push('  說明：'+note);
+    // Items
+    (d.items||[]).forEach(function(it){
+      var amt=d.is26?((it.e||0)+(it.c||0)+(it.p||0)):(it.a||0);
+      if(amt>0) lines.push('  - '+it.n+'：'+amt+(it.memo?' （'+it.memo+'）':''));
+    });
+    lines.push('');
+  });
+
+  lines.push('---');
+  lines.push('回答原則：');
+  lines.push('1. 用繁體中文、口語化方式回答');
+  lines.push('2. 金額盡量換算成「萬元」或「億元」等易讀單位');
+  lines.push('3. 回答要具體，可引用年度和項目名稱');
+  lines.push('4. 如果問題超出這份資料範圍，誠實說明無法確認');
+  lines.push('5. 回答長度適中，不要過長');
+
+  return lines.join('\n');
+}
+
+function qaAppendMsg(role, html, withFwd){
+  var el=document.getElementById('qa-messages');
+  var isBot=role==='bot';
+  var id='qamsg-'+Date.now()+Math.random().toString(36).slice(2,6);
+  var fwdBtn=withFwd
+    ? '<br><button class="qa-fwd-btn" id="fwd-'+id+'" onclick="qaForward(\"'+id+'\",this)">✉ 轉寄給團隊</button>'
+    : '';
+  var avatarBot='<div class="qa-avatar bot">林</div>';
+  var avatarUser='<div class="qa-avatar user">你</div>';
+  var bubble='<div class="qa-bubble '+role+'" id="'+id+'">'+html+fwdBtn+'</div>';
+  var div=document.createElement('div');
+  div.className='qa-msg '+role;
+  div.innerHTML=(isBot?avatarBot:avatarUser)+bubble;
+  el.appendChild(div);
+  el.scrollTop=el.scrollHeight;
+  return id;
+}
+
+function qaAppendTyping(){
+  return qaAppendMsg('bot','<span>…思考中</span>');
+}
+
+function qaRemoveMsg(id){
+  var el=document.getElementById('qa-messages');
+  var divs=el.querySelectorAll('.qa-msg');
+  divs.forEach(function(d){
+    if(d.querySelector('#'+id)) d.remove();
+  });
+}
+
+async function qaSend(){
+  if(_qaLoading) return;
+  var input=document.getElementById('qa-input');
+  var q=(input.value||'').trim();
+  if(!q) return;
+
+  // Clear quick questions after first send
+  document.getElementById('qa-quick').innerHTML='';
+
+  input.value='';
+  input.style.height='auto';
+  _qaHistory.push({role:'user',content:q});
+  qaAppendMsg('user', escHtml(q));
+
+  _qaLoading=true;
+  document.getElementById('qa-send').disabled=true;
+
+  var typingId=qaAppendTyping();
+
+  try{
+    // Build messages for API: system context + conversation history
+    var messages=_qaHistory.map(function(m){return{role:m.role,content:m.content};});
+
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: qaContextSummary(),
+        messages: messages
+      })
+    });
+
+    var data=await resp.json();
+    var answer=(data.content&&data.content[0]&&data.content[0].text)||'抱歉，無法取得回應，請稍後再試。';
+
+    _qaHistory.push({role:'assistant',content:answer});
+
+    // Remove typing indicator, show answer
+    qaRemoveMsg(typingId);
+    // Convert newlines to <br> for display
+    var htmlAnswer=escHtml(answer).replace(/\n/g,'<br>');
+    qaAppendMsg('bot', htmlAnswer, true);
+
+  } catch(e){
+    qaRemoveMsg(typingId);
+    qaAppendMsg('bot','⚠ 連線失敗（'+e.message+'），您的問題已記錄，可點「轉寄給團隊」讓工作人員回覆。', true);
+    _qaHistory.push({role:'assistant',content:'[連線錯誤]'});
+  }
+
+  _qaLoading=false;
+  document.getElementById('qa-send').disabled=false;
+  document.getElementById('qa-input').focus();
+}
+
+// 轉寄問題給團隊
+async function qaForward(msgId, btn){
+  var name=(document.getElementById('qa-name').value||'').trim()||'（未填姓名）';
+  // Find the question that preceded this answer
+  // Walk back through history: last user message before this assistant message
+  var question='', answer='';
+  for(var i=_qaHistory.length-1;i>=0;i--){
+    if(_qaHistory[i].role==='assistant'&&!answer) answer=_qaHistory[i].content;
+    else if(_qaHistory[i].role==='user'&&!question){question=_qaHistory[i].content;break;}
+  }
+
+  var formId=QA_FORMSPREE_ID;
+  if(!formId||formId==='YOUR_FORMSPREE_ID'){
+    // Fallback: mailto link
+    var subject=encodeURIComponent('[儀表板問題] '+question.slice(0,40));
+    var body=encodeURIComponent('提問者：'+name+'\n\n問題：\n'+question+'\n\nClaude 回答：\n'+answer+'\n\n---\n時間：'+new Date().toLocaleString('zh-TW'));
+    window.open('mailto:'+QA_EMAILS.join(',')+' ?subject='+subject+'&body='+body);
+    btn.textContent='✓ 已開啟郵件';
+    btn.className='qa-fwd-btn sent';
+    return;
+  }
+
+  btn.textContent='傳送中…';
+  btn.disabled=true;
+
+  try{
+    var resp=await fetch('https://formspree.io/f/'+formId,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _subject:'[林堉璘宏泰儀表板問題] '+question.slice(0,50),
+        提問者: name,
+        問題: question,
+        Claude回答: answer,
+        時間: new Date().toLocaleString('zh-TW'),
+        _replyto: ''
+      })
+    });
+    if(resp.ok){
+      btn.textContent='✓ 已轉寄給團隊';
+      btn.className='qa-fwd-btn sent';
+    } else {
+      throw new Error('HTTP '+resp.status);
+    }
+  } catch(e){
+    btn.textContent='轉寄失敗，重試？';
+    btn.disabled=false;
+  }
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Auto-resize textarea
+document.addEventListener('DOMContentLoaded',function(){
+  var ta=document.getElementById('qa-input');
+  if(!ta) return;
+  ta.addEventListener('input',function(){
+    this.style.height='auto';
+    this.style.height=Math.min(this.scrollHeight,120)+'px';
+  });
+  ta.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();qaSend();}
+  });
+});
+
+// ESC to close
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&document.getElementById('qa-overlay').style.display==='flex') qaClose();
+});
 </script>
 
 </body>
