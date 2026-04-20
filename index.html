@@ -477,7 +477,7 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 
 /* ── SHEETS 帳務資料 ── */
 #sheets-overlay{position:fixed;inset:0;background:rgba(20,15,0,.5);z-index:900;display:none;align-items:flex-start;justify-content:center;padding-top:56px}
-#sheets-panel{background:#ffffff;border-radius:10px;width:min(1000px,96vw);max-height:85vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #e0e0e0}
+#sheets-panel{background:#ffffff;border-radius:10px;width:min(1200px,97vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #e0e0e0}
 #sheets-head{padding:12px 18px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;background:#ffffff}
 #sheets-title{font-size:14px;font-weight:600;color:#111111;display:flex;align-items:center;gap:8px}
 #sheets-status{font-size:11px;color:#888888;font-weight:400;margin-left:6px}
@@ -489,16 +489,16 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 #sheets-search{padding:5px 10px;font-size:13px;border:1.5px solid #cccccc;border-radius:5px;outline:none;font-family:inherit;width:200px}
 #sheets-search:focus{border-color:#333333}
 #sheets-body{overflow-y:auto;flex:1}
-.sheets-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.sheets-tbl{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
 .sheets-tbl thead{background:#eeeeee;position:sticky;top:0;z-index:5}
-.sheets-tbl thead th{padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:#111111;border-bottom:1px solid #cccccc;white-space:nowrap}
-.sheets-tbl thead th.r{text-align:right}
-.sheets-tbl tbody td{padding:5px 10px;border-bottom:0.5px solid #eeeeee;vertical-align:middle}
+.sheets-tbl thead th{padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:#111111;border-bottom:1px solid #cccccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheets-tbl thead th.r{text-align:right;width:90px}
+.sheets-tbl tbody td{padding:5px 10px;border-bottom:0.5px solid #eeeeee;vertical-align:top;overflow:hidden}
 .sheets-tbl tbody tr:hover td{background:#f5f5f5}
-.sheets-tbl td.amt{text-align:right;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
-.sheets-tbl td.yrc{text-align:center;color:#555555;font-family:'Noto Sans TC',sans-serif}
-.sheets-tbl td.tyc{text-align:center}
-.sheets-pill{font-size:10px;padding:1px 6px;border-radius:3px;white-space:nowrap;display:inline-block}
+.sheets-tbl td.amt{text-align:right;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap;width:90px;min-width:90px}
+.sheets-tbl td.yrc{text-align:center;color:#555555;font-family:'Noto Sans TC',sans-serif;width:52px;min-width:52px}
+.sheets-tbl td.tyc{text-align:center;width:68px;min-width:68px}
+.sheets-pill{font-size:10px;padding:1px 6px;border-radius:3px;white-space:nowrap;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 #sheets-footer{padding:7px 18px;border-top:1px solid #e0e0e0;font-size:11px;color:#666666;display:flex;justify-content:space-between;align-items:center;background:#f5f5f5}
 #sheets-expbtn{padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #cccccc;background:white;color:#333333;cursor:pointer}
 
@@ -2669,7 +2669,7 @@ function sheetsRender(){
     return;
   }
   // 欄位優先順序
-  var priority=['年(公)','年(基)','類型','受贈戶名(估價單台照)','受贈戶名','已捐金額','款項狀況','專案名稱','用途/計劃名'];
+  var priority=['年(公)','年(基)','受贈戶名(估價單台照)','受贈戶名','已捐金額','款項狀況','類型','專案名稱','用途/計劃名'];
   var allKeys=Object.keys(_sheetsFiltered[0]);
   var cols=[];
   priority.forEach(function(k){if(allKeys.indexOf(k)>=0)cols.push(k);});
@@ -2677,7 +2677,7 @@ function sheetsRender(){
     if(cols.indexOf(k)<0&&_sheetsFiltered.some(function(r){return r[k]&&r[k].trim();}))
       cols.push(k);
   });
-  var label={'年(公)':'年度','年(基)':'年度(基)','受贈戶名(估價單台照)':'受贈單位','受贈戶名':'受贈單位','已捐金額':'金額','款項狀況':'狀態','類型':'出帳','專案名稱':'專案','用途/計劃名':'用途'};
+  var label={'年(公)':'年度','年(基)':'年(基)','受贈戶名(估價單台照)':'受贈單位','受贈戶名':'受贈單位','已捐金額':'金額','款項狀況':'狀態','類型':'出帳','專案名稱':'專案','用途/計劃名':'用途'};
   var isAmt=function(k){return/金額|金/.test(k);};
   var isYr=function(k){return/^年/.test(k);};
   var isType=function(k){return k==='類型';};
