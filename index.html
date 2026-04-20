@@ -558,7 +558,7 @@ mark{background:#fff176;color:#3d2e00;border-radius:2px;padding:0 1px}
   </button>
   <button onclick="qaOpen()" style="padding:5px 14px;font-size:12px;border-radius:5px;border:1px solid rgba(245,234,208,.35);background:rgba(245,234,208,.1);color:#f5ead0;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    問與答
+    提問與回饋
   </button>
   <a href="guide.html" target="_blank" style="padding:5px 14px;font-size:12px;border-radius:5px;border:1px solid rgba(245,234,208,.35);background:rgba(245,234,208,.1);color:#f5ead0;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;text-decoration:none">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -2481,7 +2481,7 @@ function sheetsExport(){
     <div id="qa-head">
       <div id="qa-head-title">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c9a800" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        問與答
+        提問與回饋
         <span id="qa-head-sub">— 輸入問題後送出，團隊收信後回覆</span>
       </div>
       <div id="qa-head-btns">
@@ -2537,9 +2537,10 @@ function qaReset(){
 
 function qaWelcome(){
   qaAppendMsg('bot',
-    '您好！歡迎使用林堉璘宏泰公益儀表板問答系統。<br>' +
-    '請輸入您的問題，我們將由專人回覆。<br>' +
-    '也可以先參考下方常見問題。'
+    '您好！歡迎使用林堉璘宏泰公益儀表板。<br>' +
+    '請輸入您的提問或回饋，<strong>基金會行政組</strong>將盡快回覆。<br>' +
+    '📮 <a href="mailto:operation@yllhtef.org" style="color:#c9a800">operation@yllhtef.org</a><br><br>' +
+    '也可以點選下方常見問題快速提問。'
   );
   var el=document.getElementById('qa-quick');
   el.innerHTML='';
@@ -2600,8 +2601,8 @@ async function qaSend(){
     });
     if(resp.ok){
       qaAppendMsg('bot',
-        '✅ 您的問題已送出，我們將盡快回覆。<br>' +
-        '<span style="font-size:12px;color:#a08820">回覆將寄至您的 Email，或由同仁直接聯繫您。</span>'
+        '✅ 您的提問已送出，基金會行政組將盡快回覆。<br>' +
+        '<span style="font-size:12px;color:#a08820">📮 operation@yllhtef.org &nbsp;·&nbsp; 若需即時聯繫，歡迎直接來信。</span>'
       );
     } else {
       throw new Error('HTTP '+resp.status);
