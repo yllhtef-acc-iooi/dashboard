@@ -259,15 +259,15 @@ body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)
       <div class="layer">
         <div class="layer-num">③</div>
         <div class="layer-body">
-          <div class="layer-title">問答層：Claude AI + 轉寄功能</div>
+          <div class="layer-title">問答層：Formspree 問題收件</div>
           <div class="layer-desc">
-            閱讀者可在「問與答」介面即時提問，Claude 根據儀表板資料回答。
+            閱讀者在「問與答」介面輸入問題後送出，自動寄到團隊信箱，由同仁人工回覆。
             <ul>
-              <li>閱讀者的問題可一鍵「轉寄給團隊」，寄到 operation@ 和 account@</li>
-              <li>若要啟用轉寄功能，需在 Formspree.io 免費建立一個收件表單（30 秒）</li>
-              <li>未設定 Formspree 時，點轉寄會自動開啟系統郵件程式，也能用</li>
+              <li>問題連同提問者姓名、時間，直接送到 operation@yllhtef.org 和 account@yllhtef.org</li>
+              <li>Formspree 帳號：operation@yllhtef.org，Form ID：<code>maqabonq</code></li>
+              <li>若自動傳送失敗，介面會自動切換為開啟郵件程式的備援方式</li>
             </ul>
-            <span class="layer-badge" style="background:#e8f5e9;color:#2e6e4a;border:1px solid #b0d8bc">✓ 已完成設定（maqabonq）</span>
+            <span class="layer-badge" style="background:#e8f5e9;color:#2e6e4a;border:1px solid #b0d8bc">✓ 已完成設定</span>
           </div>
         </div>
       </div>
@@ -288,8 +288,8 @@ body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)
         </div>
       </div>
 
-      <div class="step">
-        <div class="step-title">✓ Google Sheets 已完成連接</div>
+      <div class="step" style="border-color:var(--green-border);background:#f8fdf8">
+        <div class="step-title" style="color:var(--green)">✓ Google Sheets 已完成連接</div>
         <div class="step-desc">
           帳務資料（GID: 232592658）與彙總工作表（GID: 1853532145）已設定，儀表板開啟時自動同步。<br>
           會計同仁在 Sheets 更新數字後，閱讀者下次開啟頁面即可看到最新資料。
@@ -297,10 +297,11 @@ body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)
       </div>
 
       <div class="step" style="border-color:var(--green-border);background:#f8fdf8">
-        <div class="step-title" style="color:var(--green)">✓ Formspree 問題轉寄已完成設定</div>
+        <div class="step-title" style="color:var(--green)">✓ Formspree 問題收件已完成設定</div>
         <div class="step-desc">
-          Form ID：<code>maqabonq</code>　收件信箱：operation@yllhtef.org、account@yllhtef.org<br>
-          閱讀者點「✉ 轉寄給團隊」後，問題與 Claude 回答將自動寄到兩個信箱。
+          帳號：operation@yllhtef.org　Form ID：<code>maqabonq</code><br>
+          收件信箱：operation@yllhtef.org、account@yllhtef.org<br>
+          閱讀者在「問與答」送出問題後，會自動寄到兩個信箱，由同仁人工回覆。
         </div>
       </div>
 
@@ -317,10 +318,113 @@ body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)
       會計同仁在 <strong>Google Sheets 更新數字後存檔</strong>，所有人下次開啟儀表板連結時就會看到最新資料。<br>
       其他人（顧問、董事、同仁）只需要收藏連結，需要的時候開啟即可。<br>
       <ul>
-        <li>有問題可在網頁的「問與答」功能即時詢問 Claude</li>
-        <li>想讓工作人員回覆，點「✉ 轉寄給團隊」</li>
+        <li>有問題可在網頁的「問與答」功能送出，由同仁人工回覆（寄到 operation@ 和 account@）</li>
         <li>想查詳細帳務，點「帳務資料」從 Sheets 即時讀取</li>
+        <li>想了解整體架構，點「作業說明」開啟本頁</li>
       </ul>
+    </div>
+  </div>
+
+  <!-- PLAN B UPGRADE -->
+  <div class="sec" style="margin-top:36px">
+    <div class="sec-title">未來升級計畫：方案 B — Claude AI 即時回答</div>
+
+    <div style="background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--rad);padding:16px 20px;margin-bottom:16px;font-size:13px;color:#1a3a5a;line-height:1.7">
+      <strong>目標：</strong>閱讀者在「問與答」輸入問題後，由 Claude AI 根據儀表板資料立即回答，不需等待人工回覆。<br>
+      <strong>現況：</strong>瀏覽器端 HTML 無法直接呼叫 Anthropic API（CORS 安全限制），需要一個「中轉服務」藏住 API Key。
+    </div>
+
+    <!-- Flow B -->
+    <div class="flow" style="margin:0 0 20px">
+      <div class="flow-node" style="max-width:480px">
+        <div class="flow-icon" style="background:#e8f0fe">💬</div>
+        <div class="flow-text">
+          <div class="flow-label">閱讀者在儀表板提問</div>
+          <div class="flow-sub">輸入問題，點送出</div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node highlight" style="max-width:480px">
+        <div class="flow-icon" style="background:#fff3e0">⚡</div>
+        <div class="flow-text">
+          <div class="flow-label">Cloudflare Worker（免費中轉服務）</div>
+          <div class="flow-sub">藏著 Anthropic API Key，代為轉發請求</div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node" style="max-width:480px">
+        <div class="flow-icon" style="background:#fce4ec">🤖</div>
+        <div class="flow-text">
+          <div class="flow-label">Anthropic API（Claude AI）</div>
+          <div class="flow-sub">根據儀表板所有資料即時生成回答</div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node" style="max-width:480px">
+        <div class="flow-icon" style="background:#e8f5e9">✅</div>
+        <div class="flow-text">
+          <div class="flow-label">回答即時顯示在問與答介面</div>
+          <div class="flow-sub">閱讀者可選擇「轉寄給團隊」留存紀錄</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Steps B -->
+    <div style="font-size:14px;font-weight:600;color:var(--topbar);margin-bottom:10px;padding-left:2px">升級所需步驟（共 3 步，預估 30 分鐘）</div>
+    <div class="layer-list">
+
+      <div class="layer">
+        <div class="layer-num" style="background:#4a6a9a">B1</div>
+        <div class="layer-body">
+          <div class="layer-title">取得 Anthropic API Key</div>
+          <div class="layer-desc">
+            前往 <code>console.anthropic.com</code> 登入後，在「API Keys」建立一個新的 Key。
+            <ul>
+              <li>Key 長得像：<code>sk-ant-api03-xxxxxxxxxx…</code></li>
+              <li>建立後請妥善保存，只會顯示一次</li>
+              <li>費用：依使用量計費，一般提問量每月約 1–5 美元</li>
+            </ul>
+            <span class="layer-badge" style="background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)">待辦</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-num" style="background:#4a6a9a">B2</div>
+        <div class="layer-body">
+          <div class="layer-title">建立 Cloudflare Worker（免費中轉服務）</div>
+          <div class="layer-desc">
+            前往 <code>workers.cloudflare.com</code> 免費註冊，建立一個 Worker，貼上事先準備好的程式碼，填入 API Key。
+            <ul>
+              <li>完全免費：每天 10 萬次請求，遠超實際使用量</li>
+              <li>Worker 會得到一個固定網址，例如：<code>https://yllhtef-qa.workers.dev</code></li>
+              <li>程式碼由 Claude 協助產生，不需要自己寫</li>
+            </ul>
+            <span class="layer-badge" style="background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)">待辦</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-num" style="background:#4a6a9a">B3</div>
+        <div class="layer-body">
+          <div class="layer-title">更新儀表板 HTML，指向 Worker 網址</div>
+          <div class="layer-desc">
+            在儀表板 HTML 中，將問與答的 API 呼叫目標改為 Cloudflare Worker 的網址，重新上傳到 GitHub 即完成。
+            <ul>
+              <li>只需修改一行程式碼：<code>var QA_WORKER_URL = 'https://yllhtef-qa.workers.dev';</code></li>
+              <li>上傳新版 <code>index.html</code> 覆蓋舊版，網址不變</li>
+              <li>升級後「問與答」即可即時回答，Formspree 收件功能仍保留作備援</li>
+            </ul>
+            <span class="layer-badge" style="background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)">待辦</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:14px;padding:12px 16px;background:#fffbe8;border:1px solid #e8d060;border-radius:8px;font-size:12.5px;color:#6a5200;line-height:1.7">
+      💡 <strong>準備好升級時</strong>，只需告訴 Claude：「我要進行方案 B 升級」，並提供 Anthropic API Key 和 Cloudflare Worker 網址，Claude 會協助產生程式碼並更新儀表板。
     </div>
   </div>
 
