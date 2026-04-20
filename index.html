@@ -553,6 +553,239 @@ mark{background:#fff176;color:#3d2e00;border-radius:2px;padding:0 1px}
 </head>
 <body>
 
+<!-- ══════════════════════════════════════
+     登入畫面
+══════════════════════════════════════ -->
+<div id="login-screen" style="
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#2a1e00 0%,#3d2e00 50%,#1a1200 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Noto Sans TC',sans-serif;
+">
+  <div style="
+    width:min(420px,92vw);
+    background:rgba(255,248,220,.06);
+    border:1px solid rgba(201,168,0,.25);
+    border-radius:16px;
+    padding:40px 36px 36px;
+    box-shadow:0 32px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(201,168,0,.15);
+    backdrop-filter:blur(12px);
+  ">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="
+        width:52px;height:52px;border-radius:13px;
+        background:linear-gradient(135deg,#c9a800,#a88600);
+        display:inline-flex;align-items:center;justify-content:center;
+        font-size:22px;font-weight:700;color:#2a1e00;
+        font-family:'IBM Plex Mono',monospace;
+        box-shadow:0 4px 16px rgba(201,168,0,.35);
+        margin-bottom:14px;
+      ">林</div>
+      <div style="color:#f5ead0;font-size:17px;font-weight:600;letter-spacing:.3px;line-height:1.4">
+        林堉璘宏泰公益
+      </div>
+      <div style="color:rgba(201,168,0,.8);font-size:13px;font-weight:300;margin-top:3px">
+        支出與成效儀表板
+      </div>
+    </div>
+
+    <!-- 說明文字 -->
+    <div style="
+      color:rgba(245,234,208,.45);font-size:12px;text-align:center;
+      margin-bottom:24px;line-height:1.6;
+    ">
+      本儀表板僅供內部使用<br>請輸入通行碼以繼續
+    </div>
+
+    <!-- 輸入框 -->
+    <div style="position:relative;margin-bottom:16px">
+      <input id="login-pwd" type="password"
+        placeholder="請輸入通行碼"
+        maxlength="30"
+        onkeydown="if(event.key==='Enter')loginSubmit()"
+        style="
+          width:100%;padding:13px 48px 13px 16px;
+          background:rgba(255,255,255,.07);
+          border:1.5px solid rgba(201,168,0,.3);
+          border-radius:9px;font-size:15px;
+          color:#f5ead0;font-family:inherit;
+          outline:none;box-sizing:border-box;
+          transition:border-color .15s,background .15s;
+          letter-spacing:2px;
+        "
+        onfocus="this.style.borderColor='rgba(201,168,0,.7)';this.style.background='rgba(255,255,255,.1)'"
+        onblur="this.style.borderColor='rgba(201,168,0,.3)';this.style.background='rgba(255,255,255,.07)'"
+      >
+      <!-- 眼睛圖示 -->
+      <button onclick="loginTogglePwd()" title="顯示／隱藏" style="
+        position:absolute;right:14px;top:50%;transform:translateY(-50%);
+        background:none;border:none;cursor:pointer;padding:4px;
+        color:rgba(245,234,208,.4);transition:color .12s;
+      " onmouseover="this.style.color='rgba(201,168,0,.8)'" onmouseout="this.style.color='rgba(245,234,208,.4)'">
+        <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 錯誤訊息 -->
+    <div id="login-err" style="
+      display:none;margin-bottom:14px;
+      padding:9px 14px;border-radius:7px;
+      background:rgba(180,40,40,.15);border:1px solid rgba(200,60,60,.3);
+      color:#f08080;font-size:12.5px;text-align:center;
+    ">
+      通行碼錯誤，請再試一次
+    </div>
+
+    <!-- 登入按鈕 -->
+    <button onclick="loginSubmit()" id="login-btn" style="
+      width:100%;padding:13px;
+      background:linear-gradient(135deg,#c9a800,#a88600);
+      border:none;border-radius:9px;
+      font-size:15px;font-weight:600;
+      color:#2a1e00;cursor:pointer;
+      font-family:inherit;letter-spacing:.5px;
+      box-shadow:0 4px 16px rgba(201,168,0,.3);
+      transition:all .15s;
+    "
+    onmouseover="this.style.background='linear-gradient(135deg,#d4b400,#b89200)';this.style.boxShadow='0 6px 20px rgba(201,168,0,.45)'"
+    onmouseout="this.style.background='linear-gradient(135deg,#c9a800,#a88600)';this.style.boxShadow='0 4px 16px rgba(201,168,0,.3)'"
+    >
+      進入儀表板
+    </button>
+
+    <!-- 記住我 -->
+    <div style="text-align:center;margin-top:16px">
+      <label style="color:rgba(245,234,208,.4);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;user-select:none">
+        <input type="checkbox" id="login-remember" style="
+          width:14px;height:14px;cursor:pointer;
+          accent-color:#c9a800;
+        " checked>
+        記住我 7 天，下次免輸入
+      </label>
+    </div>
+
+    <!-- 底部聯絡 -->
+    <div style="
+      margin-top:28px;padding-top:20px;
+      border-top:1px solid rgba(201,168,0,.1);
+      text-align:center;font-size:11px;
+      color:rgba(245,234,208,.25);line-height:1.8;
+    ">
+      忘記通行碼？請聯絡基金會行政組<br>
+      <a href="mailto:operation@yllhtef.org" style="color:rgba(201,168,0,.45);text-decoration:none">
+        operation@yllhtef.org
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  登入驗證
+//  ⚠ 修改通行碼：將下方 LOGIN_PASSWORDS 陣列改為你想要的密碼
+//    可設多組（例如不同部門用不同通行碼）
+// ══════════════════════════════════════
+var LOGIN_PASSWORDS = ['yllhtef2026', 'board2026'];  // ← 在此修改通行碼
+var LOGIN_STORAGE_KEY = 'yllhtef_dashboard_auth';
+var LOGIN_EXPIRE_DAYS = 7;
+
+// 檢查是否已有有效登入紀錄
+(function(){
+  try{
+    var stored = JSON.parse(localStorage.getItem(LOGIN_STORAGE_KEY)||'null');
+    if(stored && stored.exp > Date.now()){
+      loginSuccess(false); // 直接進入，不顯示動畫
+      return;
+    }
+  }catch(e){}
+  // 顯示登入頁，聚焦輸入框
+  setTimeout(function(){
+    var el = document.getElementById('login-pwd');
+    if(el) el.focus();
+  }, 100);
+})();
+
+function loginSubmit(){
+  var pwd = (document.getElementById('login-pwd').value||'').trim();
+  var err = document.getElementById('login-err');
+  var btn = document.getElementById('login-btn');
+
+  if(!pwd){ shakeInput(); return; }
+
+  if(LOGIN_PASSWORDS.indexOf(pwd) >= 0){
+    err.style.display='none';
+    btn.textContent='✓ 驗證成功';
+    btn.style.background='linear-gradient(135deg,#4a8a5a,#3a7048)';
+
+    // 記住我
+    var remember = document.getElementById('login-remember').checked;
+    if(remember){
+      try{
+        var exp = Date.now() + LOGIN_EXPIRE_DAYS*24*60*60*1000;
+        localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify({exp:exp}));
+      }catch(e){}
+    }
+
+    setTimeout(function(){ loginSuccess(true); }, 500);
+  } else {
+    err.style.display='block';
+    shakeInput();
+    document.getElementById('login-pwd').value='';
+    document.getElementById('login-pwd').focus();
+  }
+}
+
+function loginSuccess(animate){
+  var screen = document.getElementById('login-screen');
+  if(!screen) return;
+  if(animate){
+    screen.style.transition='opacity .5s ease';
+    screen.style.opacity='0';
+    setTimeout(function(){ screen.style.display='none'; }, 500);
+  } else {
+    screen.style.display='none';
+  }
+}
+
+function loginTogglePwd(){
+  var input = document.getElementById('login-pwd');
+  var icon = document.getElementById('eye-icon');
+  if(input.type==='password'){
+    input.type='text';
+    icon.innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    input.type='password';
+    icon.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+  input.focus();
+}
+
+function shakeInput(){
+  var el = document.getElementById('login-pwd');
+  el.style.animation='none';
+  el.offsetHeight; // reflow
+  el.style.animation='loginShake .35s ease';
+  el.style.borderColor='rgba(200,80,80,.7)';
+  setTimeout(function(){ el.style.borderColor='rgba(201,168,0,.3)'; }, 600);
+}
+</script>
+
+<style>
+@keyframes loginShake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
+#login-pwd::placeholder{color:rgba(245,234,208,.3);letter-spacing:0}
+</style>
+
+
 <div class="topbar">
   <div class="logo">
     <div class="logo-mark">林</div>
