@@ -539,6 +539,16 @@ mark{background:#fff176;color:#3d2e00;border-radius:2px;padding:0 1px}
 .qa-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .qa-qbtn{padding:4px 12px;font-size:12px;border:1px solid #d4c460;border-radius:14px;background:white;color:#7a6400;cursor:pointer;transition:all .11s;font-family:inherit}
 .qa-qbtn:hover{border-color:#c9a800;color:#3d2e00;background:#fffbe8}
+/* ── QA 打字動畫 ── */
+.qa-dots{display:inline-flex;gap:5px;align-items:center;padding:2px 0}
+.qa-dots span{width:7px;height:7px;border-radius:50%;background:var(--border2);display:inline-block;animation:qaDot 1.2s infinite ease-in-out}
+.qa-dots span:nth-child(1){animation-delay:0s}
+.qa-dots span:nth-child(2){animation-delay:.2s}
+.qa-dots span:nth-child(3){animation-delay:.4s}
+@keyframes qaDot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+/* ── QA badge ── */
+.qa-mode-badge{font-size:11px;background:#fff8cc;border:1px solid #e8d060;border-radius:4px;padding:2px 8px;color:#7a5800;display:inline-block;margin-top:4px}
+
 </style>
 </head>
 <body>
@@ -2499,20 +2509,23 @@ function sheetsExport(){
         <textarea id="qa-input" placeholder="輸入問題…（Enter 送出，Shift+Enter 換行）" rows="2"></textarea>
         <button id="qa-send" onclick="qaSend()">送出</button>
       </div>
-      <div id="qa-hint">💡 問題送出後將寄到團隊信箱 &nbsp;·&nbsp; 緊急事項請直接聯絡 operation@yllhtef.org</div>
+      <div id="qa-hint">💡 問題送出後將寄到團隊信箱 &nbsp;·&nbsp; 緊急事項請直接聯絡基金會行政組：<a href="mailto:operation@yllhtef.org" style="color:var(--ink2)">operation@yllhtef.org</a></div>
     </div>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════
-//  QA 問與答功能（方案 A：Formspree 收件模式）
+//  QA 提問與回饋（展示版：模擬 Claude 即時回答）
+//  升級方案 B 時：將 QA_WORKER_URL 改為 Cloudflare Worker 網址即可
 // ═══════════════════════════════════════════════════════
 
+var QA_WORKER_URL = null; // 'https://yllhtef-qa.workers.dev'  ← 方案B啟用時填入
 var QA_FORMSPREE_ID = 'maqabonq';
+var _qaHistory = [];
+var _qaLoading = false;
 var _qaMsgCount = 0;
 
-// 常見問題快速鍵
 var QA_QUICK = [
   '2026年目前已執行了多少？',
   '歷年最大單筆捐贈是哪一筆？',
@@ -2520,6 +2533,30 @@ var QA_QUICK = [
   '台大人才計畫進度如何？',
   '奉獻獎今年預計頒發多少？',
 ];
+
+// ── 模擬回答資料庫（方案B啟用前使用）──
+var QA_MOCK = {
+  '2026': '2026 年度目前（A 已執行）公益信託直接捐款約 350 萬元、透過基金會執行約 9,338 萬元、公捐基約 1.42 億元。全年預估實際總支出（①＋②）目標為 3 億元，目前進度持續推進中。',
+  '執行': '2026 年已執行項目包括：醫療人才培育設備提升（組織碎化術）5,400 萬、榮總醫療人才培育 350 萬、堉璘淡海計畫 594 萬、Changemaker 高中計畫 350 萬等。',
+  '最大': '歷年最大單筆捐贈是 2016 年捐贈台北榮總的重粒子癌症治療設備，金額為 3 億元。該設備歷經 7 年建置，於 2023 年 5 月正式啟用，迄今已治療逾 680 位癌症病患。',
+  '重粒子': '重粒子癌症治療計畫由 2016 年捐贈 3 億元啟動，2023 年 5 月設備正式啟用。目前累計治療超過 680 位病患，胰臟癌（有轉移）首年存活率從傳統 20% 提升至 80%，副作用從 20% 降低至 5% 以下。',
+  '消防': '消防急救教育計畫自 2017 年啟動，累計捐贈 LUCAS 自動心肺復甦機 394 台（佔全台消防分隊約 4 成）、住宅火警警報器 19 萬顆。累計協助恢復呼吸心跳約 11,000 人次，OHCA 急救成功率從 2017 年 21.2% 提升至 2022 年 27.4%。',
+  '台大': '堉璘台大人才培育計畫自 2019 年啟動，累計承諾捐助 4.5 億元。2025 年第九屆計畫服務 106 位學生，協助 11 家 NPO，學生募款成果達 340 萬元，新增捐款人 1,303 人。',
+  '奉獻獎': '台灣奉獻獎第十屆（2026 年）預計頒發：奉獻獎 1 名、成就獎 3 名、新秀獎 5 名，目前確定發生金額 2,400 萬元，待討論金額 4,809 萬元，典禮籌備亦進行中。',
+  '蒙特梭利': '蒙特梭利教育推廣案承諾捐助總額 9,500 萬元，2025 年已全額撥付。先期完成師資培育中心營運計畫規劃，目標建立台灣本土蒙特梭利師資培育標準化體系。',
+  '歷年': '2015–2026 年累計實際總支出（①公益信託＋②基金會執行）超過 20 億元。其中 2019 年支出最高（達 2.66 億），主要來自台大計畫啟動與消防教育大規模擴展。',
+  '總支出': '以「①＋② 實際總支出」計算（不重複計算公捐基撥款）：2015–2025 年累計超過 20 億元，2026 年全年目標為 3 億元。',
+  'default': '感謝您的提問！根據儀表板資料，林堉璘宏泰公益基金會 2015–2026 年累計公益支出超過 20 億元，涵蓋醫療人才培育、消防急救教育、台灣奉獻獎、台大人才計畫等多項重點計畫。如需更詳細的資訊，歡迎點選「帳務資料」查閱明細，或透過本功能傳送問題給基金會行政組（operation@yllhtef.org）。'
+};
+
+function qaMockAnswer(q) {
+  var q_low = q.toLowerCase();
+  var keys = Object.keys(QA_MOCK).filter(function(k){ return k !== 'default'; });
+  for (var i = 0; i < keys.length; i++) {
+    if (q_low.indexOf(keys[i]) >= 0) return QA_MOCK[keys[i]];
+  }
+  return QA_MOCK['default'];
+}
 
 function qaOpen(){
   document.getElementById('qa-overlay').style.display='flex';
@@ -2530,17 +2567,21 @@ function qaClose(){
   document.getElementById('qa-overlay').style.display='none';
 }
 function qaReset(){
+  _qaHistory=[];
   _qaMsgCount=0;
   document.getElementById('qa-messages').innerHTML='';
   qaWelcome();
 }
 
 function qaWelcome(){
+  var isMock = !QA_WORKER_URL;
   qaAppendMsg('bot',
-    '您好！歡迎使用林堉璘宏泰公益儀表板。<br>' +
-    '請輸入您的提問或回饋，<strong>基金會行政組</strong>將盡快回覆。<br>' +
-    '📮 <a href="mailto:operation@yllhtef.org" style="color:#c9a800">operation@yllhtef.org</a><br><br>' +
-    '也可以點選下方常見問題快速提問。'
+    '您好！我是林堉璘宏泰公益儀表板的 AI 助理。<br>' +
+    '我熟悉 2015–2026 年的所有支出明細、成效資料與年度目標。<br>' +
+    '請問有什麼想了解的？' +
+    (isMock
+      ? '<br><br><span style="font-size:11px;background:#fff8cc;border:1px solid #e8d060;border-radius:4px;padding:2px 8px;color:#7a5800;display:inline-block;margin-top:4px">⚡ 展示模式：模擬 AI 即時回答</span>'
+      : '')
   );
   var el=document.getElementById('qa-quick');
   el.innerHTML='';
@@ -2550,85 +2591,146 @@ function qaWelcome(){
     btn.textContent=q;
     btn.addEventListener('click',function(){
       document.getElementById('qa-input').value=q;
-      document.getElementById('qa-input').focus();
+      qaSend();
     });
     el.appendChild(btn);
   });
 }
 
-function qaAppendMsg(role, html){
+function qaAppendMsg(role, html, withFwd){
   var el=document.getElementById('qa-messages');
   var isBot=(role==='bot');
-  var avatarBot='<div class="qa-avatar bot">林</div>';
+  var id='qamsg-'+Date.now()+Math.random().toString(36).slice(2,6);
+  var fwdBtn='';
+  if(withFwd){
+    var btn=document.createElement('button');
+    fwdBtn='<br><button class="qa-fwd-btn" id="fwd-'+id+'" onclick="qaForward(\''+id+'\',this)">✉ 轉寄給行政組</button>';
+  }
+  var avatarBot='<div class="qa-avatar bot">AI</div>';
   var avatarUser='<div class="qa-avatar user">你</div>';
-  var bubble='<div class="qa-bubble '+role+'">'+html+'</div>';
+  var bubble='<div class="qa-bubble '+role+'" id="'+id+'">'+html+fwdBtn+'</div>';
   var div=document.createElement('div');
   div.className='qa-msg '+role;
   div.innerHTML=(isBot?avatarBot:avatarUser)+bubble;
   el.appendChild(div);
   el.scrollTop=el.scrollHeight;
   _qaMsgCount++;
+  return id;
+}
+
+function qaAppendTyping(){
+  var el=document.getElementById('qa-messages');
+  var id='typing-'+Date.now();
+  var div=document.createElement('div');
+  div.className='qa-msg bot';
+  div.id='typing-wrap-'+id;
+  div.innerHTML='<div class="qa-avatar bot">AI</div><div class="qa-bubble bot" style="padding:12px 16px"><span class="qa-dots"><span></span><span></span><span></span></span></div>';
+  el.appendChild(div);
+  el.scrollTop=el.scrollHeight;
+  return id;
+}
+
+function qaRemoveTyping(id){
+  var el=document.getElementById('typing-wrap-'+id);
+  if(el) el.remove();
 }
 
 async function qaSend(){
+  if(_qaLoading) return;
   var input=document.getElementById('qa-input');
   var q=(input.value||'').trim();
   if(!q) return;
-  var name=(document.getElementById('qa-name').value||'').trim()||'（未填姓名）';
 
-  // 清空快速提問、顯示問題
   document.getElementById('qa-quick').innerHTML='';
   input.value='';
   input.style.height='auto';
+
+  _qaHistory.push({role:'user', content:q});
   qaAppendMsg('user', escHtml(q));
 
-  // 送出前顯示「傳送中」
-  var sendBtn=document.getElementById('qa-send');
-  sendBtn.disabled=true;
-  sendBtn.textContent='傳送中…';
+  _qaLoading=true;
+  document.getElementById('qa-send').disabled=true;
 
+  var typingId=qaAppendTyping();
+
+  // 模擬思考延遲（方案B啟用後這段會被真實API取代）
+  var delay = QA_WORKER_URL ? 0 : 800 + Math.random()*600;
+
+  await new Promise(function(res){ setTimeout(res, delay); });
+
+  try{
+    var answer;
+    if(QA_WORKER_URL){
+      // ── 方案B：真實 Claude API（透過 Cloudflare Worker）──
+      var resp = await fetch(QA_WORKER_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ messages: _qaHistory })
+      });
+      var data = await resp.json();
+      answer = data.answer || data.content || '抱歉，無法取得回應。';
+    } else {
+      // ── 展示模式：模擬回答 ──
+      answer = qaMockAnswer(q);
+    }
+
+    qaRemoveTyping(typingId);
+    _qaHistory.push({role:'assistant', content:answer});
+    var htmlAnswer = escHtml(answer).replace(/\n/g,'<br>');
+    qaAppendMsg('bot', htmlAnswer, true);
+
+  } catch(e){
+    qaRemoveTyping(typingId);
+    var errMsg = QA_WORKER_URL
+      ? '⚠ 連線失敗，已切換為人工回覆模式。'
+      : '⚠ 發生錯誤，請稍後再試。';
+    qaAppendMsg('bot', errMsg, true);
+  }
+
+  _qaLoading=false;
+  document.getElementById('qa-send').disabled=false;
+  document.getElementById('qa-input').focus();
+}
+
+async function qaForward(msgId, btn){
+  var name=(document.getElementById('qa-name').value||'').trim()||'（未填姓名）';
+  var question='', answer='';
+  for(var i=_qaHistory.length-1;i>=0;i--){
+    if(_qaHistory[i].role==='assistant'&&!answer) answer=_qaHistory[i].content;
+    else if(_qaHistory[i].role==='user'&&!question){question=_qaHistory[i].content;break;}
+  }
+  btn.textContent='傳送中…';
+  btn.disabled=true;
   try{
     var resp=await fetch('https://formspree.io/f/'+QA_FORMSPREE_ID,{
       method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json'},
       body:JSON.stringify({
-        _subject:'[林堉璘宏泰儀表板提問] '+q.slice(0,50),
+        _subject:'[林堉璘宏泰儀表板提問] '+question.slice(0,50),
         提問者: name,
-        問題: q,
+        問題: question,
+        AI回答: answer||'（展示模式）',
         時間: new Date().toLocaleString('zh-TW'),
         頁面: window.location.href
       })
     });
     if(resp.ok){
-      qaAppendMsg('bot',
-        '✅ 您的提問已送出，基金會行政組將盡快回覆。<br>' +
-        '<span style="font-size:12px;color:#a08820">📮 operation@yllhtef.org &nbsp;·&nbsp; 若需即時聯繫，歡迎直接來信。</span>'
-      );
-    } else {
-      throw new Error('HTTP '+resp.status);
-    }
+      btn.textContent='✓ 已寄給行政組';
+      btn.className='qa-fwd-btn sent';
+    } else { throw new Error('HTTP '+resp.status); }
   } catch(e){
-    // Fallback: mailto
-    var subject=encodeURIComponent('[林堉璘宏泰儀表板提問] '+q.slice(0,40));
-    var body=encodeURIComponent('提問者：'+name+'\n\n問題：\n'+q+'\n\n時間：'+new Date().toLocaleString('zh-TW'));
-    var mailtoLink='mailto:operation@yllhtef.org?subject='+subject+'&body='+body;
-    qaAppendMsg('bot',
-      '⚠ 自動傳送失敗，請點下方按鈕用 Email 送出：<br><br>' +
-      '<a href="'+mailtoLink+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:6px;background:#3d2e00;color:#f5ead0;font-size:12px;text-decoration:none;font-family:inherit">'+
-      '✉ 開啟 Email 送出問題</a>'
-    );
+    var subject=encodeURIComponent('[林堉璘宏泰儀表板提問] '+question.slice(0,40));
+    var body=encodeURIComponent('提問者：'+name+'\n\n問題：\n'+question+'\n\n時間：'+new Date().toLocaleString('zh-TW'));
+    window.open('mailto:operation@yllhtef.org?subject='+subject+'&body='+body);
+    btn.textContent='✓ 已開啟郵件';
+    btn.className='qa-fwd-btn sent';
   }
-
-  sendBtn.disabled=false;
-  sendBtn.textContent='送出';
-  document.getElementById('qa-input').focus();
 }
 
 function escHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Auto-resize textarea + Enter to send
 document.addEventListener('DOMContentLoaded',function(){
   var ta=document.getElementById('qa-input');
   if(!ta) return;
@@ -2641,7 +2743,6 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 });
 
-// ESC to close
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&document.getElementById('qa-overlay').style.display==='flex') qaClose();
 });
