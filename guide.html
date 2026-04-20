@@ -334,6 +334,19 @@ body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)
       <strong>現況：</strong>瀏覽器端 HTML 無法直接呼叫 Anthropic API（CORS 安全限制），需要一個「中轉服務」藏住 API Key。
     </div>
 
+    <!-- Cost note -->
+    <div style="background:#fff8cc;border:1px solid #e8d060;border-radius:var(--rad);padding:14px 18px;margin-bottom:20px;font-size:13px;color:#5a4800;line-height:1.75">
+      <div style="font-weight:600;margin-bottom:6px">💰 費用說明</div>
+      <strong>Cloudflare Workers：完全免費</strong>（每天 10 萬次請求，遠超實際用量）<br>
+      <strong>Anthropic API：需要費用，但金額極低</strong><br>
+      <div style="margin-top:8px;padding:8px 12px;background:white;border-radius:6px;border:1px solid #e0cc60">
+        新帳號開通時 Anthropic 會提供少量免費測試額度（free credits）可先試用。<br>
+        用完後採<strong>按量計費</strong>（Pay-as-you-go）：最便宜的 Haiku 模型每百萬 token 約 $1 美元。<br>
+        以實際使用估算：<strong>每月 100 次問答 ≈ $0.5–1 美元（約 15–30 元台幣）</strong>，費用可忽略不計。<br>
+        可在 Anthropic Console 設定每月消費上限，完全不怕超支。
+      </div>
+    </div>
+
     <!-- Flow B -->
     <div class="flow" style="margin:0 0 20px">
       <div class="flow-node" style="max-width:480px">
@@ -356,7 +369,7 @@ body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)
         <div class="flow-icon" style="background:#fce4ec">🤖</div>
         <div class="flow-text">
           <div class="flow-label">Anthropic API（Claude AI）</div>
-          <div class="flow-sub">根據儀表板所有資料即時生成回答</div>
+          <div class="flow-sub">根據儀表板所有資料即時生成回答　每月費用約 $0.5–1 美元</div>
         </div>
       </div>
       <div class="flow-arrow">↓</div>
@@ -382,7 +395,8 @@ body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)
             <ul>
               <li>Key 長得像：<code>sk-ant-api03-xxxxxxxxxx…</code></li>
               <li>建立後請妥善保存，只會顯示一次</li>
-              <li>費用：依使用量計費，一般提問量每月約 1–5 美元</li>
+              <li>新帳號會收到少量免費測試額度，可先試用不需立即付款</li>
+              <li>正式使用後採按量計費，可自訂每月消費上限防止超支</li>
             </ul>
             <span class="layer-badge" style="background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)">待辦</span>
           </div>
@@ -392,11 +406,11 @@ body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)
       <div class="layer">
         <div class="layer-num" style="background:#4a6a9a">B2</div>
         <div class="layer-body">
-          <div class="layer-title">建立 Cloudflare Worker（免費中轉服務）</div>
+          <div class="layer-title">建立 Cloudflare Worker（完全免費的中轉服務）</div>
           <div class="layer-desc">
             前往 <code>workers.cloudflare.com</code> 免費註冊，建立一個 Worker，貼上事先準備好的程式碼，填入 API Key。
             <ul>
-              <li>完全免費：每天 10 萬次請求，遠超實際使用量</li>
+              <li><strong>完全免費</strong>：每天 10 萬次請求，不需填信用卡，無到期日</li>
               <li>Worker 會得到一個固定網址，例如：<code>https://yllhtef-qa.workers.dev</code></li>
               <li>程式碼由 Claude 協助產生，不需要自己寫</li>
             </ul>
