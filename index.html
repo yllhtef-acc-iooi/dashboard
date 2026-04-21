@@ -3271,12 +3271,24 @@ function sheetsRender(){
   };
   var isYr=function(k){return/^年/.test(k);};
   var isType=function(k){return k==='類型';};
-  var thead='<tr>'+cols.map(function(k){
+  // ── 欄寬定義（px，未定義者彈性分配）──
+  var CW={'年(公)':46,'年(基)':46,'受贈戶名_估價單台照':120,'受贈戶名':120,
+          '已捐金額':96,'款項狀況':68,'類型':120};
+  var colgroup='<colgroup>'+cols.map(function(k){
+    var w=CW[k]||(isAmt(k)?96:0);
+    return w?'<col style="width:'+w+'px">':'<col>';
+  }).join('')+'</colgroup>';
+  var thead=colgroup+'<tr>'+cols.map(function(k){
     var lbl=label[k]||k;
     var cls=isAmt(k)?'r':'';
     var safeK=k.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-    return '<th class="'+cls+'" data-colkey="'+safeK+'" style="cursor:pointer;user-select:none;white-space:nowrap" onclick="sheetsColFilter(event,this)">'
-      +lbl+' <span style="font-size:10px;opacity:.5;font-weight:400;pointer-events:none">▾</span></th>';
+    var active=!!_colFilter.active[k];
+    // 篩選啟用：橘點 + 欄名橘色；未啟用：灰色 ▾
+    var indicator=active
+      ? ' <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#c08030;margin-left:3px;vertical-align:middle;pointer-events:none"></span>'
+      : ' <span style="font-size:10px;opacity:.4;font-weight:400;pointer-events:none">▾</span>';
+    var extra=active?';color:#c08030;font-weight:700':'';
+    return '<th class="'+cls+'" data-colkey="'+safeK+'" style="cursor:pointer;user-select:none;white-space:nowrap'+extra+'" onclick="sheetsColFilter(event,this)">'+lbl+indicator+'</th>';
   }).join('')+'</tr>';
   // 個資遮蔽：受贈單位欄若為3個中文字，第2字換O
   var NAME_KEYS=['受贈戶名_估價單台照','受贈戶名','受贈單位','單位名稱','姓名'];
@@ -3335,8 +3347,11 @@ function sheetsRender(){
   }
   var tsubhead = hasSum ? '<tbody id="sheets-sub-head" style="border-bottom:2px solid #cccccc">'+mkSumRow()+'</tbody>' : '';
   var tfoot    = hasSum ? '<tfoot style="border-top:2px solid #cccccc">'+mkSumRow()+'</tfoot>' : '';
+  // thead 變數 = colgroup + <tr>欄標題</tr>，需拆開正確組裝
+  // colgroup 必須直接是 <table> 的子元素，不能在 <thead> 裡
+  var theadRow=thead.replace(/^<colgroup>.*?<\/colgroup>/,''); // 去掉 colgroup，只保留 <tr>
   document.getElementById('sheets-body').innerHTML=
-    '<table class="sheets-tbl"><thead>'+thead+'</thead>'+tsubhead+'<tbody>'+tbody+'</tbody>'+tfoot+'</table>'+
+    '<table class="sheets-tbl">'+colgroup+'<thead>'+theadRow+'</thead>'+tsubhead+'<tbody>'+tbody+'</tbody>'+tfoot+'</table>'+
     (_sheetsFiltered.length>500?'<div style="padding:8px;text-align:center;font-size:11px;color:#a08820">顯示前500筆，請用搜尋縮小範圍</div>':'');
 }
 
