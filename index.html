@@ -1,6 +1,3 @@
-function ufBtnStyle(btn, isOn){
-  btn.style.cssText=isOn?'padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;background:#1a1a1a;color:#ffffff;border:1.5px solid #1a1a1a;font-weight:500;letter-spacing:.2px;box-sizing:border-box':'padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;background:#ffffff;color:#999999;border:1.5px solid #cccccc;font-weight:500;letter-spacing:.2px;box-sizing:border-box';
-}<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -2709,11 +2706,7 @@ function ufApply(filterId){
 function parseNum(s){if(!s||s==='—')return 0;return parseInt(s.replace(/,/g,''))||0;}
 function ffNum(n){return n.toLocaleString('en-US');}
 function ufBtnStyle(btn, isOn){
-  if(isOn){
-    btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#1a1a1a;color:#ffffff;border:1.5px solid #1a1a1a;font-weight:500;text-decoration:none;opacity:1;letter-spacing:.3px';
-  } else {
-    btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#ffffff;color:#999999;border:1.5px solid #cccccc;font-weight:500;letter-spacing:.3px';
-  }
+  btn.style.cssText=isOn?'padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;background:#1a1a1a;color:#ffffff;border:1.5px solid #1a1a1a;font-weight:500;letter-spacing:.2px;box-sizing:border-box':'padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;background:#ffffff;color:#999999;border:1.5px solid #cccccc;font-weight:500;letter-spacing:.2px;box-sizing:border-box';
 }
 
 function ufToggle(filterId,unit){
