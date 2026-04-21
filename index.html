@@ -549,9 +549,9 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 /* ── 出帳篩選 ── */
 .unit-filter{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 .unit-filter-label{font-size:11px;color:var(--ink3);margin-right:2px}
-.ufbtn{padding:4px 12px;font-size:12px;border-radius:4px;border:1.5px dashed #cccccc;background:#ffffff;color:#cccccc;cursor:pointer;transition:all .1s;font-family:inherit;display:inline-flex;align-items:center;gap:4px;font-weight:400;letter-spacing:.3px}
+.ufbtn{padding:2px 8px;font-size:11px;border-radius:3px;border:1.5px dashed #cccccc;background:#ffffff;color:#cccccc;cursor:pointer;transition:all .1s;font-family:inherit;display:inline-flex;align-items:center;gap:3px;font-weight:400;letter-spacing:.2px}
 .ufbtn:hover{border-color:var(--ink2);color:var(--ink)}
-.ufbtn.on{background:#1a1a1a!important;color:#ffffff!important;border:1.5px solid #1a1a1a!important;font-weight:700!important;text-decoration:none!important;opacity:1!important;letter-spacing:.3px}
+.ufbtn.on{background:#1a1a1a!important;color:#ffffff!important;border:1.5px solid #1a1a1a!important;font-weight:600!important;text-decoration:none!important;opacity:1!important;letter-spacing:.2px}
 
 .ufbtn .uf-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 /* ── QA 打字動畫 ── */
@@ -2616,15 +2616,16 @@ function ufApply(filterId){
     }
   });
 
-  // ── 欄顯示：隱藏未選的 A/B/C 欄（只隱藏 tbody 資料欄，不動 thead 按鈕）──
+  // ── 欄顯示：visibility 保留欄寬，避免欄位跑掉 ──
   ['e','c','p'].forEach(function(abc){
     var show=s.abcs.has(abc);
-    tbl.querySelectorAll('tbody [data-col="'+abc+'"], tfoot [data-col="'+abc+'"]').forEach(function(el){
-      el.style.display=show?'':'none';
+    // tbody 資料欄：visibility:hidden 保留空間
+    tbl.querySelectorAll('tbody [data-col="'+abc+'"]').forEach(function(el){
+      el.style.visibility=show?'':'hidden';
     });
-    // thead 的 th 按鈕：只改視覺樣式，永遠不隱藏
+    // thead 的 th 按鈕：opacity 視覺提示，不可隱藏
     tbl.querySelectorAll('thead [data-col="'+abc+'"]').forEach(function(el){
-      el.style.opacity=show?'1':'0.35';
+      el.style.opacity=show?'1':'0.4';
     });
   });
 
@@ -2685,19 +2686,20 @@ function ufApply(filterId){
       setFsub('ce',hasE?hasE+'筆':'');
       setFsub('cc',hasC?hasC+'筆':'');
       setFsub('cp2',hasP?hasP+'筆':'');
-      // 篩選小計欄顯示/隱藏（thead th 保留，只隱藏 tbody td）
+      // 篩選小計欄：用 visibility 保留欄寬
       ['e','c','p'].forEach(function(abc){
         var show=s.abcs.has(abc);
-        filtSub.querySelectorAll('tbody [data-col="'+abc+'"], tr [data-col="'+abc+'"]').forEach(function(el){
-          if(el.tagName==='TH') el.style.opacity=show?'1':'0.35';
-          else el.style.display=show?'':'none';
+        filtSub.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
+          el.style.visibility=show?'':'hidden';
         });
       });
     }
     // 合計表欄顯示/隱藏
     ['e','c','p'].forEach(function(abc){
       var show=s.abcs.has(abc);
-      sumWrap.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){el.style.display=show?'':'none';});
+      sumWrap.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
+        el.style.visibility=show?'':'hidden';
+      });
     });
   }
 }
