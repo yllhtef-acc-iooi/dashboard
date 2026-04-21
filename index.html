@@ -2941,80 +2941,96 @@ function srchHL(text, terms){
 // ── 欄篩選浮動面板 ──
 var _colFilter = { col: -1, active: {} }; // active: {colIdx: Set(vals)}
 
-function sheetsColFilter(evt, colIdx){
+function sheetsColFilter(evt, thEl){
   evt.stopPropagation();
-  // 關閉已開的
+  // ▾ span をクリックした場合、親の <th> に補正
+  if(!thEl.dataset.colkey && thEl.closest) thEl = thEl.closest('th');
+  if(!thEl || !thEl.dataset || !thEl.dataset.colkey) return;
   var existing = document.getElementById('col-filter-panel');
   if(existing){
-    if(parseInt(existing.dataset.col)===colIdx){ existing.remove(); return; }
+    var sameCol = existing.dataset.colkey === thEl.dataset.colkey;
     existing.remove();
+    if(sameCol) return;
   }
-  // 取得該欄所有不重複值
-  var cols = _sheetsFilteredCols;
-  if(!cols) return;
-  var k = cols[colIdx];
+  var k = thEl.dataset.colkey;
+  if(!k || !_sheetsData.length) return;
   var vals = {};
   _sheetsData.forEach(function(r){ var v=(r[k]||'').trim(); if(v) vals[v]=1; });
   var unique = Object.keys(vals).sort();
   if(!unique.length) return;
-  var active = _colFilter.active[colIdx] || null; // null = 全選
-  // 建面板
+  var active = _colFilter.active[k] || null;
+  // 建面板（用 createElement，完全不用字串拼接含引號的 onclick）
   var panel = document.createElement('div');
   panel.id = 'col-filter-panel';
-  panel.dataset.col = colIdx;
-  panel.style.cssText = 'position:fixed;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:10px;z-index:9999;min-width:160px;max-width:260px;max-height:320px;overflow-y:auto;font-family:inherit;font-size:13px';
-  // 定位（靠近點擊的 th）
-  var rect = evt.target.getBoundingClientRect();
-  panel.style.top = (rect.bottom + 4) + 'px';
-  panel.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
-  // 全選/全清按鈕
-  var btnRow = '<div style="display:flex;gap:6px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #eee">'
-    + '<button onclick="sheetsColFilterAll('+colIdx+',true)" style="flex:1;padding:3px;border:1px solid #ddd;border-radius:4px;background:#f8f8f8;cursor:pointer;font-size:11px">全選</button>'
-    + '<button onclick="sheetsColFilterAll('+colIdx+',false)" style="flex:1;padding:3px;border:1px solid #ddd;border-radius:4px;background:#f8f8f8;cursor:pointer;font-size:11px">全清</button>'
-    + '<button onclick="sheetsColFilterApply('+colIdx+')" style="flex:1;padding:3px;border:1px solid #1a1a1a;border-radius:4px;background:#1a1a1a;color:#fff;cursor:pointer;font-size:11px">套用</button>'
-    + '</div>';
-  var items = unique.map(function(v){
-    var checked = (!active || active.has(v)) ? 'checked' : '';
-    var esc_v = v.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    return '<label style="display:flex;align-items:center;gap:6px;padding:3px 0;cursor:pointer">'
-      + '<input type="checkbox" data-val="'+esc_v+'" '+ checked +'> '
-      + '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+esc_v+'">'+v+'</span>'
-      + '</label>';
-  }).join('');
-  panel.innerHTML = btnRow + items;
+  panel.dataset.colkey = k;
+  panel.style.cssText = 'position:fixed;background:#fff;border:1.5px solid #cccccc;border-radius:8px;'
+    +'box-shadow:0 4px 20px rgba(0,0,0,.18);padding:10px;z-index:9999;'
+    +'min-width:160px;max-width:280px;max-height:340px;overflow-y:auto;font-family:inherit;font-size:13px';
+  var rect = thEl.getBoundingClientRect();
+  panel.style.top  = (rect.bottom + 4) + 'px';
+  panel.style.left = Math.min(rect.left, window.innerWidth - 290) + 'px';
+  // 標題
+  var head = document.createElement('div');
+  head.style.cssText = 'font-size:11px;font-weight:700;color:#888;padding-bottom:7px;margin-bottom:7px;border-bottom:1px solid #eee';
+  head.textContent = k;
+  panel.appendChild(head);
+  // 按鈕列（全選 / 全清 / 套用）— 用 addEventListener，不用 onclick 屬性
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:5px;margin-bottom:8px';
+  [['全選',true],['全清',false]].forEach(function(pair){
+    var btn = document.createElement('button');
+    btn.textContent = pair[0];
+    btn.style.cssText = 'flex:1;padding:4px;border:1px solid #ddd;border-radius:4px;background:#f8f8f8;cursor:pointer;font-size:11px;font-family:inherit';
+    btn.addEventListener('click', (function(chk){ return function(e){
+      e.stopPropagation();
+      panel.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked=chk; });
+    }; })(pair[1]));
+    btnRow.appendChild(btn);
+  });
+  var applyBtn = document.createElement('button');
+  applyBtn.textContent = '套用';
+  applyBtn.style.cssText = 'flex:1;padding:4px;border:1.5px solid #1a1a1a;border-radius:4px;background:#1a1a1a;color:#fff;cursor:pointer;font-size:11px;font-family:inherit';
+  applyBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var checked = new Set();
+    panel.querySelectorAll('input[type=checkbox]:checked').forEach(function(cb){ checked.add(cb.dataset.val); });
+    var total = panel.querySelectorAll('input[type=checkbox]').length;
+    if(checked.size === total) delete _colFilter.active[k];
+    else _colFilter.active[k] = checked;
+    panel.remove();
+    sheetsRender();
+  });
+  btnRow.appendChild(applyBtn);
+  panel.appendChild(btnRow);
+  // 選項列表
+  unique.forEach(function(v){
+    var label = document.createElement('label');
+    label.style.cssText = 'display:flex;align-items:center;gap:7px;padding:4px 2px;cursor:pointer';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.dataset.val = v;
+    cb.checked = (!active || active.has(v));
+    cb.style.cursor = 'pointer';
+    var span = document.createElement('span');
+    span.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px';
+    span.title = v;
+    span.textContent = v;
+    label.appendChild(cb);
+    label.appendChild(span);
+    panel.appendChild(label);
+  });
   document.body.appendChild(panel);
   // 點其他地方關閉
   setTimeout(function(){
-    document.addEventListener('click', function closeFn(){
+    function closeFn(e){
       var p = document.getElementById('col-filter-panel');
-      if(p) p.remove();
-      document.removeEventListener('click', closeFn);
-    });
-  }, 50);
-}
-
-function sheetsColFilterAll(colIdx, checked){
-  var panel = document.getElementById('col-filter-panel');
-  if(!panel) return;
-  panel.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked = checked; });
-}
-
-function sheetsColFilterApply(colIdx){
-  var panel = document.getElementById('col-filter-panel');
-  if(!panel) return;
-  var checked = new Set();
-  panel.querySelectorAll('input[type=checkbox]:checked').forEach(function(cb){ checked.add(cb.dataset.val); });
-  var total = panel.querySelectorAll('input[type=checkbox]').length;
-  // 全選時清除篩選
-  if(checked.size === total) delete _colFilter.active[colIdx];
-  else _colFilter.active[colIdx] = checked;
-  panel.remove();
-  sheetsRender();
+      if(p && !p.contains(e.target)){ p.remove(); document.removeEventListener('click', closeFn); }
+    }
+    document.addEventListener('click', closeFn);
+  }, 100);
 }
 
 window.sheetsColFilter = sheetsColFilter;
-window.sheetsColFilterAll = sheetsColFilterAll;
-window.sheetsColFilterApply = sheetsColFilterApply;
 
 var _srchTimer=null;
 function srchDebounce(){
@@ -3217,14 +3233,12 @@ function sheetsRender(){
     }
     return true;
   });
-  // 套用欄篩選
+  // 套用欄篩選（key 是欄名字串）
   if(Object.keys(_colFilter.active).length){
     _sheetsFiltered=_sheetsFiltered.filter(function(r){
-      return Object.keys(_colFilter.active).every(function(ci){
-        var k=cols[parseInt(ci)];
-        if(!k) return true;
+      return Object.keys(_colFilter.active).every(function(k){
         var v=(r[k]||'').trim();
-        return _colFilter.active[ci].has(v);
+        return _colFilter.active[k].has(v);
       });
     });
   }
@@ -3236,16 +3250,16 @@ function sheetsRender(){
     return;
   }
   // 欄位優先順序
-  var priority=['年(公)','年(基)','受贈戶名(估價單台照)','受贈戶名','已捐金額','款項狀況','類型','專案名稱','用途/計劃名'];
+  var priority=['年(公)','年(基)','受贈戶名_估價單台照','受贈戶名','已捐金額','款項狀況','類型','專案名稱','用途/計劃名'];
   var allKeys=Object.keys(_sheetsFiltered[0]);
-  _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
   var cols=[];
   priority.forEach(function(k){if(allKeys.indexOf(k)>=0)cols.push(k);});
   allKeys.forEach(function(k){
     if(cols.indexOf(k)<0&&_sheetsFiltered.some(function(r){return r[k]&&r[k].trim();}))
       cols.push(k);
   });
-  var label={'年(公)':'年度','年(基)':'年(基)','受贈戶名(估價單台照)':'受贈單位','受贈戶名':'受贈單位','已捐金額':'金額','款項狀況':'狀態','類型':'出帳','專案名稱':'專案','用途/計劃名':'用途'};
+  _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
+  var label={'年(公)':'年度','年(基)':'年(基)','受贈戶名_估價單台照':'受贈單位','受贈戶名':'受贈單位','已捐金額':'金額','款項狀況':'狀態','類型':'出帳','專案名稱':'專案','用途/計劃名':'用途'};
   var isAmt=function(k){
     // 欄名含金/額/元/amount，或值是數字格式
     if(/金|額|元|amount/i.test(k)) return true;
@@ -3257,15 +3271,15 @@ function sheetsRender(){
   };
   var isYr=function(k){return/^年/.test(k);};
   var isType=function(k){return k==='類型';};
-  var thead='<tr>'+cols.map(function(k,ki){
+  var thead='<tr>'+cols.map(function(k){
     var lbl=label[k]||k;
     var cls=isAmt(k)?'r':'';
-    // 欄標題加篩選按鈕（▾）
-    return '<th class="'+cls+'" style="cursor:pointer;user-select:none;white-space:nowrap" onclick="sheetsColFilter(event,'+ki+')">'
-      +lbl+' <span style="font-size:10px;opacity:.5;font-weight:400">▾</span></th>';
+    var safeK=k.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return '<th class="'+cls+'" data-colkey="'+safeK+'" style="cursor:pointer;user-select:none;white-space:nowrap" onclick="sheetsColFilter(event,this)">'
+      +lbl+' <span style="font-size:10px;opacity:.5;font-weight:400;pointer-events:none">▾</span></th>';
   }).join('')+'</tr>';
   // 個資遮蔽：受贈單位欄若為3個中文字，第2字換O
-  var NAME_KEYS=['受贈戶名(估價單台照)','受贈戶名','受贈單位','單位名稱','姓名'];
+  var NAME_KEYS=['受贈戶名_估價單台照','受贈戶名','受贈單位','單位名稱','姓名'];
   function maskName(v){
     // 純3個中文字（允許前後空白）
     var m=v.trim().match(/^([一-鿿㐀-䶿])([一-鿿㐀-䶿])([一-鿿㐀-䶿])$/);
