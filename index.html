@@ -2118,34 +2118,25 @@ function renderItemTable(d,prefix){
       <colgroup><col style="width:24px"><col style="width:auto"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
       <thead>
         <tr id="${pid26}" style="background:var(--hover);border-bottom:1px solid var(--border)">
-          <td style="padding:0;width:24px;text-align:center;cursor:pointer" title="全部展開/收合" onclick="toggleAllGrp('${pid26}')">
+          <th style="padding:0;width:24px;text-align:center;cursor:pointer;font-weight:normal" title="全部展開/收合" onclick="toggleAllGrp('${pid26}')">
             <span id="all-arrow-${pid26}" style="display:inline-block;width:14px;height:14px;border:1px solid #cccccc;border-radius:2px;font-size:10px;line-height:13px;text-align:center;color:#888;font-family:monospace">+</span>
-          </td>
-          <td style="padding:3px 8px">
+          </th>
+          <th style="padding:4px 8px;font-weight:normal;text-align:left;white-space:normal">
             <button class="ufbtn on" data-u="t" onclick="ufToggle('${pid26}','t')">① 信託</button>
             <button class="ufbtn on" data-u="f" onclick="ufToggle('${pid26}','f')">② 基金會</button>
             <button class="ufbtn on" data-u="tf" onclick="ufToggle('${pid26}','tf')">③ 公捐基</button>
-          </td>
-          <td style="padding:3px 5px;text-align:center;font-size:10px;color:var(--ink3)">出帳</td>
-          <td data-col="e" style="padding:3px 4px;text-align:center">
+          </th>
+          <th style="padding:4px 5px;font-size:11px;font-weight:600;text-align:center;color:var(--ink2)">出帳</th>
+          <th data-col="e" style="padding:3px 4px;text-align:center">
             <button class="ufbtn on" data-abc="e" onclick="abcToggle('${pid26}','e')" style="width:100%;box-sizing:border-box">A 已執行</button>
-          </td>
-          <td data-col="c" style="padding:3px 4px;text-align:center">
+          </th>
+          <th data-col="c" style="padding:3px 4px;text-align:center">
             <button class="ufbtn on" data-abc="c" onclick="abcToggle('${pid26}','c')" style="width:100%;box-sizing:border-box">B 確定</button>
-          </td>
-          <td data-col="p" style="padding:3px 4px;text-align:center">
+          </th>
+          <th data-col="p" style="padding:3px 4px;text-align:center">
             <button class="ufbtn on" data-abc="p" onclick="abcToggle('${pid26}','p')" style="width:100%;box-sizing:border-box">C 待討論</button>
-          </td>
-          <td style="padding:3px 8px;text-align:center;font-size:10px;color:var(--ink3)">小計</td>
-        </tr>
-        <tr style="background:var(--hover)">
-          <th style="padding:0;width:24px;border-bottom:1px solid var(--border)"></th>
-          <th style="padding:4px 8px;font-size:11px;text-align:left;border-bottom:1px solid var(--border)">項目</th>
-          <th style="padding:4px 5px;font-size:11px;text-align:center;border-bottom:1px solid var(--border)">出帳</th>
-          <th data-col="e" style="padding:4px 6px;font-size:11px;text-align:right;color:var(--ce);border-bottom:1px solid var(--border)">A 已執行</th>
-          <th data-col="c" style="padding:4px 6px;font-size:11px;text-align:right;color:var(--cd);border-bottom:1px solid var(--border)">B 確定</th>
-          <th data-col="p" style="padding:4px 6px;font-size:11px;text-align:right;color:var(--cp);border-bottom:1px solid var(--border)">C 待討論</th>
-          <th style="padding:4px 8px;font-size:11px;text-align:right;border-bottom:1px solid var(--border)">小計</th>
+          </th>
+          <th style="padding:4px 8px;font-size:11px;font-weight:600;text-align:right;color:var(--ink2)">小計</th>
         </tr>
       </thead>
       <tbody>${compactRows}</tbody>
@@ -2625,11 +2616,15 @@ function ufApply(filterId){
     }
   });
 
-  // ── 欄顯示：隱藏未選的 A/B/C 欄 ──
+  // ── 欄顯示：隱藏未選的 A/B/C 欄（只隱藏 tbody 資料欄，不動 thead 按鈕）──
   ['e','c','p'].forEach(function(abc){
     var show=s.abcs.has(abc);
-    tbl.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
+    tbl.querySelectorAll('tbody [data-col="'+abc+'"], tfoot [data-col="'+abc+'"]').forEach(function(el){
       el.style.display=show?'':'none';
+    });
+    // thead 的 th 按鈕：只改視覺樣式，永遠不隱藏
+    tbl.querySelectorAll('thead [data-col="'+abc+'"]').forEach(function(el){
+      el.style.opacity=show?'1':'0.35';
     });
   });
 
@@ -2690,10 +2685,13 @@ function ufApply(filterId){
       setFsub('ce',hasE?hasE+'筆':'');
       setFsub('cc',hasC?hasC+'筆':'');
       setFsub('cp2',hasP?hasP+'筆':'');
-      // 篩選小計欄顯示/隱藏
+      // 篩選小計欄顯示/隱藏（thead th 保留，只隱藏 tbody td）
       ['e','c','p'].forEach(function(abc){
         var show=s.abcs.has(abc);
-        filtSub.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){el.style.display=show?'':'none';});
+        filtSub.querySelectorAll('tbody [data-col="'+abc+'"], tr [data-col="'+abc+'"]').forEach(function(el){
+          if(el.tagName==='TH') el.style.opacity=show?'1':'0.35';
+          else el.style.display=show?'':'none';
+        });
       });
     }
     // 合計表欄顯示/隱藏
