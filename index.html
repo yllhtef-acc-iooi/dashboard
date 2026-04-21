@@ -2114,18 +2114,30 @@ function renderItemTable(d,prefix){
 
       return hdrRow + itemRows;
     }).join('');
-        return `<div id="${pid26}" style="font-size:11px;color:var(--ink3);margin-bottom:8px;display:flex;align-items:center;flex-wrap:wrap;gap:5px">
-      <span style="font-weight:500;white-space:nowrap;color:var(--ink2)">出帳：</span>
-      <button class="ufbtn on" data-u="t" onclick="ufToggle('${pid26}','t')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">① 信託</button>
-      <button class="ufbtn on" data-u="f" onclick="ufToggle('${pid26}','f')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">② 基金會</button>
-      <button class="ufbtn on" data-u="tf" onclick="ufToggle('${pid26}','tf')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">③ 公捐基</button>
-      <span style="color:#cccccc;margin:0 4px;font-size:14px">|</span>
-      <span style="font-weight:500;white-space:nowrap;color:var(--ink2)">進度：</span>
-      <button class="ufbtn on" data-abc="e" onclick="abcToggle('${pid26}','e')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">A 已執行</button>
-      <button class="ufbtn on" data-abc="c" onclick="abcToggle('${pid26}','c')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">B 確定</button>
-      <button class="ufbtn on" data-abc="p" onclick="abcToggle('${pid26}','p')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">C 待討論</button>
-      <span style="margin-left:4px;color:var(--ink4);font-style:italic;white-space:nowrap">（hover 查看備注）</span>
-    </div>
+        return `<table id="${pid26}" style="width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:4px">
+      <colgroup><col style="width:24px"><col style="width:auto"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
+      <tr>
+        <td style="padding:0"></td>
+        <td style="padding:4px 8px;font-size:11px;white-space:nowrap">
+          <span style="color:var(--ink3);font-weight:500">出帳：</span>
+          <button class="ufbtn on" data-u="t" onclick="ufToggle('${pid26}','t')">① 信託</button>
+          <button class="ufbtn on" data-u="f" onclick="ufToggle('${pid26}','f')">② 基金會</button>
+          <button class="ufbtn on" data-u="tf" onclick="ufToggle('${pid26}','tf')">③ 公捐基</button>
+          <span style="color:#cccccc;margin:0 6px">|</span>
+          <span style="color:var(--ink3);font-weight:500">進度：</span>
+        </td>
+        <td style="padding:4px 6px;text-align:center">
+          <button class="ufbtn on" data-abc="e" onclick="abcToggle('${pid26}','e')" style="width:100%">A 已執行</button>
+        </td>
+        <td style="padding:4px 6px;text-align:center">
+          <button class="ufbtn on" data-abc="c" onclick="abcToggle('${pid26}','c')" style="width:100%">B 確定</button>
+        </td>
+        <td style="padding:4px 6px;text-align:center">
+          <button class="ufbtn on" data-abc="p" onclick="abcToggle('${pid26}','p')" style="width:100%">C 待討論</button>
+        </td>
+        <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--ink4);font-style:italic">小計</td>
+      </tr>
+    </table>
     <div class="itbl-wrap" id="tbl-${pid26}"><table class="itbl" style="width:100%;table-layout:fixed">
       <colgroup><col style="width:24px"><col style="width:auto"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
       <thead><tr style="background:var(--hover)">
