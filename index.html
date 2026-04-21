@@ -497,9 +497,9 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 .sheets-tbl thead{background:#eeeeee;position:sticky;top:0;z-index:5}
 .sheets-tbl thead th{padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:#111111;border-bottom:1px solid #cccccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sheets-tbl thead th.r{text-align:right;width:90px}
-.sheets-tbl tbody td{padding:5px 10px;border-bottom:0.5px solid #eeeeee;vertical-align:top;overflow:hidden}
+.sheets-tbl tbody td{padding:5px 10px;border-bottom:0.5px solid #eeeeee;vertical-align:top;white-space:normal;word-break:break-all}
 .sheets-tbl tbody tr:hover td{background:#f5f5f5}
-.sheets-tbl td.amt{text-align:right;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap;width:90px;min-width:90px}
+.sheets-tbl td.amt{text-align:right;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
 .sheets-tbl td.yrc{text-align:center;color:#555555;font-family:'Noto Sans TC',sans-serif;width:52px;min-width:52px}
 .sheets-tbl td.tyc{text-align:center;width:68px;min-width:68px}
 .sheets-pill{font-size:10px;padding:1px 6px;border-radius:3px;white-space:nowrap;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -3250,7 +3250,7 @@ function sheetsRender(){
     return;
   }
   // 欄位優先順序
-  var priority=['年(公)','年(基)','受贈戶名_估價單台照','受贈戶名','已捐金額','款項狀況','類型','專案名稱','用途/計劃名'];
+  var priority=['年(公)','年(基)','受贈戶名_估價單台照','受贈戶名','儀表板顯示名稱','已捐金額','款項狀況','類型','專案名稱','用途/計劃名'];
   var allKeys=Object.keys(_sheetsFiltered[0]);
   var cols=[];
   priority.forEach(function(k){if(allKeys.indexOf(k)>=0)cols.push(k);});
@@ -3259,7 +3259,7 @@ function sheetsRender(){
       cols.push(k);
   });
   _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
-  var label={'年(公)':'年度','年(基)':'年(基)','受贈戶名_估價單台照':'受贈單位','受贈戶名':'受贈單位','已捐金額':'金額','款項狀況':'狀態','類型':'出帳','專案名稱':'專案','用途/計劃名':'用途'};
+  var label={'年(公)':'年度','年(基)':'年(基)','受贈戶名_估價單台照':'受贈單位','受贈戶名':'受贈單位','儀表板顯示名稱':'顯示名稱','已捐金額':'金額','款項狀況':'狀態','類型':'出帳','專案名稱':'專案','用途/計劃名':'用途'};
   var isAmt=function(k){
     // 欄名含金/額/元/amount，或值是數字格式
     if(/金|額|元|amount/i.test(k)) return true;
@@ -3272,13 +3272,13 @@ function sheetsRender(){
   var isYr=function(k){return/^年/.test(k);};
   var isType=function(k){return k==='類型';};
   // ── 欄寬定義（px，未定義者彈性分配）──
-  var CW={'年(公)':46,'年(基)':46,'受贈戶名_估價單台照':120,'受贈戶名':120,
+  var CW={'年(公)':46,'年(基)':46,'受贈戶名_估價單台照':130,'受贈戶名':130,'儀表板顯示名稱':160,
           '已捐金額':96,'款項狀況':68,'類型':120};
-  var colgroup='<colgroup>'+cols.map(function(k){
+  var colgroup='<colgroup><col style="width:32px">'+cols.map(function(k){
     var w=CW[k]||(isAmt(k)?96:0);
     return w?'<col style="width:'+w+'px">':'<col>';
   }).join('')+'</colgroup>';
-  var thead=colgroup+'<tr>'+cols.map(function(k){
+  var thead=colgroup+'<tr><th style="width:32px;text-align:right;color:#ccc;font-size:10px;padding:6px 5px">#</th>'+cols.map(function(k){
     var lbl=label[k]||k;
     var cls=isAmt(k)?'r':'';
     var safeK=k.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
@@ -3299,9 +3299,15 @@ function sheetsRender(){
     return v;
   }
   var isNameCol=function(k){ return NAME_KEYS.indexOf(k)>=0; };
+  // 找出每列在 _sheetsData 的原始 index（用於顯示 Sheets 列號）
+  var dataIdxMap=new Map();
+  _sheetsData.forEach(function(r,i){ dataIdxMap.set(r,i); });
+  var SHEETS_HEADER_ROWS=6; // Sheets 前6列是標題區，資料從第7列
   var show=_sheetsFiltered.slice(0,500);
   var tbody=show.map(function(r){
-    return '<tr>'+cols.map(function(k){
+    var sheetRow=SHEETS_HEADER_ROWS+1+(_sheetsData.indexOf(r));
+    var rowRef='<td style="font-size:10px;color:#bbb;text-align:right;padding:4px 5px;white-space:nowrap;user-select:text;cursor:text" title="Sheets 第'+sheetRow+'列">'+sheetRow+'</td>';
+    return '<tr>'+rowRef+cols.map(function(k){
       var v=r[k]||'';
       if(isNameCol(k)) v=maskName(v);
       if(isAmt(k)&&v){
@@ -3310,9 +3316,10 @@ function sheetsRender(){
       }
       if(isYr(k)) return '<td class="yrc">'+v+'</td>';
       if(isType(k)){
-        var bg=v.indexOf('信託')>=0?'#eeeeee':v.indexOf('基金')>=0?'#e4e4e4':'#d8d8d8';
-        var fg=v.indexOf('信託')>=0?'#222222':v.indexOf('基金')>=0?'#333333':'#444444';
-        return '<td class="tyc"><span class="sheets-pill" style="background:'+bg+';color:'+fg+'">'+v+'</span></td>';
+        var bg=v.indexOf('信託')>=0?'#e8e8e8':v.indexOf('基金')>=0?'#dddddd':'#f0f0f0';
+        var fg=v.indexOf('信託')>=0?'#222222':v.indexOf('基金')>=0?'#333333':'#666666';
+        if(!v) return '<td></td>';
+        return '<td class="tyc"><span class="sheets-pill" style="background:'+bg+';color:'+fg+';max-width:110px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle" title="'+v.replace(/"/g,"&quot;")+'">'+v+'</span></td>';
       }
       return '<td>'+v+'</td>';
     }).join('')+'</tr>';
@@ -3332,7 +3339,7 @@ function sheetsRender(){
   // 小計列 HTML（共用）
   var SUB_STYLE='background:#f0f0f0;font-weight:700';
   function mkSumRow(){
-    var row='<tr style="'+SUB_STYLE+'">';
+    var row='<tr style="'+SUB_STYLE+'"><td></td>';
     row+=cols.map(function(k){
       if(k===cols[0]){
         return '<td style="padding:7px 8px;font-size:12px;color:#666;white-space:nowrap;font-variant-numeric:tabular-nums">小計 '+_sheetsFiltered.length.toLocaleString()+' 筆</td>';
