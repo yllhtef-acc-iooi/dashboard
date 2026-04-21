@@ -2822,15 +2822,11 @@ setTimeout(()=>{ if(typeof loadSummaryFromSheets==='function') loadSummaryFromSh
 <div id="srch-overlay" onclick="if(event.target.id==='srch-overlay')this.style.display='none'">
   <div id="srch-panel">
     <div id="srch-bar">
-      <input id="srch-q" type="text" placeholder="搜尋受贈單位、項目、金額…" oninput="srchDebounce()">
-      <button id="srch-x" onclick="document.getElementById('srch-overlay').style.display='none'">×</button>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="srch-q" type="text" placeholder="輸入關鍵字，例如：醫療、消防、ATCC、榮總…" oninput="srchDebounce()">
+      <button id="srch-x" onclick="document.getElementById('srch-overlay').style.display='none'">✕</button>
     </div>
-    <div id="srch-upload">
-      <label id="srch-filebtn">＋ 上傳帳務 Excel<input type="file" multiple accept=".xlsx,.xls" style="display:none" onchange="srchLoad(this.files)"></label>
-      <span id="srch-files">尚未上傳 — 支援 xlsx 格式，資料僅在本機處理</span>
-      <button id="srch-export-btn" onclick="srchExport()" style="display:none;padding:4px 12px;font-size:12px;border-radius:4px;border:1.5px solid #aaaaaa;background:#f5f5f5;color:#111111;cursor:pointer;font-family:inherit">⬇ 匯出結果</button>
-    </div>
-    <div id="srch-body"><div id="srch-status">上傳 Excel 後輸入關鍵字搜尋</div></div>
+    <div id="srch-body"><div id="srch-status">輸入關鍵字，搜尋所有年度的捐贈項目</div></div>
   </div>
 </div>
 
@@ -2843,99 +2839,113 @@ document.addEventListener('keydown',function(e){
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.getElementById('srch-overlay').style.display='flex';document.getElementById('srch-q').focus();}
 });
 
-function srchLoad(files){
-  if(typeof XLSX==='undefined'){alert('XLSX 程式庫未載入，請確認網路連線');return;}
-  Array.from(files).forEach(function(file){
-    var reader=new FileReader();
-    reader.onload=function(ev){
-      try{
-        var wb=XLSX.read(ev.target.result,{type:'binary',cellDates:true,cellText:false});
-        var total=0;
-        wb.SheetNames.forEach(function(sn){
-          var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:'',raw:false});
-          if(!rows.length)return;
-          var hdr=rows[0].map(function(h){return String(h||'').trim();});
-          for(var i=1;i<rows.length;i++){
-            var row=rows[i];
-            var allEmpty=true;
-            for(var j=0;j<row.length;j++){if(row[j]!==''&&row[j]!==null&&row[j]!==undefined){allEmpty=false;break;}}
-            if(allEmpty)continue;
-            var cells={};
-            hdr.forEach(function(h,ci){if(h)cells[h]=String(row[ci]||'').trim();});
-            var text=row.map(function(v){return String(v||'').trim();}).join(' ').toLowerCase();
-            _idx.push({file:file.name,sheet:sn,row:i+2,cells:cells,text:text});
-            total++;
-          }
-        });
-        _files.push(file.name+'('+total+'筆)');
-        document.getElementById('srch-files').textContent=_files.join('、');
-        srchDo();
-      }catch(err){alert('無法解析：'+file.name+'\n'+err.message);}
-    };
-    reader.readAsBinaryString(file);
-  });
-}
-
-var _srchTimer=null;
-function srchDebounce(){clearTimeout(_srchTimer);_srchTimer=setTimeout(srchDo,300);}
 function srchDo(){
-  var q=document.getElementById('srch-q').value.trim();
+  var q=document.getElementById('srch-q').value.trim().toLowerCase();
   var el=document.getElementById('srch-body');
-  if(!_idx.length){el.innerHTML='<div id="srch-status">上傳 Excel 後輸入關鍵字搜尋</div>';return;}
-  if(!q){el.innerHTML='<div id="srch-status">已載入 '+_idx.length.toLocaleString()+' 筆，請輸入關鍵字</div>';return;}
-  var terms=q.toLowerCase().split(' ').filter(function(t){return t.length>0;});
-  var hits=_idx.filter(function(r){return terms.every(function(t){return r.text.indexOf(t)>=0;});});
-  if(!hits.length){el.innerHTML='<div id="srch-status">找不到「'+q+'」</div>';document.getElementById('srch-export-btn').style.display='none';return;}
-  var show=hits.slice(0,150);
-  document.getElementById('srch-export-btn').style.display='inline-block';
-  window._srchHits=hits;
-  var html='<div id="srch-status">找到 '+hits.length.toLocaleString()+' 筆'+(hits.length>150?'，顯示前150筆':'')+'</div>';
-  show.forEach(function(r){
-    var keys=Object.keys(r.cells).filter(function(k){return r.cells[k]!=='';});
-    var rows=keys.map(function(k){
-      var v=srchHL(r.cells[k],terms);
-      return '<tr><td>'+k+'</td><td>'+v+'</td></tr>';
-    }).join('');
-    html+='<div class="srch-row"><div class="srch-src">📄 '+r.file+' › '+r.sheet+' › 第'+r.row+'列</div><table class="srch-tbl">'+rows+'</table></div>';
+  if(!q){el.innerHTML='<div id="srch-status">輸入關鍵字，搜尋所有年度的捐贈項目</div>';return;}
+  var terms=q.split(/\s+/).filter(function(t){return t.length>0;});
+
+  // 搜尋 DATA 所有年度的 items
+  var results=[];
+  var years=Object.keys(DATA).map(Number).sort(function(a,b){return b-a;});
+  years.forEach(function(yr){
+    var d=DATA[yr];
+    if(!d||!d.items) return;
+    d.items.forEach(function(it){
+      var haystack=(it.n+' '+(it.memo||'')).toLowerCase();
+      if(terms.every(function(t){return haystack.includes(t);})){
+        results.push({yr:yr,it:it,is26:!!d.is26});
+      }
+    });
   });
+
+  if(!results.length){
+    el.innerHTML='<div id="srch-status">找不到「'+q+'」</div>';
+    return;
+  }
+
+  // 統計小計
+  var sumE=0,sumC=0,sumP=0,sumA=0;
+  var unitCount={t:0,f:0,tf:0};
+  results.forEach(function(r){
+    unitCount[r.it.u]=(unitCount[r.it.u]||0)+1;
+    if(r.is26){sumE+=(r.it.e||0);sumC+=(r.it.c||0);sumP+=(r.it.p||0);}
+    else{sumA+=(r.it.a||0);}
+  });
+  var total=sumE+sumC+sumP+sumA;
+  var ff=function(n){return n?n.toLocaleString('en-US'):'—';};
+  var uLabel=function(u){return u==='t'?'①信託':u==='f'?'②基金會':'③公捐基';};
+
+  var html='';
+  // 小計卡片
+  html+='<div style="background:#f8f8f8;border:1px solid #e0e0e0;border-radius:8px;padding:14px 18px;margin-bottom:14px">';
+  html+='<div style="font-size:12px;font-weight:700;color:#888;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px">搜尋小計 — '+results.length+' 筆符合「'+q+'」</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">';
+  if(sumE||sumC||sumP){
+    html+='<div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">A 已執行</div><div style="font-size:14px;font-weight:700;color:#2d6a2d">'+ff(sumE)+'</div></div>';
+    html+='<div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">B 確定</div><div style="font-size:14px;font-weight:700;color:#555">'+ff(sumC)+'</div></div>';
+    html+='<div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">C 待討論</div><div style="font-size:14px;font-weight:700;color:#888">'+ff(sumP)+'</div></div>';
+  }
+  if(sumA){
+    html+='<div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">歷年金額</div><div style="font-size:14px;font-weight:700;color:#333">'+ff(sumA)+'</div></div>';
+  }
+  html+='<div style="background:#1a1a1a;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#aaa;margin-bottom:3px">合計</div><div style="font-size:14px;font-weight:700;color:#fff">'+ff(total)+'</div></div>';
+  html+='</div>';
+  // 出帳分布
+  html+='<div style="margin-top:8px;font-size:12px;color:#666">';
+  ['t','f','tf'].forEach(function(u){
+    if(unitCount[u]){html+='<span style="margin-right:12px">'+uLabel(u)+' '+unitCount[u]+'筆</span>';}
+  });
+  html+='</div></div>';
+
+  // 結果列表（依年度分組）
+  var byYr={};
+  results.forEach(function(r){if(!byYr[r.yr])byYr[r.yr]=[];byYr[r.yr].push(r);});
+  Object.keys(byYr).sort(function(a,b){return b-a;}).forEach(function(yr){
+    var rows=byYr[yr];
+    html+='<div style="margin-bottom:12px">';
+    html+='<div style="font-size:12px;font-weight:700;color:#444;padding:4px 0 6px;border-bottom:1px solid #e8e8e8;margin-bottom:6px">'+yr+(DATA[yr]&&DATA[yr].is26?' 預':'')+'年　'+rows.length+'筆</div>';
+    rows.forEach(function(r){
+      var it=r.it;
+      var uLbl=it.u==='t'?'信託':it.u==='f'?'基金會':'公捐基';
+      var uColor=it.u==='t'?'#333':it.u==='f'?'#555':'#888';
+      html+='<div style="display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:0.5px solid #f0f0f0">';
+      html+='<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#f0f0f0;color:'+uColor+';white-space:nowrap;flex-shrink:0">'+uLbl+'</span>';
+      html+='<span style="font-size:13px;color:#111;flex:1">'+srchHL(it.n,terms)+'</span>';
+      var amts=[];
+      if(r.is26){
+        if(it.e)amts.push('<span style="color:#2d6a2d">A '+ff(it.e)+'</span>');
+        if(it.c)amts.push('<span style="color:#555">B '+ff(it.c)+'</span>');
+        if(it.p)amts.push('<span style="color:#888">C '+ff(it.p)+'</span>');
+      } else if(it.a){
+        amts.push('<span style="color:#333">'+ff(it.a)+'</span>');
+      }
+      if(amts.length)html+='<span style="font-size:12px;font-family:monospace;white-space:nowrap">'+amts.join(' ')+'</span>';
+      html+='</div>';
+      if(it.memo){html+='<div style="font-size:11px;color:#aaa;padding:0 0 4px 0;margin-left:52px">'+it.memo+'</div>';}
+    });
+    html+='</div>';
+  });
+
   el.innerHTML=html;
 }
-
-function srchHL(text,terms){
-  var s=String(text||'');
+function srchHL(text, terms){
+  var s = String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   terms.forEach(function(t){
-    if(!t)return;
-    var out='';
-    var lo=s.toLowerCase();
-    var i=0;
-    while(i<s.length){
-      var pos=lo.indexOf(t,i);
-      if(pos<0){out+=esc(s.slice(i));break;}
-      out+=esc(s.slice(i,pos))+'<mark>'+esc(s.slice(pos,pos+t.length))+'</mark>';
-      i=pos+t.length;
-    }
-    s=out;
+    var re = new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')', 'gi');
+    s = s.replace(re, '<mark style="background:#ffee88;border-radius:2px">$1</mark>');
   });
   return s;
 }
-function srchExport(){
-  if(typeof XLSX==='undefined'||!window._srchHits||!window._srchHits.length)return;
-  var hits=window._srchHits;
-  // Collect all column headers
-  var allKeys={};
-  hits.forEach(function(r){Object.keys(r.cells).forEach(function(k){allKeys[k]=1;});});
-  var keys=['檔案','工作表','列號'].concat(Object.keys(allKeys));
-  var rows=[keys];
-  hits.forEach(function(r){
-    var row=[r.file,r.sheet,r.row];
-    Object.keys(allKeys).forEach(function(k){row.push(r.cells[k]||'');});
-    rows.push(row);
-  });
-  var ws=XLSX.utils.aoa_to_sheet(rows);
-  var wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,'搜尋結果',ws);
-  XLSX.writeFile(wb,'搜尋結果_'+new Date().toISOString().slice(0,10)+'.xlsx');
+
+var _srchTimer=null;
+function srchDebounce(){
+  clearTimeout(_srchTimer);
+  _srchTimer=setTimeout(srchDo, 200);
 }
+
+window.srchDebounce=srchDebounce;
+
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 
@@ -3168,7 +3178,32 @@ function sheetsRender(){
       return '<td>'+v+'</td>';
     }).join('')+'</tr>';
   }).join('');
+  // ── 統計金額小計 ──
+  var amtKeys=cols.filter(function(k){return isAmt(k)&&!isYr(k);});
+  var sumMap={};
+  amtKeys.forEach(function(k){sumMap[k]=0;});
+  _sheetsFiltered.forEach(function(r){
+    amtKeys.forEach(function(k){
+      var n=parseFloat((r[k]||'').replace(/,/g,''));
+      if(!isNaN(n))sumMap[k]+=n;
+    });
+  });
+  var ff=function(n){return n.toLocaleString('en-US');};
+  var hasSum=amtKeys.some(function(k){return sumMap[k]>0;});
+  var sumHtml='';
+  if(hasSum&&q){
+    sumHtml='<div style="background:#f8f8f8;border:1px solid #e0e0e0;border-radius:8px;padding:12px 16px;margin-bottom:10px;display:flex;flex-wrap:wrap;align-items:center;gap:16px">';
+    sumHtml+='<span style="font-size:11px;font-weight:700;color:#888;letter-spacing:.4px;text-transform:uppercase;flex-shrink:0">小計 '+_sheetsFiltered.length.toLocaleString()+' 筆</span>';
+    amtKeys.forEach(function(k){
+      if(sumMap[k]>0){
+        var lbl=label[k]||k;
+        sumHtml+='<span style="font-size:13px;color:#333"><span style="color:#888;font-size:11px;margin-right:4px">'+lbl+'</span><strong>'+ff(sumMap[k])+'</strong></span>';
+      }
+    });
+    sumHtml+='</div>';
+  }
   document.getElementById('sheets-body').innerHTML=
+    sumHtml+
     '<table class="sheets-tbl"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table>'+
     (_sheetsFiltered.length>500?'<div style="padding:8px;text-align:center;font-size:11px;color:#a08820">顯示前500筆，請用搜尋縮小範圍</div>':'');
 }
