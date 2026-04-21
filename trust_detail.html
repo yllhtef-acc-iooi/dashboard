@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>林堉璘宏泰公益信託明細</title>
+<style>
+  :root {
+    --bg:      #f7f7f7;
+    --card:    #ffffff;
+    --border:  #e0e0e0;
+    --border2: #c8c8c8;
+    --accent:  #1a1a1a;
+    --ink:     #111111;
+    --ink2:    #555555;
+    --ink3:    #888888;
+    --ink4:    #bbbbbb;
+    --topbar:  #1a1a1a;
+    --hover:   #f0f0f0;
+    --gold:    #c9a800;
+    --gold-dk: #a08820;
+    --rad:     6px;
+    --shadow:  0 1px 4px rgba(0,0,0,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    font-size: 12px;
+    background: var(--bg);
+    color: var(--ink2);
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+  .topbar {
+    background: var(--topbar);
+    color: #f5ead0;
+    padding: 0 24px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 400;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: #ffffff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #1a1a1a;
+    font-family: 'IBM Plex Mono', monospace; flex-shrink: 0;
+  }
+  .logo h1 { font-size: 15px; font-weight: 500; letter-spacing: .3px; color: #f5ead0; }
+  .logo h1 span { color: rgba(255,255,255,.5); font-weight: 300; }
+  .top-meta { font-size: 11px; color: rgba(255,255,255,.55); }
+  .page-body { padding: 20px 24px; }
+  .page-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+  .page-title { font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: .3px; }
+  .update-note { font-size: 11px; color: var(--ink3); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    background: var(--card);
+    border-radius: var(--rad);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  td, th {
+    border: 1px solid var(--border);
+    padding: 4px 6px;
+    vertical-align: middle;
+    white-space: normal;
+    font-size: 11px;
+    color: var(--ink2);
+  }
+  /* 數字、日期欄不換行 */
+  td.text-right, td.col-date, td.col-year, td.col-no,
+  td.text-center, th.col-yr, th.col-date, th.col-amount,
+  th.col-pending, th.col-no, th.col-year {
+    white-space: nowrap;
+  }
+  .yr-group-header {
+    background: #3a3a3a !important;
+    color: #f5ead0 !important;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  thead tr:nth-child(1) th,
+  thead tr:nth-child(2) th {
+    background: var(--topbar);
+    color: #f5ead0;
+    font-weight: 500;
+    font-size: 11px;
+    text-align: center;
+    border-color: #333333;
+    letter-spacing: .2px;
+  }
+  thead tr:nth-child(2) th {
+    background: #2e2e2e;
+    color: var(--gold);
+    font-size: 10.5px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+  }
+  thead .row-grand td {
+    background: var(--hover);
+    color: var(--ink);
+    font-weight: 600;
+    border-color: var(--border2);
+    font-size: 11px;
+  }
+  thead .row-grand td.text-right {
+    color: var(--gold-dk);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .col-no      { width: 22px;  text-align: center; padding: 0; }
+  .col-unit    { width: 220px; text-align: left; }
+  .col-year    { width: 46px;  text-align: center; }
+  .col-date    { width: 66px;  text-align: center; }
+  .col-amount  { width: 86px;  text-align: right; }
+  .col-yr      { width: 66px;  text-align: right; }
+  .col-pending { width: 78px;  text-align: right; }
+  .col-note    { width: 80px;  text-align: left; }
+  tbody tr:hover td { background: var(--hover); }
+  td.text-right, td.col-date {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .row-subtotal td {
+    background: var(--hover);
+    color: var(--ink);
+    font-weight: 600;
+    border-top: 1px solid var(--border2);
+    border-bottom: 1px solid var(--border2);
+  }
+  .row-subtotal td.text-right {
+    color: var(--gold-dk);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .row-subtotal td:first-child,
+  .row-subtotal td:nth-child(2) { text-align: left; }
+  .row-total td {
+    background: #ebebeb;
+    color: var(--ink);
+    font-weight: 700;
+    border-top: 2px solid var(--accent);
+  }
+  .row-total td.text-right {
+    color: var(--gold-dk);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .already { color: var(--ink4); font-style: italic; font-size: 10.5px; }
+  .text-right  { text-align: right; }
+  .text-center { text-align: center; }
+  .text-left   { text-align: left; }
+  .summary-table {
+    border-collapse: collapse;
+    width: auto;
+    margin-top: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--rad);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .summary-table th {
+    background: var(--topbar);
+    color: #f5ead0;
+    font-weight: 500;
+    font-size: 11px;
+    padding: 5px 14px;
+    text-align: left;
+    border: 1px solid #333333;
+    white-space: nowrap;
+    width: 190px;
+  }
+  /* ── +／− 折疊按鈕（對齊儀表板風格） ── */
+  .plus-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    background: transparent;
+    color: var(--ink4);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 400;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: border-color .12s, color .12s;
+    flex-shrink: 0;
+    padding: 0;
+    margin: auto;
+    user-select: none;
+  }
+  .plus-btn:hover { border-color: var(--ink3); color: var(--ink2); }
+  .yr-row.hidden { display: none; }
+
+  /* ── 合計行 nowrap 修正 ── */
+  thead .row-grand td {
+    white-space: nowrap !important;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  thead .row-grand td:nth-child(1),
+  thead .row-grand td:nth-child(2) {
+    font-family: "Noto Sans TC", sans-serif;
+  }
+
+  .summary-table td {
+    color: var(--gold-dk);
+    font-weight: 700;
+    font-size: 11.5px;
+    padding: 5px 14px;
+    text-align: right;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    width: 140px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">林</div>
+    <h1>林堉璘宏泰公益信託 <span>/ 捐贈明細</span></h1>
+  </div>
+  <a href="index.html" style="margin-left:auto;padding:5px 14px;font-size:12px;border-radius:5px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#ffffff;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;text-decoration:none;white-space:nowrap;">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    回到儀表板
+  </a>
+</div>
+
+<div class="page-body">
+
+<div class="page-header">
+  <div class="page-title">林堉璘宏泰公益信託捐贈明細</div>
+  <div class="update-note">資料截至 2025年12月02日</div>
+</div>
+
+<table id="mainTable">
+<colgroup>
+  <col class="col-no">
+  <col class="col-unit">
+  <col class="col-year">
+  <col class="col-date">
+  <col class="col-amount">
+  <!-- Year columns 2015~2026 -->
+  <col class="col-yr"><col class="col-yr"><col class="col-yr"><col class="col-yr">
+  <col class="col-yr"><col class="col-yr"><col class="col-yr"><col class="col-yr">
+  <col class="col-yr"><col class="col-yr"><col class="col-yr"><col class="col-yr">
+  <col class="col-pending">
+  <col class="col-note">
+</colgroup>
+<thead>
+  <tr>
+    <th rowspan="2" class="col-no"></th>
+    <th rowspan="2" class="col-unit">單位_主題</th>
+    <th rowspan="2" class="col-year">通過年度</th>
+    <th rowspan="2" class="col-date">出帳日期</th>
+    <th rowspan="2" class="col-amount">通過金額/<br>撥款年度</th>
+    <th colspan="12" class="yr-group-header">撥款年度</th>
+    <th rowspan="2" class="col-pending">已承諾<br>尚未支付</th>
+    <th rowspan="2" class="col-note">備註</th>
+  </tr>
+  <tr>
+    <th class="col-yr">2015</th>
+    <th class="col-yr">2016</th>
+    <th class="col-yr">2017</th>
+    <th class="col-yr">2018</th>
+    <th class="col-yr">2019</th>
+    <th class="col-yr">2020</th>
+    <th class="col-yr">2021</th>
+    <th class="col-yr">2022</th>
+    <th class="col-yr">2023</th>
+    <th class="col-yr">2024</th>
+    <th class="col-yr">2025</th>
+    <th class="col-yr">2026</th>
+  </tr>
+  <!-- Grand total row (top summary row matching Excel) -->
+  <tr class="row-grand">
+    <td class="text-center" style="padding:0;width:28px;"><button class="plus-btn" id="btn-all" onclick="toggleAll()" title="展開／折疊全部">+</button></td>
+    <td class="text-center" style="font-weight:700;color:var(--ink);">合計</td>
+    <td></td>
+    <td></td>
+    <td id="grand-total" class="text-right">2,219,387,384</td>
+    <td class="text-right">11,500,000</td>
+    <td class="text-right">317,000,000</td>
+    <td class="text-right">52,755,000</td>
+    <td class="text-right">197,450,000</td>
+    <td class="text-right">274,125,000</td>
+    <td class="text-right">203,167,154</td>
+    <td class="text-right">148,298,868</td>
+    <td class="text-right">199,445,354</td>
+    <td class="text-right">167,625,939</td>
+    <td class="text-right">209,228,983</td>
+    <td class="text-right">300,645,746</td>
+    <td class="text-right"></td>
+    <td class="text-right">134,645,340</td>
+    <td></td>
+  </tr>
+</thead>
+<tbody id="tableBody">
+
+<!-- ===== 2015 (民國104) ===== -->
+<tr class="yr-row" data-yr="2015">
+  <td class="text-center">1</td>
+  <td>新北市社會救濟會報專戶-八仙粉塵氣爆救助專案</td>
+  <td class="text-center">2015</td>
+  <td></td>
+  <td class="text-right">10,000,000</td>
+  <td class="text-right">10,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2015">
+  <td class="text-center">2</td>
+  <td>財團法人林建生文教基金會</td>
+  <td class="text-center">2015</td>
+  <td></td>
+  <td class="text-right">1,500,000</td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2015">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2015" onclick="toggleYr('2015')" title="2015 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2015 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">11,500,000</td>
+  <td class="text-right">11,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+
+<!-- ===== 2016 (民國105) ===== -->
+<tr class="yr-row" data-yr="2016">
+  <td class="text-center">3</td>
+  <td>臺北榮民總醫院作業基金專戶-重粒子設備籌建</td>
+  <td class="text-center">2016</td>
+  <td></td>
+  <td class="text-right">300,000,000</td>
+  <td></td>
+  <td class="text-right">300,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2016">
+  <td class="text-center">4</td>
+  <td>台南市政府社會局社會救助專戶-0206震災</td>
+  <td class="text-center">2016</td>
+  <td></td>
+  <td class="text-right">10,000,000</td>
+  <td></td>
+  <td class="text-right">10,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2016">
+  <td class="text-center">5</td>
+  <td>臺東縣政府臺東縣社會局社會救助專戶-臺東風災</td>
+  <td class="text-center">2016</td>
+  <td></td>
+  <td class="text-right">5,000,000</td>
+  <td></td>
+  <td class="text-right">5,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2016">
+  <td class="text-center">6</td>
+  <td>社團法人中華民國警察之友總會-指定捐贈(公益信託警察醫療及照護基金)</td>
+  <td class="text-center">2016</td>
+  <td></td>
+  <td class="text-right">2,000,000</td>
+  <td></td>
+  <td class="text-right">2,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2016">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2016" onclick="toggleYr('2016')" title="2016 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2016 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">317,000,000</td>
+  <td></td>
+  <td class="text-right">317,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+
+<!-- ===== 2017 (民國106) ===== -->
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">7</td>
+  <td>2016學年度第二學期致贈歷年緝毒因公殉職警察子女獎助學金(黃泰霖等3人)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">70,000</td>
+  <td></td><td></td>
+  <td class="text-right">70,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">8</td>
+  <td>財團法人中國科技大學-建築暨室內設計合作計畫(提供獎學金)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">500,000</td>
+  <td></td><td></td>
+  <td class="text-right">400,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">9</td>
+  <td>財團法人林建生文教基金會(台北教育論壇)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">840,000</td>
+  <td></td><td></td>
+  <td class="text-right">840,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">10</td>
+  <td>新北市消防局竹圍分隊及淡水分隊(心肺復甦機*2)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">11</td>
+  <td>財團法人林建生文教基金會(社區文教活動)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">12</td>
+  <td>財團法人林堉璘宏泰教育基金會(辦理台灣奉獻獎)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">32,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">32,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">13</td>
+  <td>財團法人台灣省私立台灣盲人重建院(公務車輛)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">750,000</td>
+  <td></td><td></td>
+  <td class="text-right">750,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">14</td>
+  <td>財團法人沈力揚教授醫學教育獎學紀念基金會(醫學教育論壇)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">2,800,000</td>
+  <td></td><td></td>
+  <td class="text-right">2,800,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">15</td>
+  <td>中華民國神經放射線醫學會(醫學教育論壇)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">2,200,000</td>
+  <td></td><td></td>
+  <td class="text-right">2,200,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">16</td>
+  <td>財團法人薛伯輝基金會(早療教室籌建)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">1,925,000</td>
+  <td></td><td></td>
+  <td class="text-right">1,925,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">17</td>
+  <td>臺灣基督教門諾會醫療財團法人(醫療設備捐贈)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">5,070,000</td>
+  <td></td><td></td>
+  <td class="text-right">5,070,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">18</td>
+  <td>埔基醫療財團法人(急難醫療救助金)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">400,000</td>
+  <td></td><td></td>
+  <td class="text-right">400,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">19</td>
+  <td>旗山醫院作業基金402專戶(急難醫療救助金)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">600,000</td>
+  <td></td><td></td>
+  <td class="text-right">600,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">20</td>
+  <td>彰化基督教醫療財團法人二林基督教醫院(急難醫療救助金)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">700,000</td>
+  <td></td><td></td>
+  <td class="text-right">700,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2017">
+  <td class="text-center">21</td>
+  <td>天主教私立聖十字架療養院(收容補助費用)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">2,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">2,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2017">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2017" onclick="toggleYr('2017')" title="2017 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2017 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">190,855,000</td>
+  <td></td><td></td>
+  <td class="text-right">52,755,000</td>
+  <td class="text-right">0</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+<!-- Item 8 carry-over note -->
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">8</td>
+  <td>財團法人中國科技大學-建築暨室內設計合作計畫(提供獎學金)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="already">已提列過</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">100,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">22</td>
+  <td>財團法人林堉璘宏泰教育基金會(第一屆奉獻獎及特別獎*6)</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">48,000,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">48,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">23</td>
+  <td>全台及海鷗救難隊心肺復甦機*155</td>
+  <td class="text-center">2017</td>
+  <td></td>
+  <td class="text-right">90,000,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">90,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+
+<!-- ===== 2018 (民國107) ===== -->
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">24</td>
+  <td>財團法人林建生文教基金會(社區文教活動)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">1,200,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">1,200,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">25</td>
+  <td>臺灣心臟胸腔暨血管麻醉醫學會(醫學教育論壇)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">700,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">700,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">26</td>
+  <td>台灣麻醉醫學會(醫學教育論壇)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">1,000,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">1,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">27</td>
+  <td>住宅用警報器捐贈19萬顆(全台低收入戶及獨居老人火災警報器)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">52,250,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">52,250,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">28</td>
+  <td>財團法人林建生文教基金會(社區文教活動)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">1,200,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">1,200,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2018">
+  <td class="text-center">29</td>
+  <td>財團法人林堉璘宏泰教育基金會(辦理教育合作評估)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2018">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2018" onclick="toggleYr('2018')" title="2018 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2018 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">182,650,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">197,450,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td class="text-right">0</td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">30</td>
+  <td>台灣麻醉醫療產業工會(醫學教育論壇)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">300,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">300,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">31</td>
+  <td>中華醫學會(醫學雜誌印製)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">1,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">1,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">32</td>
+  <td>財團法人林堉璘宏泰教育基金會(第二屆奉獻獎及特別獎*3，剩餘為營運資金)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">50,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">50,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">33</td>
+  <td>「腫瘤研究實驗用小動物放射治療儀」與台大醫學院(捐贈教學儀器)</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">12,500,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">10,625,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">1,875,000</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">34</td>
+  <td>心肺復甦機*100</td>
+  <td class="text-center">2018</td>
+  <td></td>
+  <td class="text-right">59,500,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">59,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+
+<!-- ===== 2019 (民國108) ===== -->
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">35</td>
+  <td>財團法人林建生文教基金會(社區文教活動)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">36</td>
+  <td>教育部-智慧鐵人競賽</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">600,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">600,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">37</td>
+  <td>榮總-中華醫學會</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">2,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">2,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">38</td>
+  <td>榮總-思源基金會</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">39</td>
+  <td>榮總-沈力揚基金會</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">40</td>
+  <td>堉璘獎學金-台灣大學行政費用(2019-2023)(款項由基金會撥款至台灣大學)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">40,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">40,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">41</td>
+  <td>堉璘獎學金-台灣大學(2019-2023)(款項由基金會撥款至台灣大學)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">410,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">82,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">132,770,340</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">42</td>
+  <td>財團法人林堉璘宏泰教育基金會(營運資金)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">10,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">10,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">43</td>
+  <td>財團法人林建生文教基金會(社區文教活動)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">1,200,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">1,200,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">44</td>
+  <td>財團法人民法研究基金會</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">900,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">900,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2019">
+  <td class="text-center">45</td>
+  <td>財團法人林堉璘宏泰教育基金會(營運資金)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">10,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">10,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2019">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2019" onclick="toggleYr('2019')" title="2019 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2019 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">525,700,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">274,125,000</td>
+  <td></td><td class="text-right">0</td><td class="text-right">0</td><td></td><td></td><td></td><td></td>
+  <td class="text-right">134,645,340</td>
+  <td class="text-right">0</td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">46</td>
+  <td>財團法人林堉璘宏泰教育基金會(第三屆台灣奉獻獎)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="text-right">45,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">45,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">41</td>
+  <td>堉璘獎學金-台灣大學(2019-2023)(款項由基金會撥款至台灣大學)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="already">已提列過</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">59,854,516</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+
+<!-- ===== 2020 (民國109) ===== -->
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">47</td>
+  <td>台北榮民總醫院(口罩一批)</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">312,638</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">312,638</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">48</td>
+  <td>財團法人紀念林建生教育基金會</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">1,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">49</td>
+  <td>財團法人林堉璘宏泰教育基金會(營運資金)</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">10,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">10,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">50</td>
+  <td>財團法人林堉璘宏泰教育基金會(甘霖獎)</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">9,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">9,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">51</td>
+  <td>財團法人林堉璘宏泰教育基金會(榮總基金會研討會捐助)</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">3,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">52</td>
+  <td>財團法人林堉璘宏泰教育基金會(營運資金)</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">9,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">9,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">53</td>
+  <td>財團法人林堉璘宏泰教育基金會(新冠肺炎記錄片)</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">5,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">5,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">54</td>
+  <td>社團法人中華民國荒野保護協會</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2020">
+  <td class="text-center">55</td>
+  <td>財團法人林堉璘宏泰教育基金會(營運資金)</td>
+  <td class="text-center">2020</td>
+  <td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2020">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2020" onclick="toggleYr('2020')" title="2020 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2020 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">98,312,638</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">203,167,154</td>
+  <td class="text-right">0</td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td class="text-right">0</td>
+</tr>
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">41</td>
+  <td>堉璘獎學金-台灣大學(2019-2023)(款項由基金會撥款至台灣大學)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="already">已提列過</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">38,008,868</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+
+<!-- ===== 2021 (民國110) ===== -->
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">56</td>
+  <td>新北市政府(呼吸器47組)</td>
+  <td class="text-center">2021</td>
+  <td></td>
+  <td class="text-right">15,040,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">15,040,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">57</td>
+  <td>臺北榮民總醫院(X光機5組)</td>
+  <td class="text-center">2021</td>
+  <td></td>
+  <td class="text-right">4,900,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">4,900,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">58</td>
+  <td>臺北榮民總醫院(葉克膜3組)</td>
+  <td class="text-center">2021</td>
+  <td></td>
+  <td class="text-right">10,350,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">10,350,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">59</td>
+  <td>張老師基金會</td>
+  <td class="text-center">2021</td>
+  <td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">60</td>
+  <td>財團法人林堉璘宏泰教育基金會(甘霖獎)</td>
+  <td class="text-center">2021</td>
+  <td></td>
+  <td class="text-right">11,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">11,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">61</td>
+  <td>財團法人林堉璘宏泰教育基金會(榮總基金會醫學教育專案)</td>
+  <td class="text-center">2021</td>
+  <td></td>
+  <td class="text-right">4,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">4,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">62</td>
+  <td>財團法人林堉璘宏泰教育基金會(社團法人中華民國無界塾創新教育協會)</td>
+  <td class="text-center">2021</td>
+  <td></td>
+  <td class="text-right">1,738,188</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">1,738,188</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2021">
+  <td class="text-center">63</td>
+  <td>財團法人林堉璘宏泰教育基金會(營運資金)</td>
+  <td class="text-center">2021</td>
+  <td></td>
+  <td class="text-right">32,761,812</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">32,761,812</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2021">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2021" onclick="toggleYr('2021')" title="2021 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2021 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">110,290,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">148,298,868</td>
+  <td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td class="text-right">0</td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">41</td>
+  <td>堉璘獎學金-台灣大學(2019-2023)(款項由基金會撥款至台灣大學)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="already">已提列過</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">25,511,354</td>
+  <td></td><td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+
+<!-- ===== 2022 (民國111) ===== -->
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">64</td>
+  <td>財團法人林堉璘宏泰教育基金會(年度預算)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">51,950,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">51,950,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">65</td>
+  <td>財團法人林堉璘宏泰教育基金會(榮總相關醫學教育基金會)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">5,700,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">5,700,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">66</td>
+  <td>財團法人林堉璘宏泰教育基金會(榮總消毒燈)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">1,700,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">1,700,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">67</td>
+  <td>財團法人林堉璘宏泰教育基金會(榮總心臟超音波)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">5,650,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">5,650,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">68</td>
+  <td>財團法人林堉璘宏泰教育基金會(鼓勵獎-財團法人台北市科學出版事業基金會)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">69</td>
+  <td>財團法人林堉璘宏泰教育基金會(鼓勵獎-尚和歌仔戲劇團)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">70</td>
+  <td>財團法人林堉璘宏泰教育基金會(鼓勵獎-社團法人台灣四十分之一移工教育文化協會)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">71</td>
+  <td>財團法人林堉璘宏泰教育基金會(鼓勵獎-財團法人天主教耶穌會台北新事社會服務中心)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">72</td>
+  <td>財團法人林堉璘宏泰教育基金會(鼓勵獎-財團法人勵馨社會福利事業基金會)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">73</td>
+  <td>財團法人肝病防治學術基金會-奉獻獎</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">74</td>
+  <td>財團法人林堉璘宏泰教育基金會(消防署救護人才培育)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">28,800,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">28,800,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">75</td>
+  <td>財團法人林堉璘宏泰教育基金會(消防署LUCAS3-44台)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">29,920,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">29,920,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2022">
+  <td class="text-center">76</td>
+  <td>財團法人林堉璘宏泰教育基金會(榮總教學用手持超音波)</td>
+  <td class="text-center">2022</td>
+  <td></td>
+  <td class="text-right">5,214,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">5,214,000</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2022">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2022" onclick="toggleYr('2022')" title="2022 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2022 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">173,934,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">199,445,354</td>
+  <td></td><td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td class="text-right">0</td>
+</tr>
+
+<!-- ===== 2023 (民國112) ===== -->
+<tr class="yr-row" data-yr="2023">
+  <td class="text-center">77</td>
+  <td>財團法人林堉璘宏泰教育基金會</td>
+  <td class="text-center">2023</td>
+  <td></td>
+  <td class="text-right">100,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">100,000,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2023">
+  <td class="text-center">77</td>
+  <td>堉璘獎學金-台灣大學(2019-2023)(款項由基金會撥款至台灣大學)</td>
+  <td class="text-center">2023</td>
+  <td></td>
+  <td class="already">已提列過</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">37,625,939</td>
+  <td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2023">
+  <td class="text-center">78</td>
+  <td>財團法人中華民國消費者文教基金會</td>
+  <td class="text-center">2023</td>
+  <td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2023">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2023" onclick="toggleYr('2023')" title="2023 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2023 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">130,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">167,625,939</td>
+  <td></td><td></td><td></td>
+  <td class="text-right">0</td>
+  <td class="text-right">0</td>
+</tr>
+
+<!-- ===== 2024 (民國113) ===== -->
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">79</td>
+  <td>財團法人林堉璘宏泰教育基金會</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">52,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">52,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">80</td>
+  <td>單位OOO_主旨山陀兒風災</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">15,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">15,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">81</td>
+  <td>贊助消防署辦理「教育訓練品質精進專案」</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">9,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">9,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">82</td>
+  <td>財團法人瑪利亞基金會(支持方案第一年計畫執行)</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">2,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">2,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">83</td>
+  <td>財團法人林堉璘宏泰教育基金會(支持方案第二、三年執行)</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">28,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">28,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">84</td>
+  <td>財團法人台北市基督教救世傳播協會(彭蒙惠偏鄉教育專案第一年計畫執行)</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">7,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">7,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">85</td>
+  <td>財團法人林堉璘宏泰教育基金會(彭蒙惠偏鄉教育專案第二、三年執行)</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">14,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">14,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">86</td>
+  <td>第八屆「堉璘台灣奉獻獎」得主*1位</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">87</td>
+  <td>第八屆「堉璘公益成就獎」得主*5位</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">15,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">15,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">88</td>
+  <td>第八屆「堉璘公益新秀獎」得主*3位</td>
+  <td class="text-center">2024</td>
+  <td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2024">
+  <td class="text-center">89</td>
+  <td>堉璘獎學金-台灣大學(2019-2023)(款項由基金會撥款至台灣大學)</td>
+  <td class="text-center">2019</td>
+  <td></td>
+  <td class="already">已提列過</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">34,228,983</td>
+  <td></td><td></td>
+  <td></td><td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2024">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2024" onclick="toggleYr('2024')" title="2024 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2024 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">175,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">209,228,983</td>
+  <td></td><td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+
+<!-- ===== 2025 (民國114) ===== -->
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">90</td>
+  <td>中華醫學會</td>
+  <td class="text-center">2025</td>
+  <td>2025/02/02</td>
+  <td class="text-right">1,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">1,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">91</td>
+  <td>財團法人沈力揚教授醫學教育獎學紀念基金會</td>
+  <td class="text-center">2025</td>
+  <td>2025/02/02</td>
+  <td class="text-right">4,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">4,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">92</td>
+  <td>財團法人消化醫學研究發展基金會</td>
+  <td class="text-center">2025</td>
+  <td>2025/02/02</td>
+  <td class="text-right">1,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">1,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">93</td>
+  <td>財團法人思源內科醫學研究發展基金會</td>
+  <td class="text-center">2025</td>
+  <td>2025/02/02</td>
+  <td class="text-right">9,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">9,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">93</td>
+  <td>思源內科基金會_50萬_國際足鞋學術研討會_李思慧主任</td>
+  <td class="text-center">2025</td>
+  <td>2025/10/10</td>
+  <td class="text-right">500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">500,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">94</td>
+  <td>財團法人紀念林建生教育基金會</td>
+  <td class="text-center">2025</td>
+  <td>2025/02/09</td>
+  <td class="text-right">2,700,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">2,700,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">95</td>
+  <td>財團法人中華民國放射線醫學會</td>
+  <td class="text-center">2025</td>
+  <td>2025/03/18</td>
+  <td class="text-right">1,200,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">1,200,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">96</td>
+  <td>財團法人思源內科醫學研究發展基金會</td>
+  <td class="text-center">2025</td>
+  <td>2025/06/12</td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">97</td>
+  <td>台南市政府救助款-水災</td>
+  <td class="text-center">2025</td>
+  <td>2025/06/23</td>
+  <td class="text-right">6,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">6,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">98</td>
+  <td>嘉義縣政府救助款-水災</td>
+  <td class="text-center">2025</td>
+  <td>2025/06/23</td>
+  <td class="text-right">6,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">6,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">99</td>
+  <td>律師諮詢費用01-07月66萬、10-12月15萬</td>
+  <td class="text-center">2025</td>
+  <td>2025/09/26</td>
+  <td class="text-right">810,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">810,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">100</td>
+  <td>得主再支持方案_第一社會福利基金會_3000萬</td>
+  <td class="text-center">2025</td>
+  <td>2025/11/12</td>
+  <td class="text-right">30,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">30,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">101</td>
+  <td>花蓮馬太鞍溪堰塞湖災害_500萬</td>
+  <td class="text-center">2025</td>
+  <td>2025/07/29</td>
+  <td class="text-right">5,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">5,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">102</td>
+  <td>堉璘臺灣奉獻獎9位得主</td>
+  <td class="text-center">2025</td>
+  <td>2025/11/13</td>
+  <td class="text-right">72,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">72,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">103</td>
+  <td>麻醉醫學研究發展基金會_50萬</td>
+  <td class="text-center">2025</td>
+  <td>2025/10/10</td>
+  <td class="text-right">500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">500,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">104</td>
+  <td>台北海洋科技大學_堉璘人才獎學金辦法_100萬</td>
+  <td class="text-center">2025</td>
+  <td>2025/10/27</td>
+  <td class="text-right">1,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">1,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">105</td>
+  <td>財團法人弘道老人福利基金會_ATCC代表隊青銀共融落實計畫_260.5萬</td>
+  <td class="text-center">2025</td>
+  <td>2025/11/14</td>
+  <td class="text-right">2,605,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">2,605,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">106</td>
+  <td>張老師基金會_AI客服系統_1500萬</td>
+  <td class="text-center">2025</td>
+  <td>2025/11/16</td>
+  <td class="text-right">15,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">15,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">107</td>
+  <td>林堉璘宏泰教育基金會_蒙特梭利師資培育體系與優質幼托示範機構_1.1億</td>
+  <td class="text-center">2025</td>
+  <td>2025/11/20</td>
+  <td class="text-right">95,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">95,000,000</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="yr-row" data-yr="2025">
+  <td class="text-center">108</td>
+  <td>財團法人林堉璘宏泰教育基金會_不高於5000萬</td>
+  <td class="text-center">2025</td>
+  <td>2025/11/20</td>
+  <td class="text-right">44,330,746</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">44,330,746</td>
+  <td></td>
+  <td></td><td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2025">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2025" onclick="toggleYr('2025')" title="2025 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2025 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">300,645,746</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">300,645,746</td>
+  <td></td>
+  <td class="text-right">0</td>
+  <td></td>
+</tr>
+
+<!-- ===== 2026 (民國115) ===== -->
+<tr class="yr-row" data-yr="2026">
+  <td class="text-center">109</td>
+  <td>財團法人盧光舜肺癌基金會_50萬陳正豐主任</td>
+  <td class="text-center">2026</td>
+  <td>2026/01/21</td>
+  <td class="text-right">500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">500,000</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr class="yr-row" data-yr="2026">
+  <td class="text-center">110</td>
+  <td>財團法人思源內科醫學研究發展基金會(護理人才培育)</td>
+  <td class="text-center">2026</td>
+  <td>2026/01/21</td>
+  <td class="text-right">3,000,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,000,000</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr class="row-subtotal" data-subtotal="2026">
+  <td class="text-center" style="padding:0;"><button class="plus-btn" id="btn-2026" onclick="toggleYr('2026')" title="2026 展開／折疊">+</button></td>
+  <td class="text-left" style="font-weight:700;color:var(--ink);">2026 年度合計</td>
+  <td></td><td></td>
+  <td class="text-right">3,500,000</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td class="text-right">3,500,000</td>
+  <td></td>
+  <td class="text-right">0</td>
+</tr>
+
+<!-- ===== Grand Total Rows ===== -->
+<tr class="row-total">
+  <td colspan="2" class="text-center">通過捐贈、支出合計</td>
+  <td></td><td></td>
+  <td class="text-right">2,219,387,384</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+  <td></td><td></td>
+</tr>
+<tr class="row-total">
+  <td colspan="2" class="text-center">通過捐贈、支出合計</td>
+  <td></td><td></td>
+  <td class="text-right">2,219,387,384</td>
+  <td class="text-right">11,500,000</td>
+  <td class="text-right">317,000,000</td>
+  <td class="text-right">52,755,000</td>
+  <td class="text-right">197,450,000</td>
+  <td class="text-right">274,125,000</td>
+  <td class="text-right">203,167,154</td>
+  <td class="text-right">148,298,868</td>
+  <td class="text-right">199,445,354</td>
+  <td class="text-right">167,625,939</td>
+  <td class="text-right">209,228,983</td>
+  <td class="text-right">300,645,746</td>
+  <td class="text-right">3,500,000</td>
+  <td class="text-right">134,645,340</td>
+  <td class="text-right">0</td>
+</tr>
+
+</tbody>
+</table>
+
+<!-- Summary section -->
+<table class="summary-table">
+  <tr>
+    <th>已撥付金額</th>
+    <td class="text-right">2,081,242,044</td>
+  </tr>
+  <tr>
+    <th>承諾尚未捐贈、支出金額</th>
+    <td class="text-right">134,645,340</td>
+  </tr>
+</table>
+
+</div><!-- /page-body -->
+
+<script>
+const YRS = ['2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+
+function toggleYr(yr) {
+  const btn = document.getElementById('btn-' + yr);
+  const rows = document.querySelectorAll('.yr-row[data-yr="' + yr + '"]');
+  const collapsed = btn.classList.contains('collapsed');
+  if (collapsed) {
+    rows.forEach(r => r.classList.remove('hidden'));
+    btn.textContent = '−';
+    btn.classList.remove('collapsed');
+  } else {
+    rows.forEach(r => r.classList.add('hidden'));
+    btn.textContent = '+';
+    btn.classList.add('collapsed');
+  }
+  // Update master button state
+  updateMasterBtn();
+}
+
+function updateMasterBtn() {
+  const masterBtn = document.getElementById('btn-all');
+  const allCollapsed = YRS.every(yr => document.getElementById('btn-' + yr).classList.contains('collapsed'));
+  masterBtn.textContent = allCollapsed ? '+' : '−';
+  if (allCollapsed) masterBtn.classList.add('collapsed');
+  else masterBtn.classList.remove('collapsed');
+}
+
+function toggleAll() {
+  const masterBtn = document.getElementById('btn-all');
+  const allCollapsed = masterBtn.classList.contains('collapsed');
+  if (allCollapsed) {
+    // Expand all
+    YRS.forEach(yr => {
+      const btn = document.getElementById('btn-' + yr);
+      if (btn.classList.contains('collapsed')) {
+        document.querySelectorAll('.yr-row[data-yr="' + yr + '"]').forEach(r => r.classList.remove('hidden'));
+        btn.textContent = '−';
+        btn.classList.remove('collapsed');
+      }
+    });
+    masterBtn.textContent = '−';
+    masterBtn.classList.remove('collapsed');
+  } else {
+    // Collapse all
+    YRS.forEach(yr => {
+      const btn = document.getElementById('btn-' + yr);
+      if (!btn.classList.contains('collapsed')) {
+        document.querySelectorAll('.yr-row[data-yr="' + yr + '"]').forEach(r => r.classList.add('hidden'));
+        btn.textContent = '+';
+        btn.classList.add('collapsed');
+      }
+    });
+    masterBtn.textContent = '+';
+    masterBtn.classList.add('collapsed');
+  }
+}
+
+// Initialize: set all btns to show "−" (expanded)
+window.addEventListener('DOMContentLoaded', () => {
+  YRS.forEach(yr => { document.getElementById('btn-' + yr).textContent = '−'; });
+  document.getElementById('btn-all').textContent = '−';
+});
+</script>
+</body>
+</html>
