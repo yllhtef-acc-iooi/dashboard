@@ -3186,7 +3186,7 @@ function sheetsRender(){
       return '<td>'+v+'</td>';
     }).join('')+'</tr>';
   }).join('');
-  // ── 統計金額小計（做成 tfoot，與各欄對齊）──
+  // ── 統計金額小計（thead 下 + tfoot，與各欄對齊）──
   var amtKeys=cols.filter(function(k){return isAmt(k)&&!isYr(k);});
   var sumMap={};
   amtKeys.forEach(function(k){sumMap[k]=0;});
@@ -3198,23 +3198,26 @@ function sheetsRender(){
   });
   var ff=function(n){return n.toLocaleString('en-US');};
   var hasSum=amtKeys.some(function(k){return sumMap[k]>0;});
-  // 小計做成 tfoot，與 thead/tbody 共用同一 table，欄位天然對齊
-  var tfoot='';
-  if(hasSum){
-    tfoot='<tfoot><tr style="background:#f4f4f4;border-top:2px solid #cccccc;font-weight:700">';
-    tfoot+=cols.map(function(k){
+  // 小計列 HTML（共用）
+  var SUB_STYLE='background:#f0f0f0;font-weight:700';
+  function mkSumRow(){
+    var row='<tr style="'+SUB_STYLE+'">';
+    row+=cols.map(function(k){
       if(k===cols[0]){
-        return '<td style="padding:7px 8px;font-size:12px;color:#888;white-space:nowrap">小計 '+_sheetsFiltered.length.toLocaleString()+' 筆</td>';
+        return '<td style="padding:7px 8px;font-size:12px;color:#666;white-space:nowrap;font-variant-numeric:tabular-nums">小計 '+_sheetsFiltered.length.toLocaleString()+' 筆</td>';
       }
       if(isAmt(k)&&!isYr(k)&&sumMap[k]>0){
-        return '<td class="amt" style="padding:7px 8px;font-size:13px;color:#111;text-align:right;font-variant-numeric:tabular-nums">'+ff(sumMap[k])+'</td>';
+        return '<td class="amt" style="padding:7px 8px;font-size:13px;color:#111;text-align:right;font-variant-numeric:tabular-nums;font-weight:700">'+ff(sumMap[k])+'</td>';
       }
       return '<td></td>';
     }).join('');
-    tfoot+='</tr></tfoot>';
+    row+='</tr>';
+    return row;
   }
+  var tsubhead = hasSum ? '<tbody id="sheets-sub-head" style="border-bottom:2px solid #cccccc">'+mkSumRow()+'</tbody>' : '';
+  var tfoot    = hasSum ? '<tfoot style="border-top:2px solid #cccccc">'+mkSumRow()+'</tfoot>' : '';
   document.getElementById('sheets-body').innerHTML=
-    '<table class="sheets-tbl"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody>'+tfoot+'</table>'+
+    '<table class="sheets-tbl"><thead>'+thead+'</thead>'+tsubhead+'<tbody>'+tbody+'</tbody>'+tfoot+'</table>'+
     (_sheetsFiltered.length>500?'<div style="padding:8px;text-align:center;font-size:11px;color:#a08820">顯示前500筆，請用搜尋縮小範圍</div>':'');
 }
 
