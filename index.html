@@ -3175,6 +3175,7 @@ function sheetsParseCsv(text){
     }
   }
   var headers=sheetsCsvLine(lines[hdrIdx]);
+  window._sheetsHdrRow=hdrIdx+1; // 資料起始的 Sheets 列號（1-based）
   var rows=[];
   for(var i=hdrIdx+1;i<lines.length;i++){
     if(!lines[i].trim()) continue;
@@ -3250,16 +3251,30 @@ function sheetsRender(){
     return;
   }
   // 欄位優先順序
-  var priority=['年(公)','年(基)','受贈戶名_估價單台照','受贈戶名','儀表板顯示名稱','已捐金額','款項狀況','類型','專案名稱','用途/計劃名'];
   var allKeys=Object.keys(_sheetsFiltered[0]);
-  var cols=[];
-  priority.forEach(function(k){if(allKeys.indexOf(k)>=0)cols.push(k);});
+  // 動態偵測受贈單位欄名（不依賴精確欄名）
+  var NAME_KEY = allKeys.find(function(k){ return /受贈戶名|受贈單位/.test(k); }) || '';
+  var AMT_KEY  = allKeys.find(function(k){ return /已捐金額/.test(k); }) || '';
+  var STAT_KEY = allKeys.find(function(k){ return /款項狀況/.test(k); }) || '';
+  var TYPE_KEY = allKeys.find(function(k){ return k==='類型'; }) || '';
+  var DISP_KEY = allKeys.find(function(k){ return /儀表板顯示名稱/.test(k); }) || '';
+  // 建立優先排序（動態欄名）
+  var priorityKeys = ['年(公)','年(基)',NAME_KEY,DISP_KEY,AMT_KEY,STAT_KEY,TYPE_KEY,'專案名稱','用途/計劃名'].filter(Boolean);
+  var seen = {};
+  var cols = [];
+  priorityKeys.forEach(function(k){ if(k&&!seen[k]&&allKeys.indexOf(k)>=0){cols.push(k);seen[k]=1;} });
   allKeys.forEach(function(k){
-    if(cols.indexOf(k)<0&&_sheetsFiltered.some(function(r){return r[k]&&r[k].trim();}))
-      cols.push(k);
+    if(!seen[k]&&_sheetsFiltered.some(function(r){return r[k]&&r[k].trim();})){cols.push(k);seen[k]=1;}
   });
+  // 動態 label（受贈單位欄用實際欄名）
+  var dynLabel = {};
+  if(NAME_KEY) dynLabel[NAME_KEY] = '受贈單位';
+  if(AMT_KEY)  dynLabel[AMT_KEY]  = '金額';
+  if(STAT_KEY) dynLabel[STAT_KEY] = '狀態';
+  if(TYPE_KEY) dynLabel[TYPE_KEY] = '出帳';
+  if(DISP_KEY) dynLabel[DISP_KEY] = '顯示名稱';
   _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
-  var label={'年(公)':'年度','年(基)':'年(基)','受贈戶名_估價單台照':'受贈單位','受贈戶名':'受贈單位','儀表板顯示名稱':'顯示名稱','已捐金額':'金額','款項狀況':'狀態','類型':'出帳','專案名稱':'專案','用途/計劃名':'用途'};
+  var label=Object.assign({'年(公)':'年度','年(基)':'年(基)','專案名稱':'專案','用途/計劃名':'用途'},dynLabel);
   var isAmt=function(k){
     // 欄名含金/額/元/amount，或值是數字格式
     if(/金|額|元|amount/i.test(k)) return true;
@@ -3292,7 +3307,7 @@ function sheetsRender(){
     return '<th class="'+cls+'" data-colkey="'+safeK+'" style="cursor:pointer;user-select:none;white-space:nowrap'+extra+'" onclick="sheetsColFilter(event,this)">'+lbl+indicator+'</th>';
   }).join('')+'</tr>';
   // 個資遮蔽：受贈單位欄若為3個中文字，第2字換O
-  var NAME_KEYS=['受贈戶名_估價單台照','受贈戶名','受贈單位','單位名稱','姓名'];
+  var NAME_KEYS=allKeys.filter(function(k){return /受贈戶名|受贈單位|姓名$/.test(k);});
   function maskName(v){
     // 純3個中文字（允許前後空白）
     var m=v.trim().match(/^([一-鿿㐀-䶿])([一-鿿㐀-䶿])([一-鿿㐀-䶿])$/);
@@ -3303,10 +3318,11 @@ function sheetsRender(){
   // 找出每列在 _sheetsData 的原始 index（用於顯示 Sheets 列號）
   var dataIdxMap=new Map();
   _sheetsData.forEach(function(r,i){ dataIdxMap.set(r,i); });
-  var SHEETS_HEADER_ROWS=6; // Sheets 前6列是標題區，資料從第7列
+  var SHEETS_HEADER_ROWS=typeof _sheetsHdrRow!=='undefined'?_sheetsHdrRow:6;
   var show=_sheetsFiltered.slice(0,500);
   var tbody=show.map(function(r){
-    var sheetRow=SHEETS_HEADER_ROWS+1+(_sheetsData.indexOf(r));
+    var origIdx=_sheetsData.indexOf(r);
+    var sheetRow=SHEETS_HEADER_ROWS+1+origIdx;
     var rowRef='<td style="font-size:10px;color:#bbb;text-align:right;padding:4px 5px;white-space:nowrap;user-select:text;cursor:text" title="Sheets 第'+sheetRow+'列">'+sheetRow+'</td>';
     return '<tr>'+rowRef+cols.map(function(k){
       var v=r[k]||'';
