@@ -1175,7 +1175,7 @@ const DATA={
   2015:{t:11500000,f:0,tf:0,
     note:'公益信託成立第一年。',
     items:[
-      {n:'社會急難救助',u:'t',a:10000000,memo:'八仙塵爆'},
+      {n:'社會急難救助',g:'charity',u:'t',a:10000000,memo:'八仙塵爆'},
       {n:'公益教育推廣',u:'t',a:1500000,memo:'林建生文教基金會；社區教育講座、文化活動及藝術活動'}
     ]},
   2016:{t:317000000,f:0,tf:0,
@@ -1290,13 +1290,13 @@ const DATA={
       {n:'醫療人才培育',u:'f',a:11500000,memo:'中華醫學會、思源基金會、沈力揚基金會、放射線醫學會',impact:'rongzong_talent'},
       {n:'基金會國際連結計畫',u:'f',a:10517925,memo:''},
       {n:'基金會營運行政',u:'f',a:9443580,memo:''},
-      {n:'消防急救教育',u:'t',a:9000000,memo:'',impact:'fire_rescue'},
+      {n:'消防急救教育',g:'medical',u:'t',a:9000000,memo:'',impact:'fire_rescue'},
       {n:'消防急救教育',u:'f',a:8350000,memo:'',impact:'fire_rescue'},
       {n:'教育人才培育',u:'f',a:7518117,memo:''},
       {n:'ATCC 競賽與落實',u:'f',a:7797801,memo:'',impact:'atcc_plan'},
       {n:'堉璘 Changemaker 高中計畫',u:'f',a:3000000,memo:'',impact:'cm_highschool'},
       {n:'蒙特梭利教育推廣案—先期籌備',u:'f',a:3000000,memo:''},
-      {n:'堉璘淡海計畫',u:'f',a:944622,memo:''},
+      {n:'堉璘淡海計畫',g:'talent',u:'f',a:944622,memo:''},
       {n:'醫療人才培育',u:'t',a:500000,memo:''}
     ]},
   2025:{t:158316790,f:57875902,tf:144330746,
@@ -1328,32 +1328,32 @@ const DATA={
     cert:{t:39000000,f:135970000,tf:0},
     pend:{t:48090000,f:52490000,tf:0},
     items:[
-      {n:'榮總醫療-114年度',u:'t',e:3500000,c:15000000,p:0,memo:'重粒子設備相關',impact:'rongzong_talent'},
-      {n:'榮總醫療-115年度',u:'f',e:19700000,c:0,p:0,memo:'思源900萬、護理300萬、沈力揚400萬、中華醫學200萬、消化100萬、放射120萬',impact:'rongzong_talent'},
-      {n:'治療癌症醫療設備（Histotripsy 組織碎化術）',u:'f',e:0,c:108000000,p:0,memo:'高強度聚焦超音波（Histotripsy）',impact:'rongzong_heavy'},
+      {n:'榮總醫療-114年度',g:'medical',u:'t',e:3500000,c:15000000,p:0,memo:'重粒子設備相關',impact:'rongzong_talent'},
+      {n:'榮總醫療-115年度',g:'medical',u:'f',e:19700000,c:0,p:0,memo:'思源900萬、護理300萬、沈力揚400萬、中華醫學200萬、消化100萬、放射120萬',impact:'rongzong_talent'},
+      {n:'治療癌症醫療設備（Histotripsy 組織碎化術）',g:'medical',u:'f',e:0,c:108000000,p:0,memo:'高強度聚焦超音波（Histotripsy）',impact:'rongzong_heavy'},
       {n:'消防急救教育',u:'f',e:0,c:9470000,p:3160000,memo:'',impact:'fire_rescue'},
-      {n:'奉獻獎獎金（第十屆）',u:'t',e:0,c:24000000,p:48090000,memo:'第一年獎金（B確定）；第二、三年獎金（C待討論）',impact:'dedication_award'},
-      {n:'奉獻獎遴選作業＆頒獎典禮暨音樂會',u:'f',e:0,c:0,p:9580000,memo:'',impact:'dedication_award'},
-      {n:'奉獻獎再支持－瑪利亞、彭蒙惠',u:'f',e:0,c:9000000,p:7500000,memo:'瑪利亞第二年：對捐看成效＋人才留任200萬；彭蒙惠偏鄉英語第二年700萬',impact:'dedication_award'},
-      {n:'堉璘臺大人才計畫',u:'f',e:0,c:0,p:50000000,memo:'預計不高於5,000萬；NTU帳戶約餘1.59億；含NPO經營管理專班、成效研究',impact:'ntu_plan'},
-      {n:'蒙特梭利教育專案執行',u:'f',e:0,c:0,p:0,memo:'預計不高於1.1億；預估5年管理費2.5萬',impact:'montessori'},
-      {n:'ATCC 競賽 2026',u:'f',e:0,c:2500000,p:0,memo:'青藝盟556,710（已提報、已簽）',impact:'atcc_plan'},
-      {n:'ATCC 落實－弘道東石',u:'f',e:0,c:2000000,p:0,memo:'學生出國 2 人共 200 萬（弘道1：30萬基金會出帳；弘道2：260.5萬，信託管理費0.5萬）',impact:'atcc_plan'},
-      {n:'ATCC 落實－心路',u:'f',e:797757,c:0,p:0,memo:'心路168,800 整理中',impact:'atcc_plan'},
-      {n:'CM 高中生計畫',u:'f',e:3500000,c:0,p:0,memo:'',impact:'cm_highschool'},
-      {n:'SKY CAMPUS 校園快樂課程',u:'f',e:1000000,c:1000000,p:0,memo:'',impact:'sky_campus'},
+      {n:'奉獻獎獎金（第十屆）',g:'award',u:'t',e:0,c:24000000,p:48090000,memo:'第一年獎金（B確定）；第二、三年獎金（C待討論）',impact:'dedication_award'},
+      {n:'奉獻獎遴選作業＆頒獎典禮暨音樂會',g:'award',u:'f',e:0,c:0,p:9580000,memo:'',impact:'dedication_award'},
+      {n:'奉獻獎再支持－瑪利亞、彭蒙惠',g:'award',u:'f',e:0,c:9000000,p:7500000,memo:'瑪利亞第二年：對捐看成效＋人才留任200萬；彭蒙惠偏鄉英語第二年700萬',impact:'dedication_award'},
+      {n:'堉璘臺大人才計畫',g:'talent',u:'f',e:0,c:0,p:50000000,memo:'預計不高於5,000萬；NTU帳戶約餘1.59億；含NPO經營管理專班、成效研究',impact:'ntu_plan'},
+      {n:'蒙特梭利教育專案執行',g:'talent',u:'f',e:0,c:0,p:0,memo:'預計不高於1.1億；預估5年管理費2.5萬',impact:'montessori'},
+      {n:'ATCC 競賽 2026',g:'talent',u:'f',e:0,c:2500000,p:0,memo:'青藝盟556,710（已提報、已簽）',impact:'atcc_plan'},
+      {n:'ATCC 落實－弘道東石',g:'talent',u:'f',e:0,c:2000000,p:0,memo:'學生出國 2 人共 200 萬（弘道1：30萬基金會出帳；弘道2：260.5萬，信託管理費0.5萬）',impact:'atcc_plan'},
+      {n:'ATCC 落實－心路',g:'talent',u:'f',e:797757,c:0,p:0,memo:'心路168,800 整理中',impact:'atcc_plan'},
+      {n:'CM 高中生計畫',g:'talent',u:'f',e:3500000,c:0,p:0,memo:'',impact:'cm_highschool'},
+      {n:'SKY CAMPUS 校園快樂課程',g:'talent',u:'f',e:1000000,c:1000000,p:0,memo:'',impact:'sky_campus'},
       {n:'堉璘淡海計畫',u:'f',e:0,c:0,p:0,memo:'地方創生加速器；新增5%（信託）：場地租金1,850,220（2年8個月）、管理費15,000',impact:'ntu_plan'},
-      {n:'募款達人－安寧',u:'f',e:1000000,c:1000000,p:0,memo:'',impact:'fundraising_masters'},
-      {n:'募款達人－第一社福',u:'f',e:2000000,c:3000000,p:0,memo:'',impact:'fundraising_masters'},
-      {n:'林建生基金會',u:'f',e:1500000,c:1200000,p:0,memo:''},
-      {n:'KindShark 醫療平台專案',u:'f',e:0,c:0,p:29120000,memo:'美金91萬（共910,000×32）'},
+      {n:'募款達人－安寧',g:'fundraising',u:'f',e:1000000,c:1000000,p:0,memo:'',impact:'fundraising_masters'},
+      {n:'募款達人－第一社福',g:'fundraising',u:'f',e:2000000,c:3000000,p:0,memo:'',impact:'fundraising_masters'},
+      {n:'林建生基金會',g:'charity',u:'f',e:1500000,c:1200000,p:0,memo:''},
+      {n:'KindShark 醫療平台專案',g:'medical',u:'f',e:0,c:0,p:29120000,memo:'美金91萬（共910,000×32）'},
       {n:'社會急難救助',u:'f',e:0,c:0,p:0,memo:'預備金（歷年約1,700萬）'},
-      {n:'弱勢學童暑期照顧－生命之愛文教基金會',u:'f',e:500000,c:0,p:0,memo:''},
-      {n:'諮詢委員出席費、車馬費',u:'f',e:0,c:0,p:3130000,memo:'114年：5位委員出席3次、1位出席2次；115年預估6位委員出席6次'},
-      {n:'國泰行政費用',u:'t',e:0,c:2810000,p:0,memo:'管理費200萬＋律師費81萬'},
-      {n:'營運行政',u:'f',e:2150740,c:0,p:0,memo:'含蔡顧問90萬'},
-      {n:'軍人之友社',u:'f',e:100000,c:0,p:0,memo:''},
-      {n:'公益信託還給基金會',u:'tf',e:34370000,c:0,p:0,memo:''}
+      {n:'弱勢學童暑期照顧－生命之愛文教基金會',g:'charity',u:'f',e:500000,c:0,p:0,memo:''},
+      {n:'諮詢委員出席費、車馬費',g:'admin',u:'f',e:0,c:0,p:3130000,memo:'114年：5位委員出席3次、1位出席2次；115年預估6位委員出席6次'},
+      {n:'國泰行政費用',g:'admin',u:'t',e:0,c:2810000,p:0,memo:'管理費200萬＋律師費81萬'},
+      {n:'營運行政',g:'admin',u:'f',e:2150740,c:0,p:0,memo:'含蔡顧問90萬'},
+      {n:'軍人之友社',g:'charity',u:'f',e:100000,c:0,p:0,memo:''},
+      {n:'公益信託還給基金會',g:'admin',u:'tf',e:34370000,c:0,p:0,memo:''}
     ]}
 };
 
@@ -1370,7 +1370,7 @@ function activeYr(){return selectedYrs.size===0?'all':selectedYrs.size===1?[...s
 
 // ── helpers ──
 const f=n=>{if(!n||n===0)return'—';const a=Math.abs(n);if(a>=1e8){const v=(n/1e8).toFixed(1);return(v.endsWith('.0')?v.slice(0,-2):v)+'億';}return a>=1e4?Math.round(n/1e4)+'萬':n.toLocaleString()};
-const ff=n=>n?n.toLocaleString():'—';
+const ff=n=>n?n.toLocaleString('en-US'):'—';
 const pct=(n,d)=>d>0?Math.round(n/d*100):0;
 const sm=a=>a.reduce((s,v)=>s+(v||0),0);
 function t5(d){
@@ -1985,19 +1985,20 @@ function renderItemTable(d,prefix){
       else if(it.u==='f'){s_fe+=ev;s_fc+=cv;s_fp+=pv;}
       else if(it.u==='tf'){s_tfe+=ev;s_tfc+=cv;s_tfp+=pv;}
     });
-    const mkSumRow=(label,e,c,p,bold,last)=>{
+    // id 對應：t=信託 f=基金會 tf=公捐基 ttf=①+③ tot=①+②
+    const mkSumRow=(label,e,c,p,bold,last,rid)=>{
       const tot=e+c+p;
       const bg=bold?'background:#f0f0f0;':'';
       const fw=bold?'font-weight:700;':'';
       return `<tr style="${bg}border-bottom:${last?'none':'0.5px solid var(--border)'}">
         <td style="padding:5px 9px;${fw}color:var(--ink2);font-size:12px">${label}</td>
-        <td data-col="e" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${e?ff(e):'—'}</td>
-        <td data-col="c" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--cd)">${c?ff(c):'—'}</td>
-        <td data-col="p" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--cp)">${p?ff(p):'—'}</td>
-        <td style="padding:5px 9px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:12px">${ff(tot)}</td>
+        <td data-col="e" data-sum="${rid}-e" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${e?ff(e):'—'}</td>
+        <td data-col="c" data-sum="${rid}-c" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--cd)">${c?ff(c):'—'}</td>
+        <td data-col="p" data-sum="${rid}-p" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--cp)">${p?ff(p):'—'}</td>
+        <td data-sum="${rid}-tot" style="padding:5px 9px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:12px">${ff(tot)}</td>
       </tr>`;
     };
-    const summaryHTML=`<div style="margin-top:10px;border:1px solid var(--border2);border-radius:var(--rad);overflow:hidden">
+    const summaryHTML=`<div id="sum-${pid26}" style="margin-top:10px;border:1px solid var(--border2);border-radius:var(--rad);overflow:hidden">
       <table style="width:100%;border-collapse:collapse;font-family:'Noto Sans TC',sans-serif">
         <thead><tr style="background:var(--hover)">
           <th style="padding:5px 9px;text-align:left;font-size:11px;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border)">匯總</th>
@@ -2007,32 +2008,59 @@ function renderItemTable(d,prefix){
           <th style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--border)">合計</th>
         </tr></thead>
         <tbody>
-          ${mkSumRow('① 公益信託',s_te,s_tc,s_tp,false,false)}
-          ${mkSumRow('② 基金會',s_fe,s_fc,s_fp,false,false)}
-          ${mkSumRow('③ 公捐基',s_tfe,s_tfc,s_tfp,false,false)}
-          ${mkSumRow('①＋③ 信託總',s_te+s_tfe,s_tc+s_tfc,s_tp+s_tfp,true,false)}
-          ${mkSumRow('①＋② 實際總',s_te+s_fe,s_tc+s_fc,s_tp+s_fp,true,true)}
+          ${mkSumRow('① 公益信託',s_te,s_tc,s_tp,false,false,'t')}
+          ${mkSumRow('② 基金會',s_fe,s_fc,s_fp,false,false,'f')}
+          ${mkSumRow('③ 公捐基',s_tfe,s_tfc,s_tfp,false,false,'tf')}
+          ${mkSumRow('①＋③ 信託總',s_te+s_tfe,s_tc+s_tfc,s_tp+s_tfp,true,false,'ttf')}
+          ${mkSumRow('①＋② 實際總',s_te+s_fe,s_tc+s_fc,s_tp+s_fp,true,true,'tot')}
         </tbody>
       </table>
     </div>`;
     const pid26='uf-'+prefix;
-    const compactRows=items.map((it,i)=>{
-      const idx=`${prefix}_${i}`;
-      const tot=(it.e||0)+(it.c||0)+(it.p||0);
-      const abcFlag=(it.e?'e':'')+(it.c?'c':'')+(it.p?'p':'');
-      const pill=`<span style="font-size:10px;padding:1px 5px;border-radius:3px;background:${UB[it.u]};color:${UT[it.u]};white-space:nowrap">${UL[it.u].replace('透過基金會執行','基金會').replace('公益信託直接捐款','信託')}</span>`;
-      const impB=it.impact?`<button class="imp-btn" id="impbtn-${idx}" onclick="toggleImpact('${it.impact}','${idx}')" style="padding:1px 6px;font-size:10px;margin-left:3px">成效</button>`:'';
-      const tooltip=it.memo?`title="${it.memo}"`:'';
-      return `<tr class="mrow" data-unit="${it.u}" data-abc="${abcFlag}" style="border-bottom:0.5px solid var(--border)">
-        <td style="padding:3px 8px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px" ${tooltip}>${it.n}${impB}</td>
-        <td style="padding:3px 5px;text-align:center;white-space:nowrap">${pill}</td>
-        <td data-col="e" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${it.e?ff(it.e):''}</td>
-        <td data-col="c" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--cd)">${it.c?ff(it.c):''}</td>
-        <td data-col="p" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--cp)">${it.p?ff(it.p):''}</td>
-        <td style="padding:3px 8px;text-align:right;font-weight:600;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap">${ff(tot)}</td>
+    // 群組定義
+    const GRP_ORDER=['medical','award','talent','fundraising','charity','admin'];
+    const GRP_LABELS={medical:'🏥 醫療',award:'🏆 奉獻獎',talent:'🎓 人才培育',fundraising:'💰 募款達人',charity:'🤝 社會慈善',admin:'⚙️ 行政營運'};
+    // 按群組組織 items
+    const grpMap={};
+    GRP_ORDER.forEach(g=>grpMap[g]=[]);
+    items.forEach(it=>{ const g=it.g||'admin'; if(grpMap[g]) grpMap[g].push(it); else grpMap['admin'].push(it); });
+    // 產生分群 HTML
+    const compactRows=GRP_ORDER.map(grpKey=>{
+      const grpItems=grpMap[grpKey];
+      if(!grpItems||!grpItems.length) return '';
+      const gid=`${prefix}_g_${grpKey}`;
+      // 群組標題列
+      const hdrRow=`<tr class="grp-hdr" data-grp="${grpKey}" style="background:#eeeeee;cursor:pointer" onclick="toggleGrp('${gid}')">
+        <td style="padding:5px 8px;font-size:11px;font-weight:600;color:var(--ink);user-select:none;white-space:nowrap">
+          <span id="${gid}-arrow" style="display:inline-block;margin-right:4px">▼</span>${GRP_LABELS[grpKey]}
+          <span style="font-size:10px;font-weight:400;color:var(--ink3);margin-left:4px">(${grpItems.length}項)</span>
+        </td>
+        <td style="padding:5px 5px;font-size:10px;color:var(--ink3);text-align:center">—</td>
+        <td data-col="e" data-gsum="${gid}-e" style="padding:5px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ce)"></td>
+        <td data-col="c" data-gsum="${gid}-c" style="padding:5px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--cd)"></td>
+        <td data-col="p" data-gsum="${gid}-p" style="padding:5px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--cp)"></td>
+        <td data-gsum="${gid}-tot" style="padding:5px 8px;text-align:right;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)"></td>
       </tr>`;
+      // 群組內各項
+      const itemRows=grpItems.map((it,i)=>{
+        const idx=`${prefix}_${grpKey}_${i}`;
+        const tot=(it.e||0)+(it.c||0)+(it.p||0);
+        const abcFlag=(it.e?'e':'')+(it.c?'c':'')+(it.p?'p':'');
+        const pill=`<span style="font-size:10px;padding:1px 5px;border-radius:3px;background:${UB[it.u]};color:${UT[it.u]};white-space:nowrap">${UL[it.u].replace('透過基金會執行','基金會').replace('公益信託直接捐款','信託')}</span>`;
+        const impB=it.impact?`<button class="imp-btn" id="impbtn-${idx}" onclick="toggleImpact('${it.impact}','${idx}')" style="padding:1px 6px;font-size:10px;margin-left:3px">成效</button>`:'';
+        const tooltip=it.memo?`title="${it.memo}"`:'';
+        return `<tr class="mrow grp-item" data-grp="${grpKey}" data-gid="${gid}" data-unit="${it.u}" data-abc="${abcFlag}" data-visible="1" style="border-bottom:0.5px solid var(--border)">
+          <td style="padding:3px 8px 3px 18px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px" ${tooltip}>${it.n}${impB}</td>
+          <td style="padding:3px 5px;text-align:center;white-space:nowrap">${pill}</td>
+          <td data-col="e" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${it.e?ff(it.e):''}</td>
+          <td data-col="c" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--cd)">${it.c?ff(it.c):''}</td>
+          <td data-col="p" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--cp)">${it.p?ff(it.p):''}</td>
+          <td style="padding:3px 8px;text-align:right;font-weight:600;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap">${ff(tot)}</td>
+        </tr>`;
+      }).join('');
+      return hdrRow + itemRows;
     }).join('');
-    return `<div style="font-size:11px;color:var(--ink3);margin-bottom:8px;display:flex;align-items:center;flex-wrap:wrap;gap:5px">
+        return `<div id="${pid26}" style="font-size:11px;color:var(--ink3);margin-bottom:8px;display:flex;align-items:center;flex-wrap:wrap;gap:5px">
       <span style="font-weight:500;white-space:nowrap;color:var(--ink2)">出帳：</span>
       <button class="ufbtn on" data-u="t" onclick="ufToggle('${pid26}','t')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">① 信託</button>
       <button class="ufbtn on" data-u="f" onclick="ufToggle('${pid26}','f')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">② 基金會</button>
@@ -2055,6 +2083,15 @@ function renderItemTable(d,prefix){
         <th style="padding:4px 8px;font-size:11px;text-align:right;border-bottom:1px solid var(--border)">小計</th>
       </tr></thead>
       <tbody>${compactRows}</tbody>
+      <tfoot id="tfoot-${pid26}">
+        <tr style="background:var(--hover);border-top:1.5px solid var(--border2)">
+          <td colspan="2" style="padding:5px 8px;font-size:11px;font-weight:600;color:var(--ink2)">篩選小計</td>
+          <td data-col="e" id="tfoot-e-${pid26}" style="padding:5px 6px;text-align:right;font-weight:700;font-size:12px;font-variant-numeric:tabular-nums;color:var(--ce)"></td>
+          <td data-col="c" id="tfoot-c-${pid26}" style="padding:5px 6px;text-align:right;font-weight:700;font-size:12px;font-variant-numeric:tabular-nums;color:var(--cd)"></td>
+          <td data-col="p" id="tfoot-p-${pid26}" style="padding:5px 6px;text-align:right;font-weight:700;font-size:12px;font-variant-numeric:tabular-nums;color:var(--cp)"></td>
+          <td id="tfoot-tot-${pid26}" style="padding:5px 8px;text-align:right;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)"></td>
+        </tr>
+      </tfoot>
     </table></div>
     ${summaryHTML}`;
 
@@ -2420,7 +2457,11 @@ function render(){
 var _ufState = {};
 
 function ufGetState(id){
-  if(!_ufState[id]) _ufState[id]={units:new Set(['t','f','tf']),abcs:new Set(['e','c','p'])};
+  if(!_ufState[id]){
+    _ufState[id]={units:new Set(['t','f','tf']),abcs:new Set(['e','c','p'])};
+    // 初始化後延遲執行一次 apply，更新小計
+    setTimeout(function(){ ufApply(id); },50);
+  }
   return _ufState[id];
 }
 
@@ -2429,33 +2470,86 @@ function ufApply(filterId){
   var tbl=document.getElementById('tbl-'+filterId);
   if(!tbl) return;
 
-  // ── 欄顯示：控制 A/B/C 各欄是否顯示（用 data-col 屬性選取）──
+  // ── 篩選邏輯：設定 data-visible（不管收合狀態）──
+  tbl.querySelectorAll('tr.grp-item').forEach(function(tr){
+    var unitOk=s.units.has(tr.dataset.unit);
+    var abc=tr.dataset.abc||'';
+    var abcOk=(s.abcs.has('e')&&abc.includes('e'))||
+               (s.abcs.has('c')&&abc.includes('c'))||
+               (s.abcs.has('p')&&abc.includes('p'));
+    var pass=unitOk&&abcOk;
+    tr.dataset.visible=pass?'1':'0';
+    // display 還要考慮群組是否展開
+    var gid=tr.dataset.gid;
+    var arrow=gid?document.getElementById(gid+'-arrow'):null;
+    var grpOpen=!arrow||arrow.textContent.includes('▼');
+    tr.style.display=(pass&&grpOpen)?'':'none';
+  });
+  // 群組標題列：重算各群組小計 + 若無符合項目則隱藏
+  tbl.querySelectorAll('tr.grp-hdr').forEach(function(hdr){
+    var grpKey=hdr.dataset.grp;
+    var ge=0,gc=0,gp=0,hasMatch=false;
+    tbl.querySelectorAll('tr.grp-item[data-grp="'+grpKey+'"]').forEach(function(tr){
+      if(tr.dataset.visible!=='1') return;
+      hasMatch=true;
+      var eCell=tr.querySelector('[data-col="e"]');
+      var cCell=tr.querySelector('[data-col="c"]');
+      var pCell=tr.querySelector('[data-col="p"]');
+      ge+=eCell?parseNum(eCell.textContent):0;
+      gc+=cCell?parseNum(cCell.textContent):0;
+      gp+=pCell?parseNum(pCell.textContent):0;
+    });
+    hdr.style.display=hasMatch?'':'none';
+    // 寫入群組小計
+    var gid=hdr.querySelector('[id$="-arrow"]');
+    if(gid){
+      var base=gid.id.replace('-arrow','');
+      function gs(sfx,v){var el=hdr.querySelector('[data-gsum="'+base+'-'+sfx+'"]');if(el)el.textContent=v?ffNum(v):'';}
+      gs('e',ge); gs('c',gc); gs('p',gp); gs('tot',ge+gc+gp);
+    }
+  });
+
+  // ── 欄顯示：隱藏未選的 A/B/C 欄 ──
   ['e','c','p'].forEach(function(abc){
     var show=s.abcs.has(abc);
     tbl.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
       el.style.display=show?'':'none';
     });
   });
-  // 合計表也一起控制
-  var sumTbl=tbl.parentElement&&tbl.parentElement.nextElementSibling;
-  if(sumTbl) ['e','c','p'].forEach(function(abc){
-    var show=s.abcs.has(abc);
-    sumTbl.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
-      el.style.display=show?'':'none';
-    });
-  });
 
-  // ── 列顯示：出帳 + 進度篩選（有任一符合進度即顯示）──
-  tbl.querySelectorAll('tr[data-unit]').forEach(function(tr){
-    var unitOk=s.units.has(tr.dataset.unit);
-    var abc=tr.dataset.abc||'';
-    var abcOk=(s.abcs.has('e')&&abc.includes('e'))||
-               (s.abcs.has('c')&&abc.includes('c'))||
-               (s.abcs.has('p')&&abc.includes('p'));
-    tr.style.display=(unitOk&&abcOk)?'':'none';
-  });
+  // ── 動態重算合計表（只計算可見列）──
+  var sumWrap=document.getElementById('sum-'+filterId)||tbl.nextElementSibling;
+  if(sumWrap&&sumWrap.querySelector){
+    var te=0,fe=0,tfe=0,tc=0,fc=0,tfc=0,tp=0,fp=0,tfp=0;
+    tbl.querySelectorAll('tr.grp-item').forEach(function(tr){
+      if(tr.dataset.visible==='0') return;  // 篩選排除的不計，收合的仍計入
+      var u=tr.dataset.unit;
+      var eCell=tr.querySelector('[data-col="e"]');
+      var cCell=tr.querySelector('[data-col="c"]');
+      var pCell=tr.querySelector('[data-col="p"]');
+      var ev=eCell?parseNum(eCell.textContent):0;
+      var cv=cCell?parseNum(cCell.textContent):0;
+      var pv=pCell?parseNum(pCell.textContent):0;
+      if(u==='t'){te+=ev;tc+=cv;tp+=pv;}
+      else if(u==='f'){fe+=ev;fc+=cv;fp+=pv;}
+      else if(u==='tf'){tfe+=ev;tfc+=cv;tfp+=pv;}
+    });
+    function setSum(id,v){var el=sumWrap.querySelector('[data-sum="'+id+'"]');if(el)el.textContent=v?ffNum(v):'—';}
+    setSum('t-e',te);setSum('t-c',tc);setSum('t-p',tp);setSum('t-tot',te+tc+tp);
+    setSum('f-e',fe);setSum('f-c',fc);setSum('f-p',fp);setSum('f-tot',fe+fc+fp);
+    setSum('tf-e',tfe);setSum('tf-c',tfc);setSum('tf-p',tfp);setSum('tf-tot',tfe+tfc+tfp);
+    setSum('ttf-e',te+tfe);setSum('ttf-c',tc+tfc);setSum('ttf-p',tp+tfp);setSum('ttf-tot',te+tfe+tc+tfc+tp+tfp);
+    setSum('tot-e',te+fe);setSum('tot-c',tc+fc);setSum('tot-p',tp+fp);setSum('tot-tot',te+fe+tc+fc+tp+fp);
+    // 合計表欄顯示/隱藏
+    ['e','c','p'].forEach(function(abc){
+      var show=s.abcs.has(abc);
+      sumWrap.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){el.style.display=show?'':'none';});
+    });
+  }
 }
 
+function parseNum(s){if(!s||s==='—')return 0;return parseInt(s.replace(/,/g,''))||0;}
+function ffNum(n){return n.toLocaleString('en-US');}
 function ufBtnStyle(btn, isOn){
   if(isOn){
     btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;text-decoration:none;opacity:1;letter-spacing:.3px';
@@ -2506,7 +2600,28 @@ window.ufFilter=ufFilter;
 window.ufToggle=ufToggle;
 window.abcToggle=abcToggle;
 
+// ── 群組摺疊函式 ──
+function toggleGrp(gid){
+  var rows=document.querySelectorAll('.grp-item[data-gid="'+gid+'"]');
+  var arrow=document.getElementById(gid+'-arrow');
+  var isOpen=arrow&&arrow.textContent.includes('▼');
+  rows.forEach(function(tr){
+    // 只控制 display，不動 data-visible（data-visible 由篩選決定）
+    var pass=tr.dataset.visible!=='0';
+    tr.style.display=(!isOpen&&pass)?'':'none';
+  });
+  if(arrow) arrow.textContent=isOpen?'▶ ':'▼ ';
+}
+window.toggleGrp=toggleGrp;
+
 render();
+// 初始化所有 2026 年度的篩選小計（渲染完成後立即執行）
+setTimeout(function(){
+  document.querySelectorAll('[id^="tbl-uf-"]').forEach(function(tbl){
+    var filterId=tbl.id.replace('tbl-','');
+    ufApply(filterId);
+  });
+},0);
 setTimeout(()=>{ if(typeof loadSummaryFromSheets==='function') loadSummaryFromSheets(); },0); // 從 Sheets 自動更新年度數字
 </script>
 
