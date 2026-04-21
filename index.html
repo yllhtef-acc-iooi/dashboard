@@ -3085,7 +3085,7 @@ var _SUMMARY_GID='1853532145'; // 儀表板彙總工作表
 function loadSummaryFromSheets(){
   // 加 cache:'no-store' 避免瀏覽器拿舊快取；t= 參數防 CDN 快取
   var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/export?format=csv&gid='+_SUMMARY_GID+'&t='+Date.now();
-  fetch(url,{cache:'no-store'}).then(r=>r.text()).then(csv=>{
+  fetch(url,{mode:'cors',credentials:'omit',cache:'no-store'}).then(r=>r.text()).then(csv=>{
     var lines=csv.trim().split('\n').slice(1); // 跳過標題列
     var updated=false;
     lines.forEach(line=>{
@@ -3269,6 +3269,8 @@ function sheetsRender(){
     return;
   }
   // 欄位優先順序
+  // 摺疊欄定義（全域，thead 和 tbody 共用）
+  var COLLAPSIBLE={'歷年已承諾':true,'歷年捐贈':true,'尚未支付':true};
   var allKeys=Object.keys(_sheetsFiltered[0]);
   // 動態偵測受贈單位欄名（不依賴精確欄名）
   // 精準欄名（依 Sheets 第6列確認）
