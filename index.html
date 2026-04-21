@@ -1998,8 +1998,9 @@ function renderItemTable(d,prefix){
         <td data-sum="${rid}-tot" style="padding:5px 9px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:12px">${ff(tot)}</td>
       </tr>`;
     };
+    const pid26='uf-'+prefix;
     const summaryHTML=`<div id="sum-${pid26}" style="margin-top:10px;border:1px solid var(--border2);border-radius:var(--rad);overflow:hidden">
-      <table style="width:100%;border-collapse:collapse;font-family:'Noto Sans TC',sans-serif">
+      <table style="width:100%;border-collapse:collapse;font-family:'Noto Sans TC',sans-serif;table-layout:fixed"><colgroup><col style="width:40%"><col data-col="e" style="width:15%"><col data-col="c" style="width:15%"><col data-col="p" style="width:15%"><col style="width:15%"></colgroup>
         <thead><tr style="background:var(--hover)">
           <th style="padding:5px 9px;text-align:left;font-size:11px;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border)">匯總</th>
           <th data-col="e" style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--ce);border-bottom:1px solid var(--border)">A 已執行</th>
@@ -2016,7 +2017,6 @@ function renderItemTable(d,prefix){
         </tbody>
       </table>
     </div>`;
-    const pid26='uf-'+prefix;
     // 群組定義
     const GRP_ORDER=['medical','award','talent','fundraising','charity','admin'];
     const GRP_LABELS={medical:'🏥 醫療',award:'🏆 奉獻獎',talent:'🎓 人才培育',fundraising:'💰 募款達人',charity:'🤝 社會慈善',admin:'⚙️ 行政營運'};
@@ -2032,7 +2032,7 @@ function renderItemTable(d,prefix){
       // 群組標題列
       const hdrRow=`<tr class="grp-hdr" data-grp="${grpKey}" style="background:#eeeeee;cursor:pointer" onclick="toggleGrp('${gid}')">
         <td style="padding:5px 8px;font-size:11px;font-weight:600;color:var(--ink);user-select:none;white-space:nowrap">
-          <span id="${gid}-arrow" style="display:inline-block;margin-right:4px">▼</span>${GRP_LABELS[grpKey]}
+          <span id="${gid}-arrow" style="display:inline-block;margin-right:4px">▶ </span>${GRP_LABELS[grpKey]}
           <span style="font-size:10px;font-weight:400;color:var(--ink3);margin-left:4px">(${grpItems.length}項)</span>
         </td>
         <td style="padding:5px 5px;font-size:10px;color:var(--ink3);text-align:center">—</td>
@@ -2049,7 +2049,7 @@ function renderItemTable(d,prefix){
         const pill=`<span style="font-size:10px;padding:1px 5px;border-radius:3px;background:${UB[it.u]};color:${UT[it.u]};white-space:nowrap">${UL[it.u].replace('透過基金會執行','基金會').replace('公益信託直接捐款','信託')}</span>`;
         const impB=it.impact?`<button class="imp-btn" id="impbtn-${idx}" onclick="toggleImpact('${it.impact}','${idx}')" style="padding:1px 6px;font-size:10px;margin-left:3px">成效</button>`:'';
         const tooltip=it.memo?`title="${it.memo}"`:'';
-        return `<tr class="mrow grp-item" data-grp="${grpKey}" data-gid="${gid}" data-unit="${it.u}" data-abc="${abcFlag}" data-visible="1" style="border-bottom:0.5px solid var(--border)">
+        return `<tr class="mrow grp-item" data-grp="${grpKey}" data-gid="${gid}" data-unit="${it.u}" data-abc="${abcFlag}" data-visible="1" style="border-bottom:0.5px solid var(--border);display:none">
           <td style="padding:3px 8px 3px 18px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px" ${tooltip}>${it.n}${impB}</td>
           <td style="padding:3px 5px;text-align:center;white-space:nowrap">${pill}</td>
           <td data-col="e" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${it.e?ff(it.e):''}</td>
@@ -2083,15 +2083,6 @@ function renderItemTable(d,prefix){
         <th style="padding:4px 8px;font-size:11px;text-align:right;border-bottom:1px solid var(--border)">小計</th>
       </tr></thead>
       <tbody>${compactRows}</tbody>
-      <tfoot id="tfoot-${pid26}">
-        <tr style="background:var(--hover);border-top:1.5px solid var(--border2)">
-          <td colspan="2" style="padding:5px 8px;font-size:11px;font-weight:600;color:var(--ink2)">篩選小計</td>
-          <td data-col="e" id="tfoot-e-${pid26}" style="padding:5px 6px;text-align:right;font-weight:700;font-size:12px;font-variant-numeric:tabular-nums;color:var(--ce)"></td>
-          <td data-col="c" id="tfoot-c-${pid26}" style="padding:5px 6px;text-align:right;font-weight:700;font-size:12px;font-variant-numeric:tabular-nums;color:var(--cd)"></td>
-          <td data-col="p" id="tfoot-p-${pid26}" style="padding:5px 6px;text-align:right;font-weight:700;font-size:12px;font-variant-numeric:tabular-nums;color:var(--cp)"></td>
-          <td id="tfoot-tot-${pid26}" style="padding:5px 8px;text-align:right;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)"></td>
-        </tr>
-      </tfoot>
     </table></div>
     ${summaryHTML}`;
 
@@ -2482,7 +2473,7 @@ function ufApply(filterId){
     // display 還要考慮群組是否展開
     var gid=tr.dataset.gid;
     var arrow=gid?document.getElementById(gid+'-arrow'):null;
-    var grpOpen=!arrow||arrow.textContent.includes('▼');
+    var grpOpen=arrow&&arrow.textContent.includes('▼');
     tr.style.display=(pass&&grpOpen)?'':'none';
   });
   // 群組標題列：重算各群組小計 + 若無符合項目則隱藏
@@ -2604,13 +2595,12 @@ window.abcToggle=abcToggle;
 function toggleGrp(gid){
   var rows=document.querySelectorAll('.grp-item[data-gid="'+gid+'"]');
   var arrow=document.getElementById(gid+'-arrow');
-  var isOpen=arrow&&arrow.textContent.includes('▼');
+  var isCollapsed=arrow&&arrow.textContent.includes('▶');
   rows.forEach(function(tr){
-    // 只控制 display，不動 data-visible（data-visible 由篩選決定）
     var pass=tr.dataset.visible!=='0';
-    tr.style.display=(!isOpen&&pass)?'':'none';
+    tr.style.display=(isCollapsed&&pass)?'':'none';
   });
-  if(arrow) arrow.textContent=isOpen?'▶ ':'▼ ';
+  if(arrow) arrow.textContent=isCollapsed?'▼ ':'▶ ';
 }
 window.toggleGrp=toggleGrp;
 
