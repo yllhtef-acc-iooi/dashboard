@@ -451,6 +451,74 @@ code { font-family:'IBM Plex Mono',monospace; font-size:11px; background:#f0f0f0
     </div>
 
     <!-- 6. 下一步確認清單 -->
+    <!-- 已知需要檢查的問題（根據實際資料掃描）-->
+    <div class="card c-amber" style="background:#fffdf8;margin-bottom:10px">
+      <div class="card-h"><span style="font-size:19px">🔍</span><span class="lbl l-next">請逐一確認</span><h3>目前 Sheets 資料需要整理的地方（根據實際掃描 1,454 筆資料）</h3></div>
+
+      <div style="background:#fff;border:1px solid #e8e0cc;border-radius:8px;padding:14px 16px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:#888;margin-bottom:8px;letter-spacing:.3px">⚠️ 最優先處理</div>
+        <ul style="list-style:none;padding:0;font-size:13px;color:var(--ink2)">
+          <li style="padding:8px 0 8px 24px;position:relative;border-bottom:0.5px solid #f0e8d8">
+            <span style="position:absolute;left:0;color:#c08030;font-weight:700">①</span>
+            <strong>682 筆資料的 A 欄「類型」是空白的</strong>——這些列同時也沒有受贈單位（J欄）和金額（K欄），疑似是 Sheets 自動產生的空白列，會被儀表板讀進來形成雜訊。<br>
+            <span style="color:#2d6a2d;font-size:12px">→ 請確認這 682 列是否真的沒有資料，若是空白列請整列刪除。</span>
+          </li>
+          <li style="padding:8px 0 8px 24px;position:relative;border-bottom:0.5px solid #f0e8d8">
+            <span style="position:absolute;left:0;color:#c08030;font-weight:700">②</span>
+            <strong>682 筆資料的 P 欄「儀表板顯示名稱」是空白的</strong>——空白的列在儀表板搜尋時找不到、關鍵字也比對不到。<br>
+            <span style="color:#2d6a2d;font-size:12px">→ 為每一筆真正的資料填寫顯示名稱。格式建議：「類別－細項說明年度」</span>
+          </li>
+          <li style="padding:8px 0 8px 24px;position:relative">
+            <span style="position:absolute;left:0;color:#c08030;font-weight:700">③</span>
+            <strong>85 筆資料的 D 欄「年(公)」顯示為 1899</strong>——1899 是 Sheets 的預設錯誤年份，代表這些列的年度欄位沒有填寫或格式有誤。<br>
+            <span style="color:#2d6a2d;font-size:12px">→ 請找出 D 欄值為 1899 的列，補上正確的民國年份（例如 2024）。</span>
+          </li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e8e0cc;border-radius:8px;padding:14px 16px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:#888;margin-bottom:8px;letter-spacing:.3px">需要統一格式</div>
+        <ul style="list-style:none;padding:0;font-size:13px;color:var(--ink2)">
+          <li style="padding:8px 0 8px 24px;position:relative;border-bottom:0.5px solid #f0e8d8">
+            <span style="position:absolute;left:0;color:#555;font-weight:700">④</span>
+            <strong>A 欄「類型」有一筆寫成「2公益信託捐給基金會」，正確應是「3公益信託捐給基金會」</strong><br>
+            目前正確的三種寫法是：<code style="font-size:11px">1公益信託直接捐款</code>、<code style="font-size:11px">2基金會實際支出</code>、<code style="font-size:11px">3公益信託捐給基金會</code>。<br>
+            <span style="color:#2d6a2d;font-size:12px">→ 用 Sheets 的「尋找與取代」(Ctrl+H)：找「2公益信託捐給基金會」→ 取代成「3公益信託捐給基金會」。</span>
+          </li>
+          <li style="padding:8px 0 8px 24px;position:relative;border-bottom:0.5px solid #f0e8d8">
+            <span style="position:absolute;left:0;color:#555;font-weight:700">⑤</span>
+            <strong>L 欄「成本分類」有 5 筆值為「保證金」，38 筆為「未分類_公益信託不分」</strong><br>
+            「保證金」不是成本分類，可能是填寫錯誤。「未分類_公益信託不分」可考慮日後統一歸類。<br>
+            <span style="color:#2d6a2d;font-size:12px">→ 請確認 5 筆「保證金」是否要改為正確的成本分類（01 獎助 / 02 業務成本）。</span>
+          </li>
+          <li style="padding:8px 0 8px 24px;position:relative">
+            <span style="position:absolute;left:0;color:#555;font-weight:700">⑥</span>
+            <strong>L 欄「成本分類」有 45 筆值為「F 行政營運管理」，與其他值格式不一致</strong><br>
+            其他分類用數字開頭（01/02），這個用英文字母 F 開頭。<br>
+            <span style="color:#2d6a2d;font-size:12px">→ 確認是否要統一格式，例如改成「03 行政營運管理」。</span>
+          </li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e8e0cc;border-radius:8px;padding:14px 16px">
+        <div style="font-size:12px;font-weight:700;color:#888;margin-bottom:8px;letter-spacing:.3px">個資保護確認</div>
+        <ul style="list-style:none;padding:0;font-size:13px;color:var(--ink2)">
+          <li style="padding:8px 0 8px 24px;position:relative;border-bottom:0.5px solid #f0e8d8">
+            <span style="position:absolute;left:0;color:#555;font-weight:700">⑦</span>
+            <strong>J 欄有 155 筆受贈戶名恰好是 3 個中文字，系統會自動遮蔽中間字</strong><br>
+            其中確認為<strong>個人姓名</strong>（會遮蔽）：涂美伶、趙福杉、陳芃君、劉宇萱、楊錦駮 等 20 人。<br>
+            其中疑似為<strong>單位名稱被誤遮蔽</strong>：<code style="font-size:11px">消防署 → 消O署</code>、<code style="font-size:11px">社企流 → 社O流</code>。<br>
+            <span style="color:#2d6a2d;font-size:12px">→ 「消防署」和「社企流」若不應遮蔽，可在名稱後加一個字（如「消防署(一)」）讓字數不是 3 個字。</span>
+          </li>
+          <li style="padding:8px 0 8px 24px;position:relative">
+            <span style="position:absolute;left:0;color:#555;font-weight:700">⑧</span>
+            <strong>K 欄「已捐金額」有 683 筆是空白的</strong><br>
+            空白代表這些列沒有金額，儀表板計算小計時會略過。這和第①項的 682 筆空白列基本一致，確認是同一批空白列即可。<br>
+            <span style="color:#2d6a2d;font-size:12px">→ 有真實金額但漏填的列，請補上數字（純數字，不需加逗號）。</span>
+          </li>
+        </ul>
+      </div>
+    </div>
     <div class="card" style="background:#f8f8f8;border-style:dashed">
       <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px">📌 下一步：步驟1 自動化前，請先確認</div>
       <ul style="list-style:none;padding:0;font-size:13px;color:var(--ink2)">
@@ -494,8 +562,8 @@ function initChat(){
   S={step:0,data:{},mode:''};
   document.getElementById('chat-msgs').innerHTML='';
   document.getElementById('result-box').style.display='none';
-  bot('你好！我來幫你建立一筆捐贈的 Sheets 欄位資料。\n\n這筆捐贈是哪個年度？',
-    ['2026 年度（預估中，分 A/B/C）','2015–2025 歷年（填總金額）']);
+  bot('你好！我來幫你把一筆捐贈整理成 Google Sheets 需要的欄位資料。\n\n這筆捐贈是哪個年度？',
+    ['2026 年度（預估中，分 A/B/C）','2015–2025 歷年（已發生）']);
 }
 
 function bot(text,opts){
@@ -505,15 +573,16 @@ function bot(text,opts){
   var h='<div class="av av-bot">林</div><div style="flex:1"><div class="bubble">'+text.replace(/\n/g,'<br>')+'</div>';
   if(opts){
     h+='<div class="qbtns">';
-    opts.forEach(function(o){ h+='<button class="qbtn" data-val="'+o.replace(/"/g,'&quot;')+'">'+o+'</button>'; });
+    opts.forEach(function(o){
+      h+='<button class="qbtn" data-val="'+o.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">'+o+'</button>';
+    });
     h+='</div>';
   }
   h+='</div>';
   d.innerHTML=h;
-  // 綁定按鈕事件（避開 inline onclick 的引號問題）
   d.querySelectorAll('.qbtn').forEach(function(btn){
     btn.addEventListener('click',function(){
-      pick(this, this.getAttribute('data-val'));
+      pick(this,this.getAttribute('data-val'));
     });
   });
   msgs.appendChild(d);
@@ -549,47 +618,125 @@ document.getElementById('chat-input').addEventListener('keydown',function(e){if(
 
 function reply(val){
   var n=S.step;
+
+  // step 0：年度
   if(n===0){
     S.mode=val.includes('2026')?'new':'hist';
     S.step=1;
-    bot('這筆捐贈的<strong>出帳來源</strong>是？',['① 公益信託','② 基金會','③ 公捐基（公益信託捐基金會）']);
+    bot('這筆捐贈的<strong>出帳來源</strong>是什麼？\n（這對應 Sheets 的 <strong>A 欄「類型」</strong>）',
+      ['① 公益信託直接捐款','② 基金會實際支出','③ 公益信託捐給基金會']);
     return;
   }
+
+  // step 1：A欄 類型
   if(n===1){
-    S.data.u=val.includes('公捐')?'tf':val.includes('基金會')?'f':'t';
+    if(val.includes('①')||val.includes('信託直接')) S.data.A='1公益信託直接捐款';
+    else if(val.includes('②')||val.includes('基金會實際')) S.data.A='2基金會實際支出';
+    else S.data.A='3公益信託捐給基金會';
+    // 同時設 u 欄（供 index.html 用）
+    S.data.u=S.data.A.startsWith('1')?'t':S.data.A.startsWith('3')?'tf':'f';
     S.step=2;
-    bot('請輸入這筆捐贈的<strong>顯示名稱</strong>。\n建議格式：「類別－細項說明年度」\n例如：榮總醫療人才培育2026');
+    bot('請輸入<strong>受贈單位的名稱</strong>。\n（對應 Sheets <strong>J 欄「受贈戶名_估價單台照」</strong>）\n\n⚠️ 注意：若是個人姓名（3個字），填完整姓名即可，系統顯示時會自動遮蔽中間字。');
     return;
   }
+
+  // step 2：J欄 受贈單位
   if(n===2){
-    S.data.n=val;
+    S.data.J=val;
     S.step=3;
+    bot('請輸入<strong>儀表板顯示名稱</strong>。\n（對應 Sheets <strong>P 欄「儀表板顯示名稱」</strong>，也是搜尋比對的主要文字）\n\n建議格式：「類別－細項說明年度」\n例如：榮總醫療人才培育2026、消防急救教育－自動心肺復甦機2台\n\n⚠️ 名稱裡不要使用逗號，可用頓號「、」或破折號「－」代替。');
+    return;
+  }
+
+  // step 3：P欄 顯示名稱
+  if(n===3){
+    // 提醒逗號問題
+    if(val.indexOf(',')>=0||val.indexOf('，')>=0){
+      bot('⚠️ 注意：名稱裡有逗號！\nSheets 資料用逗號分隔欄位，名稱有逗號會讓資料串聯錯誤。\n\n建議改用頓號「、」或破折號「－」，請重新輸入名稱：');
+      return; // 停在 step 3，等重新輸入
+    }
+    S.data.P=val;
+    S.step=4;
+    bot('請輸入<strong>款項狀況</strong>。\n（對應 Sheets <strong>G 欄「款項狀況」</strong>）',
+      ['A已執行（已撥款）','B確定（已通過，待撥）','C待討論（尚在評估）']);
+    return;
+  }
+
+  // step 4：G欄 款項狀況
+  if(n===4){
+    S.data.G=val.includes('A')?'A已執行':val.includes('B')?'B確定':'C待討論';
+    S.step=5;
     if(S.mode==='hist'){
-      bot('這筆歷年捐贈是<strong>哪一年</strong>？（例如 2024）');
-      S.step=31;
+      bot('這是哪一年的資料？\n（對應 Sheets <strong>D 欄「年(公)」</strong>，填民國年，例如：2024）');
+      S.step=50;
     } else {
-      bot('屬於哪個<strong>群組</strong>？',['醫療 (medical)','奉獻獎 (award)','人才培育 (talent)','募款達人 (fundraising)','社會慈善 (charity)','行政營運 (admin)']);
+      bot('請輸入<strong>D 欄年度</strong>：填 <strong>2026</strong>（民國115年）');
+      S.data.D='2026';
+      S.step=6;
+      bot('這筆捐贈的<strong>金額狀態</strong>？\n（對應 Sheets <strong>K 欄「已捐金額」</strong>）\n\n2026 年度分三種狀態，請依序輸入：',null);
+      bot('先填 <strong>A 已執行</strong>的金額（元），沒有填 0：');
     }
     return;
   }
-  if(n===31){S.data.year=parseInt(val)||2024;S.step=32;bot('這一年的<strong>總金額</strong>（元）？例如 5000000');return;}
-  if(n===32){S.data.a=parseInt(val.replace(/[^0-9]/g,''))||0;S.step=33;bot('是否有<strong>備注說明</strong>？（沒有請輸入「無」）',['無']);return;}
-  if(n===33){S.data.memo=(val==='無'||val==='沒有')?'':val;buildHistResult();return;}
-  if(n===3){
-    var gmap={醫療:'medical',奉獻:'award',人才:'talent',募款:'fundraising',慈善:'charity',行政:'admin'};
-    Object.keys(gmap).forEach(function(k){if(val.includes(k))S.data.g=gmap[k];});
-    if(!S.data.g)S.data.g='charity';
-    S.step=4;bot('請輸入 <strong>A 已執行</strong>（已撥款）的金額（元），沒有填 0：');return;
+
+  // 歷年 step 50：D欄年度
+  if(n===50){
+    S.data.D=val.replace(/[^0-9]/g,'')||'2024';
+    S.step=51;
+    bot('這一年的<strong>已捐金額</strong>是多少元？\n（對應 Sheets <strong>K 欄「已捐金額」</strong>，純數字，不要加逗號）');
+    return;
   }
-  if(n===4){S.data.e=parseInt(val.replace(/[^0-9]/g,''))||0;S.step=5;bot('請輸入 <strong>B 確定</strong>（已通過待撥）的金額（元），沒有填 0：');return;}
-  if(n===5){S.data.c=parseInt(val.replace(/[^0-9]/g,''))||0;S.step=6;bot('請輸入 <strong>C 待討論</strong>（預估中）的金額（元），沒有填 0：');return;}
-  if(n===6){S.data.p=parseInt(val.replace(/[^0-9]/g,''))||0;S.step=7;bot('是否有<strong>備注說明</strong>？（合作對象、金額分拆等，沒有請輸入「無」）',['無']);return;}
-  if(n===7){S.data.memo=(val==='無'||val==='沒有')?'':val;S.step=8;bot('是否屬於某個<strong>子群組</strong>？',['榮總醫療系列','ATCC 競賽與落實系列','不屬於子群組']);return;}
+  if(n===51){
+    S.data.K=parseInt(val.replace(/[^0-9]/g,''))||0;
+    S.step=52;
+    bot('這筆捐贈的<strong>成本分類</strong>是？\n（對應 Sheets <strong>L 欄「成本分類」</strong>）',
+      ['01 奬助','02 業務成本','03 管理費用','不確定（先留空）']);
+    return;
+  }
+  if(n===52){
+    S.data.L=val.includes('不確定')||val.includes('留空')?'':val.split(' ')[0]+' '+(val.split(' ')[1]||'');
+    S.data.L=S.data.L.trim();
+    S.step=53;
+    bot('是否有<strong>備注說明</strong>？\n（沒有請輸入「無」，有的話請描述，例如：合作對象、設備名稱等）',['無']);
+    return;
+  }
+  if(n===53){
+    S.data.memo=(val==='無'||val==='沒有')?'':val;
+    buildHistResult();
+    return;
+  }
+
+  // 2026 step 6：A已執行
+  if(n===6){
+    S.data.e=parseInt(val.replace(/[^0-9]/g,''))||0;
+    S.step=7;
+    bot('再填 <strong>B 確定</strong>的金額（元），沒有填 0：');
+    return;
+  }
+  if(n===7){
+    S.data.c=parseInt(val.replace(/[^0-9]/g,''))||0;
+    S.step=8;
+    bot('最後填 <strong>C 待討論</strong>的金額（元），沒有填 0：');
+    return;
+  }
   if(n===8){
-    if(val.includes('榮總'))S.data.sg='sg_rongzong';
-    else if(val.includes('ATCC'))S.data.sg='sg_atcc_impl';
-    else S.data.sg='';
-    build2026Result();return;
+    S.data.p=parseInt(val.replace(/[^0-9]/g,''))||0;
+    S.data.K=S.data.e+S.data.c+S.data.p; // K欄合計
+    S.step=9;
+    bot('這筆捐贈的<strong>成本分類</strong>是？\n（對應 Sheets <strong>L 欄「成本分類」</strong>）',
+      ['01 奬助','02 業務成本','03 管理費用','不確定（先留空）']);
+    return;
+  }
+  if(n===9){
+    S.data.L=val.includes('不確定')||val.includes('留空')?'':val;
+    S.step=10;
+    bot('是否有<strong>備注說明</strong>？\n（沒有請輸入「無」，有的話請描述用途、合作對象等）',['無']);
+    return;
+  }
+  if(n===10){
+    S.data.memo=(val==='無'||val==='沒有')?'':val;
+    build2026Result();
+    return;
   }
 }
 
@@ -597,22 +744,43 @@ function fmt(n){return n?n.toLocaleString('zh-TW'):'0';}
 
 function build2026Result(){
   var d=S.data;
-  var uLabel=d.u==='t'?'公益信託 (t)':d.u==='tf'?'公捐基 (tf)':'基金會 (f)';
-  var gLabel=GROUPS[d.g]||d.g;
   var total=(d.e||0)+(d.c||0)+(d.p||0);
-  var lines=['P 欄（顯示名稱）   '+d.n,'u 欄（出帳類型）   '+uLabel,'g 欄（群組）       '+d.g+'  ← '+gLabel];
-  if(d.sg)lines.push('sg 欄（子群組）    '+d.sg);
-  lines=lines.concat(['e 欄（A 已執行）   '+fmt(d.e||0),'c 欄（B 確定）     '+fmt(d.c||0),'p 欄（C 待討論）   '+fmt(d.p||0),'memo 欄（備注）    '+(d.memo||'（無）')]);
-  bot('✅ 完成！總金額 <strong>'+fmt(total)+' 元</strong>。以下是欄位資料，請複製後貼入 Google Sheets：');
+  var lines=[
+    '【填入 Google Sheets 的欄位資料】',
+    '',
+    'A 欄（類型）          '+d.A,
+    'D 欄（年(公)）        2026',
+    'G 欄（款項狀況）      '+d.G,
+    'J 欄（受贈戶名）      '+d.J,
+    'K 欄（已捐金額）      '+fmt(total)+'  ← A+B+C 合計',
+    'L 欄（成本分類）      '+(d.L||'（請確認）'),
+    'P 欄（儀表板顯示名稱）'+d.P,
+    '',
+    '── 2026年度細分（index.html 用）──',
+    'e（A 已執行）  '+fmt(d.e||0),
+    'c（B 確定）    '+fmt(d.c||0),
+    'p（C 待討論）  '+fmt(d.p||0),
+  ];
+  if(d.memo) lines.push('備注             '+d.memo);
+  bot('✅ 完成！K 欄合計 <strong>'+fmt(total)+' 元</strong>。以下是這筆捐贈的完整欄位資料：');
   showResult(lines.join('\n'));
 }
 
 function buildHistResult(){
   var d=S.data;
-  var uLabel=d.u==='t'?'公益信託 (t)':d.u==='tf'?'公捐基 (tf)':'基金會 (f)';
-  var yr=d.year||2024;
-  var lines=['P 欄（顯示名稱）   '+d.n,'u 欄（出帳類型）   '+uLabel,'a 欄（年度總金額） '+fmt(d.a||0),yr+' 欄（年度欄）    '+fmt(d.a||0),'memo 欄（備注）    '+(d.memo||'（無）')];
-  bot('✅ 完成！'+yr+' 年度欄位資料如下：');
+  var lines=[
+    '【填入 Google Sheets 的欄位資料】',
+    '',
+    'A 欄（類型）          '+d.A,
+    'D 欄（年(公)）        '+d.D,
+    'G 欄（款項狀況）      '+d.G,
+    'J 欄（受贈戶名）      '+d.J,
+    'K 欄（已捐金額）      '+fmt(d.K||0),
+    'L 欄（成本分類）      '+(d.L||'（請確認）'),
+    'P 欄（儀表板顯示名稱）'+d.P,
+  ];
+  if(d.memo) lines.push('備注             '+d.memo);
+  bot('✅ 完成！以下是 '+d.D+' 年度這筆捐贈的完整欄位資料：');
   showResult(lines.join('\n'));
 }
 
