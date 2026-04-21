@@ -3034,6 +3034,12 @@ function sheetsColFilter(evt, thEl){
   }, 100);
 }
 
+function sheetsToggleCol(k){
+  if(!window._sheetsCollapsed) window._sheetsCollapsed={};
+  window._sheetsCollapsed[k]=!window._sheetsCollapsed[k];
+  sheetsRender();
+}
+window.sheetsToggleCol = sheetsToggleCol;
 window.sheetsColFilter = sheetsColFilter;
 
 var _srchTimer=null;
@@ -3272,22 +3278,34 @@ function sheetsRender(){
   var TYPE_KEY = allKeys.find(function(k){ return k==='類型'; }) || '';
   var DISP_KEY = allKeys.find(function(k){ return k==='儀表板顯示名稱'; }) || '';
   // 建立優先排序（動態欄名）
-  var priorityKeys = ['年(公)','年(基)',NAME_KEY,DISP_KEY,AMT_KEY,STAT_KEY,TYPE_KEY,'成本分類','策略主軸','公益信託計畫書_分類'].filter(Boolean);
+  // 只顯示指定欄，順序：A D G J P K L M N O
+  var SHOW_COLS=['類型','年(公)','款項狀況','受贈戶名_估價單台照','儀表板顯示名稱','已捐金額','成本分類','歷年已承諾','歷年捐贈','尚未支付'];
+  // 動態欄名補上（J欄可能有底線變體）
+  if(NAME_KEY && SHOW_COLS.indexOf(NAME_KEY)<0) SHOW_COLS[3]=NAME_KEY;
+  if(DISP_KEY && SHOW_COLS.indexOf(DISP_KEY)<0) SHOW_COLS[4]=DISP_KEY;
+  var priorityKeys = SHOW_COLS.filter(function(k){ return allKeys.indexOf(k)>=0; });
   var seen = {};
   var cols = [];
   priorityKeys.forEach(function(k){ if(k&&!seen[k]&&allKeys.indexOf(k)>=0){cols.push(k);seen[k]=1;} });
-  allKeys.forEach(function(k){
-    if(!seen[k]&&_sheetsFiltered.some(function(r){return r[k]&&r[k].trim();})){cols.push(k);seen[k]=1;}
-  });
+  // 只顯示指定欄，不加入其他欄
   // 動態 label（受贈單位欄用實際欄名）
+  // 欄字母對應表（Sheets 第6列確認）
+  var COL_LETTER={'類型':'A','年(公)':'D','款項狀況':'G','尚未支付':'O',
+    '已捐金額':'K','成本分類':'L','歷年已承諾':'M','歷年捐贈':'N'};
+  if(NAME_KEY) COL_LETTER[NAME_KEY]='J';
+  if(DISP_KEY) COL_LETTER[DISP_KEY]='P';
+  if(AMT_KEY)  COL_LETTER[AMT_KEY] ='K';
+  if(STAT_KEY) COL_LETTER[STAT_KEY]='G';
+  if(TYPE_KEY) COL_LETTER[TYPE_KEY]='A';
+  function colLabel(k,name){ var c=COL_LETTER[k]||''; return c?c+' '+name:name; }
   var dynLabel = {};
-  if(NAME_KEY) dynLabel[NAME_KEY] = '受贈單位';
-  if(AMT_KEY)  dynLabel[AMT_KEY]  = '金額';
-  if(STAT_KEY) dynLabel[STAT_KEY] = '狀態';
-  if(TYPE_KEY) dynLabel[TYPE_KEY] = '出帳';
-  if(DISP_KEY) dynLabel[DISP_KEY] = '顯示名稱';
+  if(NAME_KEY) dynLabel[NAME_KEY] = colLabel(NAME_KEY,'受贈單位');
+  if(AMT_KEY)  dynLabel[AMT_KEY]  = colLabel(AMT_KEY,'金額');
+  if(STAT_KEY) dynLabel[STAT_KEY] = colLabel(STAT_KEY,'狀態');
+  if(TYPE_KEY) dynLabel[TYPE_KEY] = colLabel(TYPE_KEY,'出帳');
+  if(DISP_KEY) dynLabel[DISP_KEY] = colLabel(DISP_KEY,'顯示名稱');
   _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
-  var label=Object.assign({'年(公)':'年度','年(基)':'年(基)','成本分類':'成本分類','策略主軸':'策略主軸','公益信託計畫書_分類':'計畫書分類'},dynLabel);
+  var label=Object.assign({'年(公)':'D 年度','成本分類':'L 成本分類','歷年已承諾':'M 已承諾','歷年捐贈':'N 歷年捐贈','尚未支付':'O 尚未支付'},dynLabel);
   // 確保所有顯示欄都有 label（用欄名縮寫避免空白標題）
   cols.forEach(function(k){ if(!label[k]) label[k]=k.length>8?k.slice(0,7)+'…':k; });
   var isAmt=function(k){
@@ -3302,7 +3320,9 @@ function sheetsRender(){
   var isYr=function(k){return/^年/.test(k);};
   var isType=function(k){return k==='類型';};
   // ── 欄寬定義（px，未定義者彈性分配）──
-  var CW={'年(公)':38,'年(基)':38}; // 欄寬由動態欄名在下方設定
+  var CW={'年(公)':38}; // 欄寬由動態欄名在下方設定
+  // 可摺疊欄位（預設收合）
+  if(!window._sheetsCollapsed) window._sheetsCollapsed={'歷年已承諾':true,'歷年捐贈':true,'尚未支付':true};
           
   // 動態欄寬（用偵測到的欄名作 key）
   if(NAME_KEY) CW[NAME_KEY]=120;
@@ -3310,7 +3330,12 @@ function sheetsRender(){
   if(AMT_KEY)  CW[AMT_KEY]=88;
   if(STAT_KEY) CW[STAT_KEY]=56;
   if(TYPE_KEY) CW[TYPE_KEY]=110;
-  CW['成本分類']=80; CW['策略主軸']=72; CW['公益信託計畫書_分類']=90;
+  CW['成本分類']=80;
+  // 摺疊欄：展開時正常寬，收合時 18px
+  var MNO_W={'歷年已承諾':82,'歷年捐贈':78,'尚未支付':72};
+  Object.keys(MNO_W).forEach(function(k){
+    CW[k]=(window._sheetsCollapsed&&window._sheetsCollapsed[k])?18:MNO_W[k];
+  });
     var colgroup='<colgroup><col style="width:36px;min-width:36px">'+cols.map(function(k){
     var w=CW[k];
     if(!w){ if(isAmt(k)) w=90; else if(isYr(k)) w=40; }
@@ -3349,12 +3374,20 @@ function sheetsRender(){
     return '<tr>'+rowRef+cols.map(function(k){
       var v=r[k]||'';
       if(isNameCol(k)) v=maskName(v);
+      // 摺疊欄：顯示極窄的空 td
+      if(COLLAPSIBLE[k]&&window._sheetsCollapsed[k]){
+        return '<td style="width:16px;min-width:16px;padding:0;background:#fafafa;border-right:1px solid #eee"></td>';
+      }
       if(isNameCol(k)){
         return '<td style="max-width:140px;word-break:break-all;text-align:left">'+v+'</td>';
       }
       if(isAmt(k)&&v){
         var n=parseFloat(v.replace(/,/g,''));
-        return '<td class="amt">'+(isNaN(n)?v:n.toLocaleString())+'</td>';
+        // 日期/年度欄不加千分位（值<10000且非金額欄）
+        var isDateCol=/^年|^月|日期|請款|付款/.test(k);
+        if(isNaN(n)) return '<td class="amt">'+v+'</td>';
+        if(isDateCol||n<10000) return '<td class="amt" style="white-space:nowrap">'+Math.round(n)+'</td>';
+        return '<td class="amt">'+n.toLocaleString()+'</td>';
       }
       if(isYr(k)) return '<td class="yrc">'+v+'</td>';
       if(isType(k)){
