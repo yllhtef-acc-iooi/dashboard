@@ -77,6 +77,11 @@ html,body{min-height:100vh;background:var(--bg);font-family:Noto Sans TC,sans-se
 .sel-scroll{flex:1;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;min-width:0}
 .sel-scroll::-webkit-scrollbar{display:none}
 .sel-scroll .sel{flex-wrap:nowrap;margin-bottom:0;width:max-content}
+
+/* ── 年度選擇：左右箭頭 ── */
+.sel-arrow{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);background:white;color:var(--ink2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:14px;line-height:1;padding:0}
+.sel-arrow:hover{border-color:var(--ink);color:var(--ink);background:var(--hover)}
+.sel-arrow:active{transform:scale(.92)}
 .sel-clear{flex-shrink:0;font-size:11px;padding:3px 10px;border:1px solid var(--border2);border-radius:4px;background:white;color:var(--ink2);cursor:pointer;white-space:nowrap;transition:all .12s}
 .sel-clear:hover{border-color:var(--ink);color:var(--ink)}
 
@@ -540,6 +545,15 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 .qa-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .qa-qbtn{padding:4px 12px;font-size:12px;border:1px solid #cccccc;border-radius:14px;background:white;color:#333333;cursor:pointer;transition:all .11s;font-family:inherit}
 .qa-qbtn:hover{border-color:#555555;color:#111111;background:#f5f5f5}
+
+/* ── 出帳篩選 ── */
+.unit-filter{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
+.unit-filter-label{font-size:11px;color:var(--ink3);margin-right:2px}
+.ufbtn{padding:4px 12px;font-size:12px;border-radius:4px;border:1.5px dashed #cccccc;background:#ffffff;color:#cccccc;cursor:pointer;transition:all .1s;font-family:inherit;display:inline-flex;align-items:center;gap:4px;font-weight:400;letter-spacing:.3px}
+.ufbtn:hover{border-color:var(--ink2);color:var(--ink)}
+.ufbtn.on{background:#1a1a1a!important;color:#ffffff!important;border:1.5px solid #1a1a1a!important;font-weight:700!important;text-decoration:none!important;opacity:1!important;letter-spacing:.3px}
+
+.ufbtn .uf-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 /* ── QA 打字動畫 ── */
 .qa-dots{display:inline-flex;gap:5px;align-items:center;padding:2px 0}
 .qa-dots span{width:7px;height:7px;border-radius:50%;background:#aaaaaa;display:inline-block;animation:qaDot 1.2s infinite ease-in-out}
@@ -831,13 +845,15 @@ function shakeInput(){
 
   <!-- ② 年度選擇（固定單列）+ KPI + 長條圖 + 圖例 -->
   <div id="chart-area">
-    <!-- 年度選擇列：固定單行，不換行 -->
-    <div class="sel-bar">
+    <!-- 年度選擇列：暫時收起，恢復時移除 style="display:none" -->
+    <div class="sel-bar" style="display:none">
       <div class="sel-bar-label">年度選擇</div>
       <div class="sel-bar-hint" id="detail-hint">點選展開明細，可多選左右比較</div>
-      <div class="sel-scroll">
+      <button class="sel-arrow" id="sel-arrow-l" onclick="selScroll(-120)" title="向左">‹</button>
+      <div class="sel-scroll" id="sel-scroll">
         <div class="sel" id="sel" style="margin-bottom:0;flex-wrap:nowrap"></div>
       </div>
+      <button class="sel-arrow" id="sel-arrow-r" onclick="selScroll(120)" title="向右">›</button>
       <button onclick="selectedYrs.clear();openImpact={};render();" class="sel-clear">清除全部</button>
     </div>
 
@@ -884,10 +900,10 @@ function shakeInput(){
 // ═══════════════════════════════════════════════════════
 //  COLOUR TOKENS
 // ═══════════════════════════════════════════════════════
-const CA='#1a1a1a',CB='#555555',CC='#999999';
-const CE='#2d6a2d',CD='#555555',CP='#888888',CO='#1a1a1a';
-const UB={t:'#eeeeee',f:'#e4e4e4',tf:'#d8d8d8'};
-const UT={t:'#222222',f:'#333333',tf:'#444444'};
+const CA='#5a3e1e',CB='#8a6030',CC='#b08858';
+const CE='#2e6e4a',CD='#9a5210',CP='#6e5f8a',CO='#c9a800';
+const UB={t:'#f5edd0',f:'#e8edd8',tf:'#ddeae8'};
+const UT={t:'#4a3a08',f:'#2a3820',tf:'#1a3840'};
 const UL={t:'公益信託',f:'透過基金會執行',tf:'公捐基'};
 const UC={t:CA,f:CB,tf:CC};
 const GOAL=300000000;
@@ -1306,38 +1322,38 @@ const DATA={
       {n:'竹林慈玄宮 & 淡水關懷弱勢協會',u:'f',a:5892450,memo:''},
       {n:'化育文教基金會—捐助佛學院建校',u:'f',a:2000000,memo:''}
     ]},
-  2026:{t:93400000,f:236386420,tf:207460157,is26:true,
-    note:'2026 年度預算目標：①公益信託 7,500 萬、②基金會 2.25 億、③公捐基 2.25 億；①+② 實際總支出目標 3 億。',
-    exec:{t:3500000,f:93380691,tf:142370000},
-    cert:{t:41810000,f:90045729,tf:0},
-    pend:{t:48090000,f:52960000,tf:65090157},
+  2026:{t:90590000,f:219708497,tf:34370000,is26:true,
+    note:'2026 年度實際總支出目標 3 億（①＋②）。資料來源：115年度公益支出及預估表。',
+    exec:{t:3500000,f:31248497,tf:34370000},
+    cert:{t:39000000,f:135970000,tf:0},
+    pend:{t:48090000,f:52490000,tf:0},
     items:[
-      {n:'醫療人才培育之設備提升',u:'f',e:54000000,c:54000000,p:0,memo:'組織碎化術/高強度聚焦超音波',impact:'rongzong_talent'},
-      {n:'榮總醫療人才培育—2026年度',u:'f',e:19700000,c:0,p:0,memo:'',impact:'rongzong_talent'},
-      {n:'榮總醫療人才培育—2025年度',u:'t',e:3500000,c:15000000,p:0,memo:'',impact:'rongzong_talent'},
-      {n:'醫療人才培育—思源基金會護理人才培育',u:'t',e:3000000,c:0,p:0,memo:''},
-      {n:'醫療人才培育—盧光舜肺癌基金會',u:'t',e:500000,c:0,p:0,memo:''},
+      {n:'榮總醫療-114年度',u:'t',e:3500000,c:15000000,p:0,memo:'重粒子設備相關',impact:'rongzong_talent'},
+      {n:'榮總醫療-115年度',u:'f',e:19700000,c:0,p:0,memo:'思源900萬、護理300萬、沈力揚400萬、中華醫學200萬、消化100萬、放射120萬',impact:'rongzong_talent'},
+      {n:'治療癌症醫療設備（Histotripsy 組織碎化術）',u:'f',e:0,c:108000000,p:0,memo:'高強度聚焦超音波（Histotripsy）',impact:'rongzong_heavy'},
       {n:'消防急救教育',u:'f',e:0,c:9470000,p:3160000,memo:'',impact:'fire_rescue'},
-      {n:'堉璘台灣奉獻獎-第十屆獎金',u:'t',e:0,c:24000000,p:48090000,memo:'第十屆；奉獻獎、成就獎×3、新秀獎×5',impact:'dedication_award'},
-      {n:'堉璘台灣奉獻獎-遴選&頒獎典禮',u:'f',e:0,c:0,p:9580000,memo:'',impact:'dedication_award'},
-      {n:'堉璘台灣奉獻獎再支持',u:'f',e:7426263,c:9000000,p:7500000,memo:'瑪利亞基金會＋彭蒙惠偏鄉英語教育',impact:'dedication_award'},
-      {n:'ATCC 競賽 2026',u:'f',e:0,c:2242400,p:3600000,memo:'',impact:'atcc_plan'},
-      {n:'ATCC 落實',u:'f',e:795757,c:800000,p:0,memo:'心路 79.6萬（A）、弘道東石 80萬（B）',impact:'atcc_plan'},
-      {n:'堉璘台大人才計畫',u:'f',e:0,c:0,p:50000000,memo:'累計承諾 4.5 億，執行中',impact:'ntu_plan'},
-      {n:'蒙特梭利教育',u:'f',e:189000,c:50000000,p:95000000,memo:'師資培育體系與優質幼托示範機構',impact:'montessori'},
-      {n:'堉璘淡海計畫',u:'f',e:5944548,c:0,p:0,memo:'地方創生加速器'},
-      {n:'堉璘 Changemaker 高中計畫',u:'f',e:3500000,c:0,p:0,memo:'高中生計畫 2025、2026 年',impact:'cm_highschool'},
-      {n:'心理健康-Sky Campus校園快樂課程',u:'f',e:0,c:1000000,p:0,memo:'心理健康課程',impact:'sky_campus'},
-      {n:'公益教育/社區教育之推廣',u:'f',e:1500000,c:1200000,p:0,memo:'林建生文教基金會'},
-      {n:'募款達人',u:'f',e:3000000,c:5000000,p:0,memo:'安寧 100萬（A+B）、第一社福 200+300萬（A+B）',impact:'fundraising_masters'},
-      {n:'生命之愛文教—苗栗弱勢學童',u:'f',e:500000,c:0,p:0,memo:''},
-      {n:'社會急難救助',u:'f',e:0,c:0,p:0,memo:'預備金（歷年約 1,700 萬）'},
-      {n:'KindShark 醫療平台',u:'f',e:0,c:0,p:29120000,memo:''},
+      {n:'奉獻獎獎金（第十屆）',u:'t',e:0,c:24000000,p:48090000,memo:'第一年獎金（B確定）；第二、三年獎金（C待討論）',impact:'dedication_award'},
+      {n:'奉獻獎遴選作業＆頒獎典禮暨音樂會',u:'f',e:0,c:0,p:9580000,memo:'',impact:'dedication_award'},
+      {n:'奉獻獎再支持－瑪利亞、彭蒙惠',u:'f',e:0,c:9000000,p:7500000,memo:'瑪利亞第二年：對捐看成效＋人才留任200萬；彭蒙惠偏鄉英語第二年700萬',impact:'dedication_award'},
+      {n:'堉璘臺大人才計畫',u:'f',e:0,c:0,p:50000000,memo:'預計不高於5,000萬；NTU帳戶約餘1.59億；含NPO經營管理專班、成效研究',impact:'ntu_plan'},
+      {n:'蒙特梭利教育專案執行',u:'f',e:0,c:0,p:0,memo:'預計不高於1.1億；預估5年管理費2.5萬',impact:'montessori'},
+      {n:'ATCC 競賽 2026',u:'f',e:0,c:2500000,p:0,memo:'青藝盟556,710（已提報、已簽）',impact:'atcc_plan'},
+      {n:'ATCC 落實－弘道東石',u:'f',e:0,c:2000000,p:0,memo:'學生出國 2 人共 200 萬（弘道1：30萬基金會出帳；弘道2：260.5萬，信託管理費0.5萬）',impact:'atcc_plan'},
+      {n:'ATCC 落實－心路',u:'f',e:797757,c:0,p:0,memo:'心路168,800 整理中',impact:'atcc_plan'},
+      {n:'CM 高中生計畫',u:'f',e:3500000,c:0,p:0,memo:'',impact:'cm_highschool'},
+      {n:'SKY CAMPUS 校園快樂課程',u:'f',e:1000000,c:1000000,p:0,memo:'',impact:'sky_campus'},
+      {n:'堉璘淡海計畫',u:'f',e:0,c:0,p:0,memo:'地方創生加速器；新增5%（信託）：場地租金1,850,220（2年8個月）、管理費15,000',impact:'ntu_plan'},
+      {n:'募款達人－安寧',u:'f',e:1000000,c:1000000,p:0,memo:'',impact:'fundraising_masters'},
+      {n:'募款達人－第一社福',u:'f',e:2000000,c:3000000,p:0,memo:'',impact:'fundraising_masters'},
+      {n:'林建生基金會',u:'f',e:1500000,c:1200000,p:0,memo:''},
+      {n:'KindShark 醫療平台專案',u:'f',e:0,c:0,p:29120000,memo:'美金91萬（共910,000×32）'},
+      {n:'社會急難救助',u:'f',e:0,c:0,p:0,memo:'預備金（歷年約1,700萬）'},
+      {n:'弱勢學童暑期照顧－生命之愛文教基金會',u:'f',e:500000,c:0,p:0,memo:''},
+      {n:'諮詢委員出席費、車馬費',u:'f',e:0,c:0,p:3130000,memo:'114年：5位委員出席3次、1位出席2次；115年預估6位委員出席6次'},
+      {n:'國泰行政費用',u:'t',e:0,c:2810000,p:0,memo:'管理費200萬＋律師費81萬'},
+      {n:'營運行政',u:'f',e:2150740,c:0,p:0,memo:'含蔡顧問90萬'},
       {n:'軍人之友社',u:'f',e:100000,c:0,p:0,memo:''},
-      {n:'國泰行政費用',u:'t',e:0,c:2810000,p:0,memo:''},
-      {n:'基金會營運行政',u:'f',e:2832024,c:8333329,p:0,memo:'行政費用'},
-      {n:'創辦人專案—愛語包容影音製作',u:'f',e:0,c:0,p:1175000,memo:'頒獎典禮影音製作，預估確認'},
-      {n:'公益信託還給基金會',u:'tf',e:142370000,c:0,p:65090157,memo:''}
+      {n:'公益信託還給基金會',u:'tf',e:34370000,c:0,p:0,memo:''}
     ]}
 };
 
@@ -1432,7 +1448,7 @@ function updateLayout(){
   const hasDetail=selectedYrs.size>0;
   // KPI 只在有選年份時顯示
   const kpisWrap=document.getElementById('kpis-wrap');
-  if(kpisWrap)kpisWrap.style.display=(hasDetail&&selectedYrs.size===1)?'':'none';
+  if(kpisWrap)kpisWrap.style.display='none'; // 暫時收起小圖框
   // 年度明細 section（含標題列和捲動條）
   const secB=document.getElementById('section-b');
   const sepDetail=document.getElementById('sep-detail');
@@ -1530,12 +1546,12 @@ function buildKPI(){
         +'<div style="font-size:28px;font-weight:800;color:var(--topbar);font-family:Noto Sans TC,sans-serif;line-height:1;margin:4px 0 2px">'+f(goal)+'<span style="font-size:14px;font-weight:400;color:var(--ink3);margin-left:3px">元</span></div>'
         +'<div style="margin-bottom:10px"></div>'
         // 已執行小字（綠色，與進度條一致）
-        +'<div style="font-size:11px;color:#2d6a2d;font-weight:600;margin-bottom:4px">已執行 '+f(val)+'</div>'
+        +'<div style="font-size:11px;color:#5a8a60;font-weight:600;margin-bottom:4px">已執行 '+f(val)+'</div>'
         // 進度條
         +'<div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:6px">'
-        +'<div style="height:100%;width:'+pct+'%;background:#2d6a2d;border-radius:4px"></div></div>'
+        +'<div style="height:100%;width:'+pct+'%;background:#5a8a60;border-radius:4px"></div></div>'
         // %
-        +'<div style="font-size:11px;font-weight:600;color:#2d6a2d;font-family:Noto Sans TC,sans-serif">'+pct+'%</div>'
+        +'<div style="font-size:11px;font-weight:600;color:#5a8a60;font-family:Noto Sans TC,sans-serif">'+pct+'%</div>'
         +diffNote;
     }
     function kpiCard(cls,label,val,sub,goal,fullVal){
@@ -1578,9 +1594,9 @@ function legChip(bg){
 function buildLeg(){
   const el=document.getElementById('leg');
   let h=`<span style="font-size:12px;color:var(--ink2);margin-right:4px;font-weight:500">出帳來源</span>
-    <span class="li">${legBadge('①',CA,'#ffffff')} <span style="font-size:13px;color:var(--ink)">公益信託</span></span>
-    <span class="li">${legBadge('②',CB,'#ffffff')} <span style="font-size:13px;color:var(--ink)">基金會</span></span>
-    <span class="li">${legBadge('③',CC,'#ffffff')} <span style="font-size:13px;color:var(--ink)">公捐基</span></span>`;
+    <span class="li">${legBadge('①',CA,'#f5ead0')} <span style="font-size:13px;color:var(--ink)">公益信託</span></span>
+    <span class="li">${legBadge('②',CB,'#f5ead0')} <span style="font-size:13px;color:var(--ink)">基金會</span></span>
+    <span class="li">${legBadge('③',CC,'#f5ead0')} <span style="font-size:13px;color:var(--ink)">公捐基</span></span>`;
   const ay=activeYr();if(ay===2026||ay==='all'||ay==='multi'||selectedYrs.has(2026))
     h+=`<div class="leg-div"></div>
       <span style="font-size:12px;color:var(--ink2);margin-right:4px;font-weight:500">當年度預估</span>
@@ -1593,7 +1609,7 @@ function buildLeg(){
 
 // ─── CHART ───────────────────────────────────────────
 // 5 metric colors
-const CM1='#1a1a1a',CM2='#444444',CM3='#777777',CM4='#0d0d0d',CM5='#555555';
+const CM1='#5a3e1e',CM2='#8a6030',CM3='#b08858',CM4='#3d2810',CM5='#705028';
 let chartMetric='stacked'; // 'stacked' | 't' | 'f' | 'tf' | 'ttf' | 'tf2'
 
 function buildChartToggle(){
@@ -1621,7 +1637,7 @@ function buildChart(){
   const labels=YEARS.map(y=>y===2026?'2026預':String(y));
   // Track which bars are selected for highlighting
   const selSet=selectedYrs;
-  const tickStyle={color:'#555555',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}};
+  const tickStyle={color:'#4a3c10',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}};
   const gridStyle={color:'rgba(0,0,0,.07)'};
 
   const ayc=activeYr();if(ayc==='all'||ayc==='multi'){
@@ -1630,11 +1646,11 @@ function buildChart(){
     if(chartMetric==='stacked'){
       // Apply highlight border to selected years
       const barBorderT=YEARS.map(y=>selSet.has(y)?3:0);
-      const barBorderC=YEARS.map(y=>selSet.has(y)?'rgba(255,255,255,.8)':'transparent');
+      const barBorderC=YEARS.map(y=>selSet.has(y)?'rgba(61,46,0,.7)':'transparent');
       datasets=[
         {label:'①公益信託直接捐款',data:YEARS.map(y=>DATA[y].t),backgroundColor:CM1,borderRadius:2,stack:'s',borderWidth:barBorderT,borderColor:barBorderC,borderSkipped:false},
         {label:'②透過基金會執行',data:YEARS.map(y=>DATA[y].f),backgroundColor:CM2,borderRadius:2,stack:'s',borderWidth:barBorderT,borderColor:barBorderC,borderSkipped:false},
-        {label:'目標 3億',data:YEARS.map(()=>GOAL),type:'line',borderColor:'rgba(0,0,0,.35)',borderDash:[6,3],borderWidth:2,pointRadius:0,fill:false,stack:undefined}
+        {label:'目標 3億',data:YEARS.map(()=>GOAL),type:'line',borderColor:'rgba(180,120,0,.65)',borderDash:[6,3],borderWidth:2,pointRadius:0,fill:false,stack:undefined}
       ];
     } else {
       const metricData={
@@ -1646,7 +1662,7 @@ function buildChart(){
       }[chartMetric];
       datasets=[
         {label:metricData.label,data:YEARS.map(y=>metricData.fn(DATA[y])),backgroundColor:metricData.color,borderRadius:3},
-        {label:'目標 3億',data:YEARS.map(()=>GOAL),type:'line',borderColor:'rgba(0,0,0,.35)',borderDash:[6,3],borderWidth:2,pointRadius:0,fill:false},
+        {label:'目標 3億',data:YEARS.map(()=>GOAL),type:'line',borderColor:'rgba(180,120,0,.65)',borderDash:[6,3],borderWidth:2,pointRadius:0,fill:false},
       ];
     }
     // afterDraw plugin：在選取年份的長條正上方畫小資訊框
@@ -1680,15 +1696,15 @@ function buildChart(){
           const by=chart.chartArea.top-bh-6;
           // 畫框
           ctx.save();
-          ctx.fillStyle='rgba(255,255,255,0.97)';
-          ctx.strokeStyle='#aaaaaa';
+          ctx.fillStyle='rgba(253,248,232,0.97)';
+          ctx.strokeStyle='#c9a800';
           ctx.lineWidth=1.5;
           ctx.beginPath();
           ctx.roundRect(bx,by,bw,bh,6);
           ctx.fill(); ctx.stroke();
           // 畫文字
           lines.forEach((line,i)=>{
-            ctx.fillStyle= i===0?'#111111': i===lines.length-1?'#111111':'#555555';
+            ctx.fillStyle= i===0?'#3d2e00': i===lines.length-1?'#3d2e00':'#6a5a30';
             ctx.font= (i===0||i===lines.length-1)?'bold 11px Noto Sans TC':'11px Noto Sans TC';
             ctx.textAlign='left';
             ctx.fillText(line, bx+pad, by+pad+i*lineH+lineH*0.75);
@@ -1714,7 +1730,7 @@ function buildChart(){
           }
         }}},
         scales:{
-          x:{ticks:{color:'#555555',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}},grid:{display:false},stacked:chartMetric==='stacked'},
+          x:{ticks:{color:'#4a3c10',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}},grid:{display:false},stacked:chartMetric==='stacked'},
           y:{ticks:{...tickStyle,callback:v=>f(v)},grid:gridStyle,stacked:chartMetric==='stacked'}
         },
         onClick:(_,els)=>{
@@ -1770,7 +1786,7 @@ function buildChart(){
             }}
           },
           scales:{
-            x:{ticks:{color:'#555555',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"},maxRotation:0},grid:{display:false},stacked:true},
+            x:{ticks:{color:'#4a3c10',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"},maxRotation:0},grid:{display:false},stacked:true},
             y:{ticks:{...tickStyle,callback:v=>f(v)},grid:gridStyle,stacked:true}
           }}});
     } else {
@@ -1797,7 +1813,7 @@ function buildChart(){
             }
           }}},
           scales:{
-            x:{ticks:{color:'#555555',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}},grid:{display:false}},
+            x:{ticks:{color:'#4a3c10',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}},grid:{display:false}},
             y:{ticks:{...tickStyle,callback:v=>f(v)},grid:gridStyle,beginAtZero:true}
           }}});
     }
@@ -1809,10 +1825,10 @@ function buildChart(){
 
 // Column accent colours for each IOII step
 const IOII_COLORS={
-  input: {dot:'#555555', head:'#555555', border:'#d0d0d0'},
-  output:{dot:'#333333', head:'#333333', border:'#c0c0c0'},
-  outcome:{dot:'#2d6a2d', head:'#2d6a2d', border:'#b0ccb0'},
-  impact:{dot:'#1a1a1a', head:'#1a1a1a', border:'#aaaaaa'},
+  input: {dot:'#5a7888', head:'#5a7888', border:'#c0d0d8'},
+  output:{dot:'#8a7030', head:'#8a7030', border:'#d4c080'},
+  outcome:{dot:'#4a7a58', head:'#4a7a58', border:'#b0d0b8'},
+  impact:{dot:'#c9a800', head:'#c9a800', border:'#e8d020'},
 };
 const IOII_STEPS=[
   {key:'input',  label:'Input',   sub:'投入'},
@@ -1961,66 +1977,110 @@ function renderItemTable(d,prefix){
   const maxA=Math.max(...items.map(it=>d.is26?(it.e||0)+(it.c||0)+(it.p||0):(it.a||0)),1);
 
   if(d.is26){
-    const rows=items.map((it,i)=>{
-      const tot=(it.e||0)+(it.c||0)+(it.p||0);
+    // ══ 2026：A/B/C三欄 + 多選篩選 + 合計表 ══
+    let s_te=0,s_fe=0,s_tfe=0,s_tc=0,s_fc=0,s_tfc=0,s_tp=0,s_fp=0,s_tfp=0;
+    items.forEach(function(it){
+      const ev=it.e||0,cv=it.c||0,pv=it.p||0;
+      if(it.u==='t'){s_te+=ev;s_tc+=cv;s_tp+=pv;}
+      else if(it.u==='f'){s_fe+=ev;s_fc+=cv;s_fp+=pv;}
+      else if(it.u==='tf'){s_tfe+=ev;s_tfc+=cv;s_tfp+=pv;}
+    });
+    const mkSumRow=(label,e,c,p,bold,last)=>{
+      const tot=e+c+p;
+      const bg=bold?'background:#f0f0f0;':'';
+      const fw=bold?'font-weight:700;':'';
+      return `<tr style="${bg}border-bottom:${last?'none':'0.5px solid var(--border)'}">
+        <td style="padding:5px 9px;${fw}color:var(--ink2);font-size:12px">${label}</td>
+        <td data-col="e" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${e?ff(e):'—'}</td>
+        <td data-col="c" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--cd)">${c?ff(c):'—'}</td>
+        <td data-col="p" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--cp)">${p?ff(p):'—'}</td>
+        <td style="padding:5px 9px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:12px">${ff(tot)}</td>
+      </tr>`;
+    };
+    const summaryHTML=`<div style="margin-top:10px;border:1px solid var(--border2);border-radius:var(--rad);overflow:hidden">
+      <table style="width:100%;border-collapse:collapse;font-family:'Noto Sans TC',sans-serif">
+        <thead><tr style="background:var(--hover)">
+          <th style="padding:5px 9px;text-align:left;font-size:11px;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border)">匯總</th>
+          <th data-col="e" style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--ce);border-bottom:1px solid var(--border)">A 已執行</th>
+          <th data-col="c" style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--cd);border-bottom:1px solid var(--border)">B 確定</th>
+          <th data-col="p" style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--cp);border-bottom:1px solid var(--border)">C 待討論</th>
+          <th style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--border)">合計</th>
+        </tr></thead>
+        <tbody>
+          ${mkSumRow('① 公益信託',s_te,s_tc,s_tp,false,false)}
+          ${mkSumRow('② 基金會',s_fe,s_fc,s_fp,false,false)}
+          ${mkSumRow('③ 公捐基',s_tfe,s_tfc,s_tfp,false,false)}
+          ${mkSumRow('①＋③ 信託總',s_te+s_tfe,s_tc+s_tfc,s_tp+s_tfp,true,false)}
+          ${mkSumRow('①＋② 實際總',s_te+s_fe,s_tc+s_fc,s_tp+s_fp,true,true)}
+        </tbody>
+      </table>
+    </div>`;
+    const pid26='uf-'+prefix;
+    const compactRows=items.map((it,i)=>{
       const idx=`${prefix}_${i}`;
-      // 字母標籤 + 精確金額，各自一行，靠右對齊
-      const tagLines=[
-        it.e>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
-          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.e)}</span>
-          <span class="st-tag" style="background:#f2ede6;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">A</span>
-        </div>`:'',
-        it.c>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
-          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.c)}</span>
-          <span class="st-tag" style="background:#ebe5dc;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">B</span>
-        </div>`:'',
-        it.p>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
-          <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.p)}</span>
-          <span class="st-tag" style="background:#e2dbd0;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">C</span>
-        </div>`:'',
-        it.impact?`<div style="text-align:right;margin-top:4px">${impBtn(it.impact,idx)}</div>`:'',
-      ].filter(Boolean).join('');
-      const pct=it.e>0&&tot>0?Math.round(it.e/tot*100):0;
-      return `<tr class="mrow">
-        <td><span>${it.n}</span>${it.memo?`<div class="item-memo">${it.memo}</div>`:''}</td>
-        <td class="c"><span class="upill" style="background:${UB[it.u]};color:${UT[it.u]}">${UL[it.u]}</span></td>
-        <td style="vertical-align:top;padding:6px 8px 6px 8px;width:200px;min-width:200px">${tagLines||'<span style="font-size:10px;color:#a08820;float:right">承諾中</span>'}</td>
-        <td class="r" style="font-weight:600;font-variant-numeric:tabular-nums;font-family:'Noto Sans TC',sans-serif">${ff(tot)||'—'}</td>
-        <td class="r" style="font-size:11px;color:var(--ink3)">${pct>0?`<span style="font-variant-numeric:tabular-nums;font-family:'Noto Sans TC',sans-serif;font-weight:500">${pct}%</span>`:''}</td>
+      const tot=(it.e||0)+(it.c||0)+(it.p||0);
+      const abcFlag=(it.e?'e':'')+(it.c?'c':'')+(it.p?'p':'');
+      const pill=`<span style="font-size:10px;padding:1px 5px;border-radius:3px;background:${UB[it.u]};color:${UT[it.u]};white-space:nowrap">${UL[it.u].replace('透過基金會執行','基金會').replace('公益信託直接捐款','信託')}</span>`;
+      const impB=it.impact?`<button class="imp-btn" id="impbtn-${idx}" onclick="toggleImpact('${it.impact}','${idx}')" style="padding:1px 6px;font-size:10px;margin-left:3px">成效</button>`:'';
+      const tooltip=it.memo?`title="${it.memo}"`:'';
+      return `<tr class="mrow" data-unit="${it.u}" data-abc="${abcFlag}" style="border-bottom:0.5px solid var(--border)">
+        <td style="padding:3px 8px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px" ${tooltip}>${it.n}${impB}</td>
+        <td style="padding:3px 5px;text-align:center;white-space:nowrap">${pill}</td>
+        <td data-col="e" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${it.e?ff(it.e):''}</td>
+        <td data-col="c" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--cd)">${it.c?ff(it.c):''}</td>
+        <td data-col="p" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--cp)">${it.p?ff(it.p):''}</td>
+        <td style="padding:3px 8px;text-align:right;font-weight:600;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap">${ff(tot)}</td>
       </tr>`;
     }).join('');
-    return `<div class="itbl-wrap"><table class="itbl"><thead><tr>
-      <th>項目</th>
-      <th class="c">出帳<br><span style="font-size:10px;font-weight:400;color:var(--ink3)">①②③來源</span></th>
-      <th class="r">狀態 / 成效<br><span style="font-size:10px;font-weight:400;color:var(--ink3)">A已執行　B確定　C待討論</span></th>
-      <th class="r">小計</th>
-      <th class="r">完成率</th>
-    </tr></thead><tbody>${rows}</tbody></table></div>`;
+    return `<div style="font-size:11px;color:var(--ink3);margin-bottom:8px;display:flex;align-items:center;flex-wrap:wrap;gap:5px">
+      <span style="font-weight:500;white-space:nowrap;color:var(--ink2)">出帳：</span>
+      <button class="ufbtn on" data-u="t" onclick="ufToggle('${pid26}','t')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">① 信託</button>
+      <button class="ufbtn on" data-u="f" onclick="ufToggle('${pid26}','f')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">② 基金會</button>
+      <button class="ufbtn on" data-u="tf" onclick="ufToggle('${pid26}','tf')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">③ 公捐基</button>
+      <span style="color:#cccccc;margin:0 4px;font-size:14px">|</span>
+      <span style="font-weight:500;white-space:nowrap;color:var(--ink2)">進度：</span>
+      <button class="ufbtn on" data-abc="e" onclick="abcToggle('${pid26}','e')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">A 已執行</button>
+      <button class="ufbtn on" data-abc="c" onclick="abcToggle('${pid26}','c')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">B 確定</button>
+      <button class="ufbtn on" data-abc="p" onclick="abcToggle('${pid26}','p')" style="padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;letter-spacing:.3px">C 待討論</button>
+      <span style="margin-left:4px;color:var(--ink4);font-style:italic;white-space:nowrap">（hover 查看備注）</span>
+    </div>
+    <div class="itbl-wrap" id="tbl-${pid26}"><table class="itbl" style="width:100%;table-layout:fixed">
+      <colgroup><col style="width:30%"><col style="width:10%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
+      <thead><tr style="background:var(--hover)">
+        <th style="padding:4px 8px;font-size:11px;text-align:left;border-bottom:1px solid var(--border)">項目</th>
+        <th style="padding:4px 5px;font-size:11px;text-align:center;border-bottom:1px solid var(--border)">出帳</th>
+        <th data-col="e" style="padding:4px 6px;font-size:11px;text-align:right;color:var(--ce);border-bottom:1px solid var(--border)">A 已執行</th>
+        <th data-col="c" style="padding:4px 6px;font-size:11px;text-align:right;color:var(--cd);border-bottom:1px solid var(--border)">B 確定</th>
+        <th data-col="p" style="padding:4px 6px;font-size:11px;text-align:right;color:var(--cp);border-bottom:1px solid var(--border)">C 待討論</th>
+        <th style="padding:4px 8px;font-size:11px;text-align:right;border-bottom:1px solid var(--border)">小計</th>
+      </tr></thead>
+      <tbody>${compactRows}</tbody>
+    </table></div>
+    ${summaryHTML}`;
+
   } else {
+    // ══ 歷年：單欄金額 ══
     const rows=items.map((it,i)=>{
       const idx=`${prefix}_${i}`;
-      return `<tr class="mrow">
+      return `<tr class="mrow" data-unit="${it.u}">
         <td><span>${it.n}</span>${it.memo?`<div class="item-memo">${it.memo}</div>`:''}</td>
         <td class="c"><span class="upill" style="background:${UB[it.u]};color:${UT[it.u]}">${UL[it.u]}</span></td>
         <td class="r">${it.impact?impBtn(it.impact,idx):''}</td>
         <td class="r">${ff(it.a)}</td>
       </tr>`;
     }).join('');
-    return `<div class="itbl-wrap"><table class="itbl"><thead><tr><th>項目</th><th class="c">出帳</th><th class="r">成效</th><th class="r">金額</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    const pidhist='uf-'+prefix;
+    return `<div class="unit-filter" id="${pidhist}">
+      <span class="unit-filter-label">出帳篩選</span>
+      <button class="ufbtn on" data-u="all" onclick="ufFilter('${pidhist}','all')"><span class="uf-dot" style="background:#888"></span>全部</button>
+      <button class="ufbtn" data-u="t" onclick="ufFilter('${pidhist}','t')"><span class="uf-dot" style="background:#333"></span>公益信託</button>
+      <button class="ufbtn" data-u="f" onclick="ufFilter('${pidhist}','f')"><span class="uf-dot" style="background:#666"></span>基金會</button>
+      <button class="ufbtn" data-u="tf" onclick="ufFilter('${pidhist}','tf')"><span class="uf-dot" style="background:#999"></span>公捐基</button>
+    </div>
+    <div class="itbl-wrap" id="tbl-${pidhist}"><table class="itbl"><thead><tr><th>項目</th><th class="c">出帳</th><th class="r">成效</th><th class="r">金額</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 }
 
-// ═══════════════════════════════════════════════════════
-//  MATRIX TABLE  (cross-year horizontal view)
-// ═══════════════════════════════════════════════════════
-// Row definitions (row label, key into DATA, description)
-const MROWS=[
-  {id:'t',   label:'①公益信託直接捐款',   cls:'mrow',    key:'t'},
-  {id:'f',   label:'②透過基金會執行', cls:'mrow',    key:'f'},
-  {id:'tf',  label:'③公捐基',         cls:'mrow',    key:'tf'},
-  {id:'ttf', label:'①＋③ 公益信託總支出',cls:'msubtot',computed:(d)=>d.t+d.tf},
-  {id:'ttf2',label:'①＋② 實際總支出', cls:'mgtot',  computed:(d)=>d.t+d.f},
-];
 
 function getVal(row,yr){
   const d=DATA[yr];
@@ -2028,6 +2088,14 @@ function getVal(row,yr){
   const v=d[row.key]||0;
   return v;
 }
+
+const MROWS=[
+  {id:'t',   label:'①公益信託直接捐款',   cls:'mrow',    key:'t'},
+  {id:'f',   label:'②透過基金會執行', cls:'mrow',    key:'f'},
+  {id:'tf',  label:'③公捐基',         cls:'mrow',    key:'tf'},
+  {id:'ttf', label:'①＋③ 公益信託總支出',cls:'msubtot',computed:(d)=>d.t+d.tf},
+  {id:'ttf2',label:'①＋② 實際總支出', cls:'mgtot',  computed:(d)=>d.t+d.f},
+];
 
 function buildMatrix(){
   const el=document.getElementById('section-matrix');
@@ -2040,7 +2108,7 @@ function buildMatrix(){
     hdrCols+=`<th class="yc"><div class="mh-yr ${isEst?'est':''} ${isSel?'on':''}"
       onclick="toggleYrDetail(${yr})"
       title="${isEst?'預估：A已執行 B確定發生 C待討論':''}${isSel?' — 再按取消':' — 點擊展開明細'}"
-      >${yr}${isEst?' 預':''}</div>${isEst?`<div style="font-size:9px;color:#555555;text-align:center;line-height:1.3;margin-top:2px">A+B+C<br>全年預估</div>`:''}</th>`;
+      >${yr}${isEst?' 預':''}</div>${isEst?`<div style="font-size:9px;color:#9c6228;text-align:center;line-height:1.3;margin-top:2px">A+B+C<br>全年預估</div>`:''}</th>`;
   });
   // add history total col if showing all
   const showTotal=true;
@@ -2056,7 +2124,7 @@ function buildMatrix(){
       const isEst=DATA[yr].is26;
       const isSel2=selectedYrs.has(yr);
       const valCls=v===0?'zero':isEst?'est-val':'pos';
-      const selStyle=isSel2?'font-weight:700;background:rgba(0,0,0,.04);':'';
+      const selStyle=isSel2?'font-weight:700;background:rgba(201,168,0,.08);':'';
       // 2026 加 tooltip 說明 A/B/C 拆分
       let tipAttr='';
       if(isEst&&v>0){
@@ -2347,6 +2415,96 @@ function render(){
   buildMatrix();buildColumns();
   updateLayout();
 }
+
+// ── 出帳 + ABC 多選篩選函式 ──
+var _ufState = {};
+
+function ufGetState(id){
+  if(!_ufState[id]) _ufState[id]={units:new Set(['t','f','tf']),abcs:new Set(['e','c','p'])};
+  return _ufState[id];
+}
+
+function ufApply(filterId){
+  var s=ufGetState(filterId);
+  var tbl=document.getElementById('tbl-'+filterId);
+  if(!tbl) return;
+
+  // ── 欄顯示：控制 A/B/C 各欄是否顯示（用 data-col 屬性選取）──
+  ['e','c','p'].forEach(function(abc){
+    var show=s.abcs.has(abc);
+    tbl.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
+      el.style.display=show?'':'none';
+    });
+  });
+  // 合計表也一起控制
+  var sumTbl=tbl.parentElement&&tbl.parentElement.nextElementSibling;
+  if(sumTbl) ['e','c','p'].forEach(function(abc){
+    var show=s.abcs.has(abc);
+    sumTbl.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
+      el.style.display=show?'':'none';
+    });
+  });
+
+  // ── 列顯示：出帳 + 進度篩選（有任一符合進度即顯示）──
+  tbl.querySelectorAll('tr[data-unit]').forEach(function(tr){
+    var unitOk=s.units.has(tr.dataset.unit);
+    var abc=tr.dataset.abc||'';
+    var abcOk=(s.abcs.has('e')&&abc.includes('e'))||
+               (s.abcs.has('c')&&abc.includes('c'))||
+               (s.abcs.has('p')&&abc.includes('p'));
+    tr.style.display=(unitOk&&abcOk)?'':'none';
+  });
+}
+
+function ufBtnStyle(btn, isOn){
+  if(isOn){
+    btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;text-decoration:none;opacity:1;letter-spacing:.3px';
+  } else {
+    btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#f5f5f5;color:#bbbbbb;border:1.5px dashed #cccccc;font-weight:400;text-decoration:line-through;opacity:0.75;letter-spacing:.3px';
+  }
+}
+
+function ufToggle(filterId,unit){
+  var s=ufGetState(filterId);
+  if(s.units.has(unit)){if(s.units.size>1)s.units.delete(unit);}
+  else{s.units.add(unit);}
+  var bar=document.getElementById(filterId);
+  if(bar) bar.querySelectorAll('[data-u]').forEach(function(b){
+    var isOn=s.units.has(b.dataset.u);
+    b.classList.toggle('on',isOn);
+    ufBtnStyle(b,isOn);
+  });
+  ufApply(filterId);
+}
+
+function abcToggle(filterId,abc){
+  var s=ufGetState(filterId);
+  if(s.abcs.has(abc)){if(s.abcs.size>1)s.abcs.delete(abc);}
+  else{s.abcs.add(abc);}
+  var bar=document.getElementById(filterId);
+  if(bar) bar.querySelectorAll('[data-abc]').forEach(function(b){
+    var isOn=s.abcs.has(b.dataset.abc);
+    b.classList.toggle('on',isOn);
+    ufBtnStyle(b,isOn);
+  });
+  ufApply(filterId);
+}
+
+function ufFilter(filterId,unit){
+  var tbl=document.getElementById('tbl-'+filterId);
+  if(!tbl) return;
+  var bar=document.getElementById(filterId);
+  if(bar) bar.querySelectorAll('.ufbtn[data-u]').forEach(function(b){
+    b.classList.toggle('on',b.dataset.u===unit);
+  });
+  tbl.querySelectorAll('tr[data-unit]').forEach(function(tr){
+    tr.style.display=(unit==='all'||tr.dataset.unit===unit)?'':'none';
+  });
+}
+
+window.ufFilter=ufFilter;
+window.ufToggle=ufToggle;
+window.abcToggle=abcToggle;
 
 render();
 setTimeout(()=>{ if(typeof loadSummaryFromSheets==='function') loadSummaryFromSheets(); },0); // 從 Sheets 自動更新年度數字
