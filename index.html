@@ -2114,28 +2114,33 @@ function renderItemTable(d,prefix){
 
       return hdrRow + itemRows;
     }).join('');
-        return `<table id="${pid26}" style="width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:4px">
+        return `<table id="${pid26}" style="width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:4px;border:1px solid var(--border);border-radius:var(--rad);overflow:hidden">
       <colgroup><col style="width:24px"><col style="width:auto"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
-      <tr>
-        <td style="padding:0"></td>
-        <td style="padding:4px 8px;font-size:11px;white-space:nowrap">
+      <tr style="border-bottom:0.5px solid var(--border)">
+        <td style="padding:0;border-right:1px solid var(--border)"></td>
+        <td style="padding:3px 8px;font-size:11px">
           <span style="color:var(--ink3);font-weight:500">出帳：</span>
           <button class="ufbtn on" data-u="t" onclick="ufToggle('${pid26}','t')">① 信託</button>
           <button class="ufbtn on" data-u="f" onclick="ufToggle('${pid26}','f')">② 基金會</button>
           <button class="ufbtn on" data-u="tf" onclick="ufToggle('${pid26}','tf')">③ 公捐基</button>
-          <span style="color:#cccccc;margin:0 6px">|</span>
+        </td>
+        <td colspan="4" style="padding:3px 8px;font-size:10px;color:var(--ink4);text-align:right;font-style:italic">（hover 查看備注）</td>
+      </tr>
+      <tr>
+        <td style="padding:0;border-right:1px solid var(--border)"></td>
+        <td style="padding:3px 8px;font-size:11px">
           <span style="color:var(--ink3);font-weight:500">進度：</span>
         </td>
-        <td style="padding:4px 6px;text-align:center">
-          <button class="ufbtn on" data-abc="e" onclick="abcToggle('${pid26}','e')" style="width:100%">A 已執行</button>
+        <td style="padding:3px 6px;text-align:center">
+          <button class="ufbtn on" data-abc="e" onclick="abcToggle('${pid26}','e')" style="width:100%;box-sizing:border-box">A 已執行</button>
         </td>
-        <td style="padding:4px 6px;text-align:center">
-          <button class="ufbtn on" data-abc="c" onclick="abcToggle('${pid26}','c')" style="width:100%">B 確定</button>
+        <td style="padding:3px 6px;text-align:center">
+          <button class="ufbtn on" data-abc="c" onclick="abcToggle('${pid26}','c')" style="width:100%;box-sizing:border-box">B 確定</button>
         </td>
-        <td style="padding:4px 6px;text-align:center">
-          <button class="ufbtn on" data-abc="p" onclick="abcToggle('${pid26}','p')" style="width:100%">C 待討論</button>
+        <td style="padding:3px 6px;text-align:center">
+          <button class="ufbtn on" data-abc="p" onclick="abcToggle('${pid26}','p')" style="width:100%;box-sizing:border-box">C 待討論</button>
         </td>
-        <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--ink4);font-style:italic">小計</td>
+        <td style="padding:3px 8px;text-align:center;font-size:10px;color:var(--ink3)">小計</td>
       </tr>
     </table>
     <div class="itbl-wrap" id="tbl-${pid26}"><table class="itbl" style="width:100%;table-layout:fixed">
