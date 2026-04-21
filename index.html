@@ -481,7 +481,7 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 
 /* ── SHEETS 帳務資料 ── */
 #sheets-overlay{position:fixed;inset:0;background:rgba(20,15,0,.5);z-index:900;display:none;align-items:flex-start;justify-content:center;padding-top:56px}
-#sheets-panel{background:#ffffff;border-radius:10px;width:min(1200px,97vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #e0e0e0}
+#sheets-panel{background:#ffffff;border-radius:10px;width:min(1560px,97vw);height:92vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #e0e0e0}
 #sheets-head{padding:12px 18px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;background:#ffffff}
 #sheets-title{font-size:14px;font-weight:600;color:#111111;display:flex;align-items:center;gap:8px}
 #sheets-status{font-size:11px;color:#888888;font-weight:400;margin-left:6px}
@@ -496,10 +496,10 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 .sheets-tbl{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto}
 .sheets-tbl thead{background:#eeeeee;position:sticky;top:0;z-index:5}
 .sheets-tbl thead th{padding:6px 8px;text-align:left;font-size:11px;font-weight:600;color:#111111;border-bottom:1px solid #cccccc;white-space:nowrap}
-.sheets-tbl thead th.r{text-align:right;width:90px}
+.sheets-tbl thead th.r{text-align:right;min-width:85px;white-space:nowrap}
 .sheets-tbl tbody td{padding:5px 10px;border-bottom:0.5px solid #eeeeee;vertical-align:top;white-space:normal;word-break:break-word;overflow-wrap:anywhere}
 .sheets-tbl tbody tr:hover td{background:#f5f5f5}
-.sheets-tbl td.amt{text-align:right;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+.sheets-tbl td.amt{text-align:right;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap;min-width:85px}
 .sheets-tbl td.yrc{text-align:center;color:#555555;font-family:'Noto Sans TC',sans-serif;width:52px;min-width:52px}
 .sheets-tbl td.tyc{text-align:center;width:68px;min-width:68px}
 .sheets-pill{font-size:10px;padding:1px 6px;border-radius:3px;white-space:nowrap;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -3234,6 +3234,14 @@ function sheetsRender(){
     }
     return true;
   });
+  // 過濾掉空行（受贈單位和金額都空的列）
+  if(NAME_KEY||AMT_KEY){
+    _sheetsFiltered=_sheetsFiltered.filter(function(r){
+      var hasName=NAME_KEY&&(r[NAME_KEY]||'').trim();
+      var hasAmt=AMT_KEY&&(r[AMT_KEY]||'').trim();
+      return hasName||hasAmt;
+    });
+  }
   // 套用欄篩選（key 是欄名字串）
   if(Object.keys(_colFilter.active).length){
     _sheetsFiltered=_sheetsFiltered.filter(function(r){
@@ -3287,9 +3295,15 @@ function sheetsRender(){
   var isYr=function(k){return/^年/.test(k);};
   var isType=function(k){return k==='類型';};
   // ── 欄寬定義（px，未定義者彈性分配）──
-  var CW={'年(公)':40,'年(基)':40,'受贈戶名_估價單台照':150,'受贈戶名':150,'儀表板顯示名稱':200,'已捐金額':90,'款項狀況':60,'類型':120};
+  var CW={'年(公)':38,'年(基)':38}; // 欄寬由動態欄名在下方設定
           
-  var colgroup='<colgroup><col style="width:36px;min-width:36px">'+cols.map(function(k){
+  // 動態欄寬（用偵測到的欄名作 key）
+  if(NAME_KEY) CW[NAME_KEY]=120;
+  if(DISP_KEY) CW[DISP_KEY]=180;
+  if(AMT_KEY)  CW[AMT_KEY]=90;
+  if(STAT_KEY) CW[STAT_KEY]=58;
+  if(TYPE_KEY) CW[TYPE_KEY]=115;
+    var colgroup='<colgroup><col style="width:36px;min-width:36px">'+cols.map(function(k){
     var w=CW[k];
     if(!w){ if(isAmt(k)) w=90; else if(isYr(k)) w=40; }
     return w?'<col style="width:'+w+'px;min-width:'+w+'px">':'<col>';
