@@ -2955,7 +2955,11 @@ function sheetsColFilter(evt, thEl){
   var k = thEl.dataset.colkey;
   if(!k || !_sheetsData.length) return;
   var vals = {};
-  _sheetsData.forEach(function(r){ var v=(r[k]||'').trim(); if(v) vals[v]=1; });
+  _sheetsData.forEach(function(r){
+    var v=(r[k]||'').trim();
+    // 過濾 CSV 解析錯誤產生的異常值（以逗號開頭、或超過100字）
+    if(v && v[0]!=',' && v.length<=100) vals[v]=1;
+  });
   var unique = Object.keys(vals).sort();
   if(!unique.length) return;
   var active = _colFilter.active[k] || null;
@@ -3215,12 +3219,7 @@ function sheetsBuildYrFilter(){
 
 function sheetsSetYr(yr,btn){
   _sheetsSelYr=yr;
-  document.querySelectorAll('.sheets-yr-btn').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on');
-  sheetsRender();
-}
-
-function sheetsRender(){
+  document.querySelectorAll('.sheets-yr-btn').forEach(function(function sheetsRender(){
   var q=(document.getElementById('sheets-search').value||'').toLowerCase().trim();
   var terms=q?q.split(' ').filter(function(t){return t.length>0;}):[]; 
   _sheetsFiltered=_sheetsData.filter(function(r){
@@ -3265,7 +3264,7 @@ function sheetsRender(){
   var AMT_KEY  = allKeys.find(function(k){ return /已捐金額/.test(k); }) || '';
   var STAT_KEY = allKeys.find(function(k){ return /款項狀況/.test(k); }) || '';
   var TYPE_KEY = allKeys.find(function(k){ return k==='類型'; }) || '';
-  var DISP_KEY = allKeys.find(function(k){ return /儀表板顯示名稱/.test(k); }) || '';
+  var DISP_KEY = allKeys.find(function(k){ return /儀表板.?顯示|顯示名稱/.test(k); }) || '';
   // 建立優先排序（動態欄名）
   var priorityKeys = ['年(公)','年(基)',NAME_KEY,DISP_KEY,AMT_KEY,STAT_KEY,TYPE_KEY,'專案名稱','用途/計劃名'].filter(Boolean);
   var seen = {};
@@ -3283,6 +3282,8 @@ function sheetsRender(){
   if(DISP_KEY) dynLabel[DISP_KEY] = '顯示名稱';
   _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
   var label=Object.assign({'年(公)':'年度','年(基)':'年(基)','專案名稱':'專案','用途/計劃名':'用途'},dynLabel);
+  // 確保所有顯示欄都有 label（用欄名縮寫避免空白標題）
+  cols.forEach(function(k){ if(!label[k]) label[k]=k.length>8?k.slice(0,7)+'…':k; });
   var isAmt=function(k){
     // 欄名含金/額/元/amount，或值是數字格式
     if(/金|額|元|amount/i.test(k)) return true;
@@ -3341,16 +3342,21 @@ function sheetsRender(){
     return '<tr>'+rowRef+cols.map(function(k){
       var v=r[k]||'';
       if(isNameCol(k)) v=maskName(v);
+      if(isNameCol(k)){
+        return '<td style="max-width:140px;word-break:break-all;text-align:left">'+v+'</td>';
+      }
       if(isAmt(k)&&v){
         var n=parseFloat(v.replace(/,/g,''));
         return '<td class="amt">'+(isNaN(n)?v:n.toLocaleString())+'</td>';
       }
       if(isYr(k)) return '<td class="yrc">'+v+'</td>';
       if(isType(k)){
-        var bg=v.indexOf('信託')>=0?'#e8e8e8':v.indexOf('基金')>=0?'#dddddd':'#f0f0f0';
-        var fg=v.indexOf('信託')>=0?'#222222':v.indexOf('基金')>=0?'#333333':'#666666';
         if(!v) return '<td></td>';
-        return '<td class="tyc"><span class="sheets-pill" style="background:'+bg+';color:'+fg+';max-width:110px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle" title="'+v.replace(/"/g,"&quot;")+'">'+v+'</span></td>';
+        // 過濾掉 CSV 解析錯誤的多值（含逗號開頭）
+        var vClean = v[0]===',' ? v.slice(1).split(',')[0].trim() : v;
+        var bg=vClean.indexOf('信託')>=0?'#e8e8e8':vClean.indexOf('基金')>=0?'#dddddd':'#f0f0f0';
+        var fg=vClean.indexOf('信託')>=0?'#222222':vClean.indexOf('基金')>=0?'#333333':'#666666';
+        return '<td class="tyc"><span class="sheets-pill" style="background:'+bg+';color:'+fg+';max-width:110px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle" title="'+v.replace(/"/g,"&quot;")+'">'+vClean+'</span></td>';
       }
       return '<td>'+v+'</td>';
     }).join('')+'</tr>';
@@ -3391,6 +3397,8 @@ function sheetsRender(){
   document.getElementById('sheets-body').innerHTML=
     '<table class="sheets-tbl">'+colgroup+'<thead>'+theadRow+'</thead>'+tsubhead+'<tbody>'+tbody+'</tbody>'+tfoot+'</table>'+
     (_sheetsFiltered.length>500?'<div style="padding:8px;text-align:center;font-size:11px;color:#a08820">顯示前500筆，請用搜尋縮小範圍</div>':'');
+}
+;text-align:center;font-size:11px;color:#a08820">顯示前500筆，請用搜尋縮小範圍</div>':'');
 }
 
 function sheetsExport(){
