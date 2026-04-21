@@ -2938,6 +2938,84 @@ function srchHL(text, terms){
   return s;
 }
 
+// ── 欄篩選浮動面板 ──
+var _colFilter = { col: -1, active: {} }; // active: {colIdx: Set(vals)}
+
+function sheetsColFilter(evt, colIdx){
+  evt.stopPropagation();
+  // 關閉已開的
+  var existing = document.getElementById('col-filter-panel');
+  if(existing){
+    if(parseInt(existing.dataset.col)===colIdx){ existing.remove(); return; }
+    existing.remove();
+  }
+  // 取得該欄所有不重複值
+  var cols = _sheetsFilteredCols;
+  if(!cols) return;
+  var k = cols[colIdx];
+  var vals = {};
+  _sheetsData.forEach(function(r){ var v=(r[k]||'').trim(); if(v) vals[v]=1; });
+  var unique = Object.keys(vals).sort();
+  if(!unique.length) return;
+  var active = _colFilter.active[colIdx] || null; // null = 全選
+  // 建面板
+  var panel = document.createElement('div');
+  panel.id = 'col-filter-panel';
+  panel.dataset.col = colIdx;
+  panel.style.cssText = 'position:fixed;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:10px;z-index:9999;min-width:160px;max-width:260px;max-height:320px;overflow-y:auto;font-family:inherit;font-size:13px';
+  // 定位（靠近點擊的 th）
+  var rect = evt.target.getBoundingClientRect();
+  panel.style.top = (rect.bottom + 4) + 'px';
+  panel.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
+  // 全選/全清按鈕
+  var btnRow = '<div style="display:flex;gap:6px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #eee">'
+    + '<button onclick="sheetsColFilterAll('+colIdx+',true)" style="flex:1;padding:3px;border:1px solid #ddd;border-radius:4px;background:#f8f8f8;cursor:pointer;font-size:11px">全選</button>'
+    + '<button onclick="sheetsColFilterAll('+colIdx+',false)" style="flex:1;padding:3px;border:1px solid #ddd;border-radius:4px;background:#f8f8f8;cursor:pointer;font-size:11px">全清</button>'
+    + '<button onclick="sheetsColFilterApply('+colIdx+')" style="flex:1;padding:3px;border:1px solid #1a1a1a;border-radius:4px;background:#1a1a1a;color:#fff;cursor:pointer;font-size:11px">套用</button>'
+    + '</div>';
+  var items = unique.map(function(v){
+    var checked = (!active || active.has(v)) ? 'checked' : '';
+    var esc_v = v.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    return '<label style="display:flex;align-items:center;gap:6px;padding:3px 0;cursor:pointer">'
+      + '<input type="checkbox" data-val="'+esc_v+'" '+ checked +'> '
+      + '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+esc_v+'">'+v+'</span>'
+      + '</label>';
+  }).join('');
+  panel.innerHTML = btnRow + items;
+  document.body.appendChild(panel);
+  // 點其他地方關閉
+  setTimeout(function(){
+    document.addEventListener('click', function closeFn(){
+      var p = document.getElementById('col-filter-panel');
+      if(p) p.remove();
+      document.removeEventListener('click', closeFn);
+    });
+  }, 50);
+}
+
+function sheetsColFilterAll(colIdx, checked){
+  var panel = document.getElementById('col-filter-panel');
+  if(!panel) return;
+  panel.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked = checked; });
+}
+
+function sheetsColFilterApply(colIdx){
+  var panel = document.getElementById('col-filter-panel');
+  if(!panel) return;
+  var checked = new Set();
+  panel.querySelectorAll('input[type=checkbox]:checked').forEach(function(cb){ checked.add(cb.dataset.val); });
+  var total = panel.querySelectorAll('input[type=checkbox]').length;
+  // 全選時清除篩選
+  if(checked.size === total) delete _colFilter.active[colIdx];
+  else _colFilter.active[colIdx] = checked;
+  panel.remove();
+  sheetsRender();
+}
+
+window.sheetsColFilter = sheetsColFilter;
+window.sheetsColFilterAll = sheetsColFilterAll;
+window.sheetsColFilterApply = sheetsColFilterApply;
+
 var _srchTimer=null;
 function srchDebounce(){
   clearTimeout(_srchTimer);
@@ -3020,6 +3098,7 @@ var _sheetsData=[];
 var _sheetsYrs=[];
 var _sheetsSelYr='all';
 var _sheetsLoaded=false;
+var _sheetsFilteredCols=[];
 var _sheetsFiltered=[];
 
 function sheetsOpen(){
@@ -3138,8 +3217,19 @@ function sheetsRender(){
     }
     return true;
   });
+  // 套用欄篩選
+  if(Object.keys(_colFilter.active).length){
+    _sheetsFiltered=_sheetsFiltered.filter(function(r){
+      return Object.keys(_colFilter.active).every(function(ci){
+        var k=cols[parseInt(ci)];
+        if(!k) return true;
+        var v=(r[k]||'').trim();
+        return _colFilter.active[ci].has(v);
+      });
+    });
+  }
   document.getElementById('sheets-count').textContent=
-    '共 '+_sheetsFiltered.length.toLocaleString()+' 筆'+(q?' (已篩選)':'');
+    '共 '+_sheetsFiltered.length.toLocaleString()+' 筆'+(q||Object.keys(_colFilter.active).length?' (已篩選)':'');
   if(!_sheetsFiltered.length){
     document.getElementById('sheets-body').innerHTML=
       '<div style="padding:24px;text-align:center;color:#a08820;font-size:13px">找不到符合的資料</div>';
@@ -3148,6 +3238,7 @@ function sheetsRender(){
   // 欄位優先順序
   var priority=['年(公)','年(基)','受贈戶名(估價單台照)','受贈戶名','已捐金額','款項狀況','類型','專案名稱','用途/計劃名'];
   var allKeys=Object.keys(_sheetsFiltered[0]);
+  _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
   var cols=[];
   priority.forEach(function(k){if(allKeys.indexOf(k)>=0)cols.push(k);});
   allKeys.forEach(function(k){
@@ -3166,13 +3257,27 @@ function sheetsRender(){
   };
   var isYr=function(k){return/^年/.test(k);};
   var isType=function(k){return k==='類型';};
-  var thead='<tr>'+cols.map(function(k){
-    return '<th class="'+(isAmt(k)?'r':'')+'">'+(label[k]||k)+'</th>';
+  var thead='<tr>'+cols.map(function(k,ki){
+    var lbl=label[k]||k;
+    var cls=isAmt(k)?'r':'';
+    // 欄標題加篩選按鈕（▾）
+    return '<th class="'+cls+'" style="cursor:pointer;user-select:none;white-space:nowrap" onclick="sheetsColFilter(event,'+ki+')">'
+      +lbl+' <span style="font-size:10px;opacity:.5;font-weight:400">▾</span></th>';
   }).join('')+'</tr>';
+  // 個資遮蔽：受贈單位欄若為3個中文字，第2字換O
+  var NAME_KEYS=['受贈戶名(估價單台照)','受贈戶名','受贈單位','單位名稱','姓名'];
+  function maskName(v){
+    // 純3個中文字（允許前後空白）
+    var m=v.trim().match(/^([一-鿿㐀-䶿])([一-鿿㐀-䶿])([一-鿿㐀-䶿])$/);
+    if(m) return m[1]+'O'+m[3];
+    return v;
+  }
+  var isNameCol=function(k){ return NAME_KEYS.indexOf(k)>=0; };
   var show=_sheetsFiltered.slice(0,500);
   var tbody=show.map(function(r){
     return '<tr>'+cols.map(function(k){
       var v=r[k]||'';
+      if(isNameCol(k)) v=maskName(v);
       if(isAmt(k)&&v){
         var n=parseFloat(v.replace(/,/g,''));
         return '<td class="amt">'+(isNaN(n)?v:n.toLocaleString())+'</td>';
