@@ -3219,7 +3219,12 @@ function sheetsBuildYrFilter(){
 
 function sheetsSetYr(yr,btn){
   _sheetsSelYr=yr;
-  document.querySelectorAll('.sheets-yr-btn').forEach(function(function sheetsRender(){
+  document.querySelectorAll('.sheets-yr-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  sheetsRender();
+}
+
+function sheetsRender(){
   var q=(document.getElementById('sheets-search').value||'').toLowerCase().trim();
   var terms=q?q.split(' ').filter(function(t){return t.length>0;}):[]; 
   _sheetsFiltered=_sheetsData.filter(function(r){
@@ -3260,13 +3265,14 @@ function sheetsSetYr(yr,btn){
   // 欄位優先順序
   var allKeys=Object.keys(_sheetsFiltered[0]);
   // 動態偵測受贈單位欄名（不依賴精確欄名）
-  var NAME_KEY = allKeys.find(function(k){ return /受贈戶名|受贈單位/.test(k); }) || '';
-  var AMT_KEY  = allKeys.find(function(k){ return /已捐金額/.test(k); }) || '';
-  var STAT_KEY = allKeys.find(function(k){ return /款項狀況/.test(k); }) || '';
+  // 精準欄名（依 Sheets 第6列確認）
+  var NAME_KEY = allKeys.find(function(k){ return /受贈戶名/.test(k); }) || '';
+  var AMT_KEY  = allKeys.find(function(k){ return k==='已捐金額'; }) || '';
+  var STAT_KEY = allKeys.find(function(k){ return k==='款項狀況'; }) || '';
   var TYPE_KEY = allKeys.find(function(k){ return k==='類型'; }) || '';
-  var DISP_KEY = allKeys.find(function(k){ return /儀表板.?顯示|顯示名稱/.test(k); }) || '';
+  var DISP_KEY = allKeys.find(function(k){ return k==='儀表板顯示名稱'; }) || '';
   // 建立優先排序（動態欄名）
-  var priorityKeys = ['年(公)','年(基)',NAME_KEY,DISP_KEY,AMT_KEY,STAT_KEY,TYPE_KEY,'專案名稱','用途/計劃名'].filter(Boolean);
+  var priorityKeys = ['年(公)','年(基)',NAME_KEY,DISP_KEY,AMT_KEY,STAT_KEY,TYPE_KEY,'成本分類','策略主軸','公益信託計畫書_分類'].filter(Boolean);
   var seen = {};
   var cols = [];
   priorityKeys.forEach(function(k){ if(k&&!seen[k]&&allKeys.indexOf(k)>=0){cols.push(k);seen[k]=1;} });
@@ -3281,7 +3287,7 @@ function sheetsSetYr(yr,btn){
   if(TYPE_KEY) dynLabel[TYPE_KEY] = '出帳';
   if(DISP_KEY) dynLabel[DISP_KEY] = '顯示名稱';
   _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
-  var label=Object.assign({'年(公)':'年度','年(基)':'年(基)','專案名稱':'專案','用途/計劃名':'用途'},dynLabel);
+  var label=Object.assign({'年(公)':'年度','年(基)':'年(基)','成本分類':'成本分類','策略主軸':'策略主軸','公益信託計畫書_分類':'計畫書分類'},dynLabel);
   // 確保所有顯示欄都有 label（用欄名縮寫避免空白標題）
   cols.forEach(function(k){ if(!label[k]) label[k]=k.length>8?k.slice(0,7)+'…':k; });
   var isAmt=function(k){
@@ -3300,10 +3306,11 @@ function sheetsSetYr(yr,btn){
           
   // 動態欄寬（用偵測到的欄名作 key）
   if(NAME_KEY) CW[NAME_KEY]=120;
-  if(DISP_KEY) CW[DISP_KEY]=180;
-  if(AMT_KEY)  CW[AMT_KEY]=90;
-  if(STAT_KEY) CW[STAT_KEY]=58;
-  if(TYPE_KEY) CW[TYPE_KEY]=115;
+  if(DISP_KEY) CW[DISP_KEY]=170;
+  if(AMT_KEY)  CW[AMT_KEY]=88;
+  if(STAT_KEY) CW[STAT_KEY]=56;
+  if(TYPE_KEY) CW[TYPE_KEY]=110;
+  CW['成本分類']=80; CW['策略主軸']=72; CW['公益信託計畫書_分類']=90;
     var colgroup='<colgroup><col style="width:36px;min-width:36px">'+cols.map(function(k){
     var w=CW[k];
     if(!w){ if(isAmt(k)) w=90; else if(isYr(k)) w=40; }
@@ -3322,7 +3329,7 @@ function sheetsSetYr(yr,btn){
     return '<th class="'+cls+'" data-colkey="'+safeK+'" style="cursor:pointer;user-select:none;white-space:nowrap'+extra+'" onclick="sheetsColFilter(event,this)">'+lbl+indicator+'</th>';
   }).join('')+'</tr>';
   // 個資遮蔽：受贈單位欄若為3個中文字，第2字換O
-  var NAME_KEYS=allKeys.filter(function(k){return /受贈戶名|受贈單位|姓名$/.test(k);});
+  var NAME_KEYS=allKeys.filter(function(k){return /受贈戶名/.test(k);});
   function maskName(v){
     // 純3個中文字（允許前後空白）
     var m=v.trim().match(/^([一-鿿㐀-䶿])([一-鿿㐀-䶿])([一-鿿㐀-䶿])$/);
@@ -3397,8 +3404,6 @@ function sheetsSetYr(yr,btn){
   document.getElementById('sheets-body').innerHTML=
     '<table class="sheets-tbl">'+colgroup+'<thead>'+theadRow+'</thead>'+tsubhead+'<tbody>'+tbody+'</tbody>'+tfoot+'</table>'+
     (_sheetsFiltered.length>500?'<div style="padding:8px;text-align:center;font-size:11px;color:#a08820">顯示前500筆，請用搜尋縮小範圍</div>':'');
-}
-;text-align:center;font-size:11px;color:#a08820">顯示前500筆，請用搜尋縮小範圍</div>':'');
 }
 
 function sheetsExport(){
