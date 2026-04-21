@@ -3155,7 +3155,15 @@ function sheetsRender(){
       cols.push(k);
   });
   var label={'年(公)':'年度','年(基)':'年(基)','受贈戶名(估價單台照)':'受贈單位','受贈戶名':'受贈單位','已捐金額':'金額','款項狀況':'狀態','類型':'出帳','專案名稱':'專案','用途/計劃名':'用途'};
-  var isAmt=function(k){return/金額|金/.test(k);};
+  var isAmt=function(k){
+    // 欄名含金/額/元/amount，或值是數字格式
+    if(/金|額|元|amount/i.test(k)) return true;
+    // 也掃值：如果這欄有任何數值格式的資料就算金額欄
+    return _sheetsFiltered.some(function(r){
+      var v=(r[k]||'').replace(/,/g,'').replace(/\s/g,'');
+      return v.length>0 && !isNaN(parseFloat(v)) && parseFloat(v)>1000;
+    });
+  };
   var isYr=function(k){return/^年/.test(k);};
   var isType=function(k){return k==='類型';};
   var thead='<tr>'+cols.map(function(k){
@@ -3191,7 +3199,7 @@ function sheetsRender(){
   var ff=function(n){return n.toLocaleString('en-US');};
   var hasSum=amtKeys.some(function(k){return sumMap[k]>0;});
   var sumHtml='';
-  if(hasSum&&q){
+  if(hasSum){
     sumHtml='<div style="background:#f8f8f8;border:1px solid #e0e0e0;border-radius:8px;padding:12px 16px;margin-bottom:10px;display:flex;flex-wrap:wrap;align-items:center;gap:16px">';
     sumHtml+='<span style="font-size:11px;font-weight:700;color:#888;letter-spacing:.4px;text-transform:uppercase;flex-shrink:0">小計 '+_sheetsFiltered.length.toLocaleString()+' 筆</span>';
     amtKeys.forEach(function(k){
