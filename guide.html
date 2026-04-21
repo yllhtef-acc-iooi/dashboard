@@ -370,6 +370,115 @@ code { font-family:'IBM Plex Mono',monospace; font-size:11px; background:#f0f0f0
     </div>
   </div>
 
+  <!-- Google Sheets 作業注意事項（同事版） -->
+  <div class="sec">
+    <div class="sec-h">整理或新增 Google Sheets 資料時——同事注意事項</div>
+    <p style="font-size:13px;color:var(--ink2);margin-bottom:16px;line-height:1.8">
+      這些是實際整理帳務資料時踩過的坑，不需要懂程式，只要照這些規則填資料，儀表板就能自動讀取正確。
+    </p>
+
+    <!-- 1. 欄名不要亂改 -->
+    <div class="card c-amber" style="background:#fffdf8;margin-bottom:10px">
+      <div class="card-h"><span style="font-size:19px">⚠️</span><span class="lbl l-next">最重要</span><h3>欄名（第6列標題）不要隨意修改</h3></div>
+      <p style="font-size:13px;color:var(--ink2);line-height:1.8">
+        儀表板讀取資料時，靠的是欄名來找到正確的欄位。<strong>欄名改了，儀表板就找不到資料，顯示會出錯。</strong><br>
+        如果真的需要改欄名，必須同時通知維護者更新儀表板程式碼。
+      </p>
+      <div style="background:#fff8f0;border:1px solid var(--aborder);border-radius:6px;padding:10px 14px;margin-top:10px;font-size:13px;color:var(--ink2)">
+        <strong>目前儀表板使用的欄位（第6列）：</strong><br>
+        <div style="display:grid;grid-template-columns:40px 1fr;gap:4px 16px;margin-top:8px;font-size:12px;font-family:'IBM Plex Mono',monospace">
+          <span style="color:var(--amber);font-weight:700">A 欄</span><span>類型（出帳來源，例如：1公益信託直接捐款）</span>
+          <span style="color:var(--amber);font-weight:700">D 欄</span><span>年(公)（民國年，例如：2024）</span>
+          <span style="color:var(--amber);font-weight:700">G 欄</span><span>款項狀況（例如：A已執行、B確定）</span>
+          <span style="color:var(--amber);font-weight:700">J 欄</span><span>受贈戶名_估價單台照（受贈單位名稱）</span>
+          <span style="color:var(--amber);font-weight:700">K 欄</span><span>已捐金額（數字，不需要加逗號）</span>
+          <span style="color:var(--amber);font-weight:700">L 欄</span><span>成本分類</span>
+          <span style="color:var(--amber);font-weight:700">M 欄</span><span>歷年已承諾</span>
+          <span style="color:var(--amber);font-weight:700">N 欄</span><span>歷年捐贈</span>
+          <span style="color:var(--amber);font-weight:700">O 欄</span><span>尚未支付</span>
+          <span style="color:var(--amber);font-weight:700">P 欄</span><span>儀表板顯示名稱（儀表板上看到的項目名稱）</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 儲存格內容含逗號 -->
+    <div class="card c-amber" style="background:#fffdf8;margin-bottom:10px">
+      <div class="card-h"><span style="font-size:19px">📝</span><span class="lbl l-next">填資料時</span><h3>儲存格內容有逗號，要用英文雙引號包起來</h3></div>
+      <p style="font-size:13px;color:var(--ink2);line-height:1.8">
+        儀表板從 Sheets 讀取資料時，用逗號來分隔欄位。如果某個儲存格的內容本身就有逗號（例如「1公益信託計畫書,分類」），資料就會被切錯，造成欄位對應跑掉。
+      </p>
+      <div style="background:#fff8f0;border:1px solid var(--aborder);border-radius:6px;padding:10px 14px;margin-top:10px;font-size:13px">
+        <div style="color:#c05050;margin-bottom:6px">❌ 有問題的填法（A欄「類型」出現逗號）：</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2)">1公益信託計畫書,分類,媒體識讀</div>
+        <div style="color:#2d6a2d;margin:10px 0 6px">✓ 正確填法（直接在 Sheets 儲存格正常輸入，不要手動加逗號）：</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2)">1公益信託計畫書</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:8px">若一筆資料有多個分類，建議拆成兩列分別填寫，而非用逗號隔開。</div>
+      </div>
+    </div>
+
+    <!-- 3. 資料從第7列開始 -->
+    <div class="card c-amber" style="background:#fffdf8;margin-bottom:10px">
+      <div class="card-h"><span style="font-size:19px">📋</span><span class="lbl l-next">填資料時</span><h3>第1–6列是說明區，資料從第7列開始填</h3></div>
+      <p style="font-size:13px;color:var(--ink2);line-height:1.8">
+        儀表板自動把第6列當成欄名列（標題），第7列以後才是真正的資料。<br>
+        <strong>不要在第1–6列插入新的資料列。</strong>新增一筆捐贈，請在現有資料的最後一列後面繼續往下填。
+      </p>
+    </div>
+
+    <!-- 4. P欄顯示名稱 -->
+    <div class="card c-amber" style="background:#fffdf8;margin-bottom:10px">
+      <div class="card-h"><span style="font-size:19px">✏️</span><span class="lbl l-next">新增捐贈時</span><h3>P 欄「儀表板顯示名稱」一定要填</h3></div>
+      <p style="font-size:13px;color:var(--ink2);line-height:1.8">
+        這個欄位是儀表板的項目名稱，也是搜尋時比對的主要文字。<strong>空白就不會在儀表板顯示。</strong>
+      </p>
+      <div style="background:#fff8f0;border:1px solid var(--aborder);border-radius:6px;padding:10px 14px;margin-top:10px;font-size:13px;color:var(--ink2)">
+        <strong>建議命名格式：「類別－細項說明年度」</strong><br>
+        <div style="margin-top:6px;font-size:12px;font-family:'IBM Plex Mono',monospace;line-height:2">
+          榮總醫療人才培育2026<br>
+          消防急救教育－自動心肺復甦機2台<br>
+          ATCC 競賽與落實－心路基金會
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 共用設定 -->
+    <div class="card c-green" style="margin-bottom:10px">
+      <div class="card-h"><span style="font-size:19px">🔓</span><span class="lbl l-done">已完成</span><h3>Sheets 已設為「知道連結的任何人可檢視」</h3></div>
+      <p style="font-size:13px;color:var(--ink2);line-height:1.8">
+        儀表板能自動讀取 Sheets 資料，需要 Sheets 維持公開可讀。目前已設定完成，<strong>請不要更改這個共用設定</strong>。<br>
+        若不小心改掉：右上角「共用」→「一般存取」→「知道連結的任何人」→「檢視者」→「完成」。
+      </p>
+    </div>
+
+    <!-- 6. 下一步確認清單 -->
+    <div class="card" style="background:#f8f8f8;border-style:dashed">
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px">📌 下一步：步驟1 自動化前，請先確認</div>
+      <ul style="list-style:none;padding:0;font-size:13px;color:var(--ink2)">
+        <li style="padding:6px 0 6px 24px;position:relative;border-bottom:0.5px solid #e8e8e8">
+          <span style="position:absolute;left:0;color:#c08030;font-size:16px">□</span>
+          <strong>第6列的欄名</strong>和上表一致（特別確認 J 欄和 P 欄的名稱沒有被改動）
+        </li>
+        <li style="padding:6px 0 6px 24px;position:relative;border-bottom:0.5px solid #e8e8e8">
+          <span style="position:absolute;left:0;color:#c08030;font-size:16px">□</span>
+          <strong>A 欄「類型」</strong>每一列的值都是乾淨的文字，不含逗號
+        </li>
+        <li style="padding:6px 0 6px 24px;position:relative;border-bottom:0.5px solid #e8e8e8">
+          <span style="position:absolute;left:0;color:#c08030;font-size:16px">□</span>
+          <strong>P 欄「儀表板顯示名稱」</strong>每一筆資料都有填寫
+        </li>
+        <li style="padding:6px 0 6px 24px;position:relative;border-bottom:0.5px solid #e8e8e8">
+          <span style="position:absolute;left:0;color:#c08030;font-size:16px">□</span>
+          <strong>Sheets 共用設定</strong>維持「知道連結的任何人・檢視者」不變
+        </li>
+        <li style="padding:6px 0 6px 24px;position:relative">
+          <span style="position:absolute;left:0;color:#c08030;font-size:16px">□</span>
+          確認後通知維護者，即可開始步驟1（index.html 年度明細自動從 Sheets 讀取）
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  
   <div class="footer">
     林堉璘宏泰教育基金會 ｜ 儀表板作業說明文件<br>
     如有問題請聯絡 <a href="mailto:operation@yllhtef.org" style="color:#888">operation@yllhtef.org</a>
@@ -527,4 +636,4 @@ initChat();
 </script>
 
 </body>
-</html>
+</html    >
