@@ -3084,7 +3084,7 @@ var _SUMMARY_GID='1853532145'; // 儀表板彙總工作表
 // 從 Google Sheets 彙總表自動載入年度數字，更新 DATA
 function loadSummaryFromSheets(){
   // 加 cache:'no-store' 避免瀏覽器拿舊快取；t= 參數防 CDN 快取
-  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/gviz/tq?tqx=out:csv&gid='+_SUMMARY_GID+'&t='+Date.now();
+  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/export?format=csv&gid='+_SUMMARY_GID+'&t='+Date.now();
   fetch(url,{cache:'no-store'}).then(r=>r.text()).then(csv=>{
     var lines=csv.trim().split('\n').slice(1); // 跳過標題列
     var updated=false;
@@ -3141,10 +3141,10 @@ function sheetsClose(){
 }
 
 function sheetsLoad(){
-  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/gviz/tq?tqx=out:csv&gid='+_SHEET_GID+'&t='+Date.now();
+  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/export?format=csv&gid='+_SHEET_GID+'&t='+Date.now();
   sheetsStatus('載入中…');
-  fetch(url)
-    .then(function(r){return r.text();})
+  fetch(url,{mode:'cors',credentials:'omit',cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
     .then(function(csv){
       _sheetsData=sheetsParseCsv(csv);
       _sheetsLoaded=true;
