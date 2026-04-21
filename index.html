@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+function ufBtnStyle(btn, isOn){
+  btn.style.cssText=isOn?'padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;background:#1a1a1a;color:#ffffff;border:1.5px solid #1a1a1a;font-weight:500;letter-spacing:.2px;box-sizing:border-box':'padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;background:#ffffff;color:#999999;border:1.5px solid #cccccc;font-weight:500;letter-spacing:.2px;box-sizing:border-box';
+}<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -549,9 +551,9 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 /* ── 出帳篩選 ── */
 .unit-filter{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 .unit-filter-label{font-size:11px;color:var(--ink3);margin-right:2px}
-.ufbtn{padding:2px 8px;font-size:11px;border-radius:3px;border:1.5px dashed #cccccc;background:#ffffff;color:#cccccc;cursor:pointer;transition:all .1s;font-family:inherit;display:inline-flex;align-items:center;gap:3px;font-weight:400;letter-spacing:.2px}
+.ufbtn{padding:2px 8px;font-size:11px;border-radius:3px;border:1.5px solid #cccccc;background:#ffffff;color:#999999;cursor:pointer;transition:background .1s,color .1s,border-color .1s;font-family:inherit;display:inline-flex;align-items:center;gap:3px;font-weight:500;letter-spacing:.2px;box-sizing:border-box}
 .ufbtn:hover{border-color:var(--ink2);color:var(--ink)}
-.ufbtn.on{background:#1a1a1a!important;color:#ffffff!important;border:1.5px solid #1a1a1a!important;font-weight:600!important;text-decoration:none!important;opacity:1!important;letter-spacing:.2px}
+.ufbtn.on{background:#1a1a1a!important;color:#ffffff!important;border:1.5px solid #1a1a1a!important;font-weight:500!important;opacity:1!important;letter-spacing:.2px;box-sizing:border-box}
 
 .ufbtn .uf-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 /* ── QA 打字動畫 ── */
@@ -2001,7 +2003,7 @@ function renderItemTable(d,prefix){
     };
     const pid26='uf-'+prefix;
     const summaryHTML=`<div id="sum-${pid26}" style="margin-top:10px;border:1px solid var(--border2);border-radius:var(--rad);overflow:hidden">
-      <table style="width:100%;border-collapse:collapse;font-family:'Noto Sans TC',sans-serif;table-layout:fixed"><colgroup><col style="width:24px"><col style="width:auto"><col style="width:13%"><col data-col="e" style="width:13%"><col data-col="c" style="width:13%"><col data-col="p" style="width:13%"><col style="width:13%"></colgroup>
+      <table style="width:100%;border-collapse:collapse;font-family:'Noto Sans TC',sans-serif;table-layout:fixed"><colgroup><col style="width:24px"><col style="width:31%"><col style="width:11%"><col data-col="e" style="width:13%"><col data-col="c" style="width:13%"><col data-col="p" style="width:13%"><col style="width:13%"></colgroup>
         <thead><tr style="background:var(--hover)">
           <th style="padding:0;width:24px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)"></th>
           <th colspan="2" style="padding:5px 9px;text-align:left;font-size:11px;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border)">匯總</th>
@@ -2115,13 +2117,13 @@ function renderItemTable(d,prefix){
       return hdrRow + itemRows;
     }).join('');
     return `<div class="itbl-wrap" id="tbl-${pid26}"><table class="itbl" style="width:100%;table-layout:fixed">
-      <colgroup><col style="width:24px"><col style="width:auto"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
+      <colgroup><col style="width:24px"><col style="width:31%"><col style="width:11%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
       <thead>
         <tr id="${pid26}" style="background:var(--hover);border-bottom:1px solid var(--border)">
           <th style="padding:0;width:24px;text-align:center;cursor:pointer;font-weight:normal" title="全部展開/收合" onclick="toggleAllGrp('${pid26}')">
             <span id="all-arrow-${pid26}" style="display:inline-block;width:14px;height:14px;border:1px solid #cccccc;border-radius:2px;font-size:10px;line-height:13px;text-align:center;color:#888;font-family:monospace">+</span>
           </th>
-          <th style="padding:4px 8px;font-weight:normal;text-align:left;white-space:normal">
+          <th style="padding:4px 8px;font-weight:normal;text-align:left;white-space:nowrap">
             <button class="ufbtn on" data-u="t" onclick="ufToggle('${pid26}','t')">① 信託</button>
             <button class="ufbtn on" data-u="f" onclick="ufToggle('${pid26}','f')">② 基金會</button>
             <button class="ufbtn on" data-u="tf" onclick="ufToggle('${pid26}','tf')">③ 公捐基</button>
@@ -2143,7 +2145,7 @@ function renderItemTable(d,prefix){
     </table></div>
     <div id="filt-sub-${pid26}" style="margin-top:6px;margin-bottom:0;border:1.5px solid var(--border2);border-radius:var(--rad);overflow:hidden;background:var(--hover)">
       <table style="width:100%;border-collapse:collapse;table-layout:fixed;font-family:'Noto Sans TC',sans-serif">
-        <colgroup><col style="width:24px"><col style="width:auto"><col style="width:13%"><col data-col="e" style="width:13%"><col data-col="c" style="width:13%"><col data-col="p" style="width:13%"><col style="width:13%"></colgroup>
+        <colgroup><col style="width:24px"><col style="width:31%"><col style="width:11%"><col data-col="e" style="width:13%"><col data-col="c" style="width:13%"><col data-col="p" style="width:13%"><col style="width:13%"></colgroup>
         <thead><tr style="border-bottom:1px solid var(--border)">
           <th style="padding:0;border-right:1px solid var(--border)"></th>
           <th colspan="2" style="padding:4px 9px;font-size:11px;font-weight:600;color:var(--ink2);text-align:left">篩選小計</th>
@@ -2708,9 +2710,9 @@ function parseNum(s){if(!s||s==='—')return 0;return parseInt(s.replace(/,/g,''
 function ffNum(n){return n.toLocaleString('en-US');}
 function ufBtnStyle(btn, isOn){
   if(isOn){
-    btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#111111;color:#ffffff;border:2px solid #111111;font-weight:700;text-decoration:none;opacity:1;letter-spacing:.3px';
+    btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#1a1a1a;color:#ffffff;border:1.5px solid #1a1a1a;font-weight:500;text-decoration:none;opacity:1;letter-spacing:.3px';
   } else {
-    btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#f5f5f5;color:#bbbbbb;border:1.5px dashed #cccccc;font-weight:400;text-decoration:line-through;opacity:0.75;letter-spacing:.3px';
+    btn.style.cssText='padding:4px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;background:#ffffff;color:#999999;border:1.5px solid #cccccc;font-weight:500;letter-spacing:.3px';
   }
 }
 
