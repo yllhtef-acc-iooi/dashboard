@@ -3,454 +3,744 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>林堉璘宏泰公益儀表板｜作業流程說明</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>林堉璘宏泰公益儀表板｜作業說明</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f7f7f7;--card:#ffffff;--border:#d0d0d0;--border2:#b8b8b8;
-  --accent:#1a1a1a;--topbar:#1a1a1a;--ink:#111111;--ink2:#555555;--ink3:#888888;
-  --green:#2d6a2d;--green-bg:#f0f6f0;--green-border:#b0ccb0;
-  --blue:#1a4a7a;--blue-bg:#f0f4f8;--blue-border:#b0c4d8;
+  --bg:#f7f7f7;--card:#fff;--border:#d8d8d8;
+  --topbar:#1a1a1a;--ink:#111;--ink2:#444;--ink3:#888;--ink4:#bbb;
+  --green:#2a6a2a;--gbg:#f0f6f0;--gborder:#b0ceb0;
+  --amber:#7a4400;--abg:#fdf4e8;--aborder:#e0c090;
+  --blue:#1a3a7a;--bbg:#f0f4fb;--bborder:#a0b8e0;
   --rad:10px;
 }
-body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink);font-size:15px;line-height:1.7;min-height:100vh}
+body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink);font-size:14px;line-height:1.75;min-height:100vh}
 
-/* ── TOPBAR ── */
-.topbar{background:var(--topbar);color:#ffffff;padding:0 28px;height:52px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
-.logo-mark{width:30px;height:30px;border-radius:7px;background:#ffffff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a1a1a;flex-shrink:0}
-.topbar h1{font-size:15px;font-weight:500;color:#ffffff}
-.topbar h1 span{color:rgba(255,255,255,.6);font-weight:300}
-.topbar-tag{font-size:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.75);padding:3px 10px;border-radius:14px}
+/* topbar */
+.topbar{background:var(--topbar);color:#fff;padding:0 28px;height:52px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:200}
+.logo{width:30px;height:30px;border-radius:7px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a1a1a;flex-shrink:0}
+.topbar h1{font-size:15px;font-weight:500}
+.topbar h1 span{opacity:.5;font-weight:300}
+.ttag{font-size:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:3px 10px;border-radius:14px;color:rgba(255,255,255,.8)}
+.tbtn{margin-left:auto;padding:5px 14px;font-size:12px;border-radius:5px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;text-decoration:none;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0}
 
-/* ── LAYOUT ── */
-.wrap{max-width:820px;margin:0 auto;padding:32px 24px 64px}
+/* tabs */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);background:#fff;position:sticky;top:52px;z-index:100}
+.tab{padding:12px 22px;font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;white-space:nowrap}
+.tab.active{color:var(--ink);border-bottom-color:var(--ink)}
+.tab:hover:not(.active){color:var(--ink2)}
 
-/* ── HERO ── */
-.hero{text-align:center;padding:36px 0 28px}
-.hero-badge{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:#888888;background:#ffffff;border:1px solid #cccccc;padding:4px 14px;border-radius:20px;margin-bottom:16px}
-.hero h2{font-size:26px;font-weight:700;color:var(--topbar);line-height:1.3;margin-bottom:10px}
-.hero p{font-size:14px;color:var(--ink3);max-width:520px;margin:0 auto}
+/* panels */
+.panel{display:none;max-width:900px;margin:0 auto;padding:32px 24px 72px}
+.panel.active{display:block}
 
-/* ── FLOW DIAGRAM ── */
-.flow{display:flex;flex-direction:column;align-items:center;gap:0;margin:28px 0 36px}
-.flow-node{background:white;border:1px solid #d0d0d0;border-radius:var(--rad);padding:14px 22px;width:100%;max-width:460px;display:flex;align-items:center;gap:14px;}
-.flow-node.highlight{background:#f8f8f8;border-color:#d0d0d0;}
-.flow-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
-.flow-icon.sheets{background:#f0f0f0}
-.flow-icon.sync{background:#f0f0f0}
-.flow-icon.web{background:var(--card)}
-.flow-icon.line{background:#f0f0f0}
-.flow-icon.user{background:#f0f0f0}
-.flow-text{flex:1}
-.flow-label{font-size:13px;font-weight:600;color:var(--topbar)}
-.flow-sub{font-size:12px;color:var(--ink3);margin-top:1px}
-.flow-arrow{font-size:22px;color:var(--border2);line-height:1;margin:4px 0;align-self:center}
-.flow-arrow-label{font-size:11px;color:var(--ink3);margin-top:-6px;margin-bottom:2px;font-style:italic}
+/* section */
+.sec-h{font-size:16px;font-weight:700;color:var(--topbar);display:flex;align-items:center;gap:9px;margin-bottom:16px;margin-top:28px}
+.sec-h:first-child{margin-top:0}
+.sec-h::before{content:'';width:4px;height:18px;background:#555;border-radius:2px;flex-shrink:0}
 
-/* ── SECTION ── */
-.sec{margin-bottom:32px}
-.sec-title{font-size:17px;font-weight:700;color:var(--topbar);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.sec-title::before{content:'';width:4px;height:18px;background:#555555;border-radius:2px;flex-shrink:0}
+/* cards */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--rad);padding:18px 22px;margin-bottom:10px}
+.card.c-green{border-left:4px solid var(--green)}
+.card.c-amber{border-left:4px solid #c08030}
+.card.c-blue{border-left:4px solid #4a7ab0}
+.card.c-gray{background:#f8f8f8;border-style:dashed}
+.card-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.card-h h3{font-size:14px;font-weight:700;color:var(--ink)}
+.lbl{font-size:10px;font-weight:700;letter-spacing:.3px;padding:2px 8px;border-radius:3px}
+.l-done{background:var(--gbg);color:var(--green)}
+.l-next{background:var(--abg);color:var(--amber)}
+.l-future{background:var(--bbg);color:var(--blue)}
 
-/* ── ROLE TABLE ── */
-.role-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.role-card{background:white;border:1px solid #d0d0d0;border-radius:var(--rad);padding:16px 16px 14px;display:flex;flex-direction:column;gap:6px}
-.role-card-top{display:flex;align-items:center;gap:8px}
-.role-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.role-name{font-size:13px;font-weight:600;color:var(--topbar)}
-.role-action{font-size:12.5px;color:var(--ink2);line-height:1.55;padding-left:42px}
-.role-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.4px;padding:2px 8px;border-radius:10px;margin-top:4px}
-.tag-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
-.tag-gold{background:#f0f0f0;color:#333333;border:1px solid #cccccc}
-.tag-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+/* flow */
+.flow{display:flex;align-items:stretch;background:#fff;border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;margin-bottom:8px}
+.fn{flex:1;padding:16px 14px;border-right:1px solid var(--border)}
+.fn:last-child{border-right:none}
+.fn.f-green{background:var(--gbg)}.fn.f-amber{background:var(--abg)}.fn.f-blue{background:var(--bbg)}.fn.f-gray{background:#f8f8f8}
+.fn-lbl{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.fn-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.fn-sub{font-size:11px;color:var(--ink3);line-height:1.6}
+.fn-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:3px;margin-top:7px;font-weight:600}
+.b-done{background:var(--gbg);color:var(--green);border:1px solid var(--gborder)}
+.b-todo{background:var(--abg);color:var(--amber);border:1px solid var(--aborder)}
+.farr{display:flex;align-items:center;justify-content:center;padding:0 2px;color:#ccc;font-size:18px;flex-shrink:0}
 
-/* ── LAYER CARDS ── */
-.layer-list{display:flex;flex-direction:column;gap:12px}
-.layer{background:white;border:1px solid #d0d0d0;border-radius:var(--rad);padding:18px 20px;display:flex;gap:16px;align-items:flex-start}
-.layer-num{width:30px;height:30px;border-radius:50%;background:var(--topbar);color:#f5ead0;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.layer-body{flex:1}
-.layer-title{font-size:14px;font-weight:700;color:var(--topbar);margin-bottom:4px}
-.layer-desc{font-size:13px;color:var(--ink2);line-height:1.65}
-.layer-desc ul{padding-left:18px;margin-top:6px}
-.layer-desc li{margin-bottom:3px}
-.layer-desc code{background:#eeeeee;padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#111111}
-.layer-badge{display:inline-block;margin-top:8px;font-size:11px;font-weight:500;padding:2px 10px;border-radius:10px}
+/* roadmap */
+.rm{display:flex;flex-direction:column}
+.rm-step{display:flex;gap:16px;position:relative}
+.rm-step:not(:last-child)::after{content:'';position:absolute;left:19px;top:40px;bottom:0;width:2px;background:#e8e8e8}
+.rm-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;z-index:1;position:relative}
+.n-done{background:var(--green);color:#fff}.n-next{background:#c08030;color:#fff}.n-future{background:#4a7ab0;color:#fff}.n-ideal{background:#444;color:#fff}
+.rm-body{flex:1;padding-bottom:26px}
+.rm-tag{font-size:11px;font-weight:700;letter-spacing:.3px;margin-bottom:4px}
+.rt-done{color:var(--green)}.rt-next{color:var(--amber)}.rt-future{color:var(--blue)}.rt-ideal{color:#444}
+.rm-body h4{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.rm-body p{font-size:13px;color:var(--ink2);line-height:1.75}
+.rm-body ul{margin-top:6px;padding:0;list-style:none}
+.rm-body li{font-size:13px;color:var(--ink2);padding:2px 0 2px 16px;position:relative;line-height:1.7}
+.rm-body li::before{content:'→';position:absolute;left:0;color:#ccc;font-size:11px;top:5px}
+.effort{display:inline-block;font-size:11px;padding:3px 10px;border-radius:10px;background:#f0f0f0;color:#555;margin-top:8px}
 
-/* ── STEPS (once-only setup) ── */
-.steps{display:flex;flex-direction:column;gap:10px;counter-reset:step}
-.step{background:white;border:1px solid #d0d0d0;border-radius:var(--rad);padding:15px 18px 15px 56px;position:relative;counter-increment:step}
-.step::before{content:counter(step);position:absolute;left:16px;top:14px;width:28px;height:28px;border-radius:50%;background:#1a1a1a;color:#ffffff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.step-title{font-size:13px;font-weight:600;color:var(--topbar);margin-bottom:4px}
-.step-desc{font-size:13px;color:var(--ink2);line-height:1.6}
-.step-desc code{background:#eeeeee;padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#111111}
-.step-note{margin-top:6px;font-size:12px;color:var(--ink3);padding:6px 10px;background:#f5f5f5;border-radius:0 6px 6px 0;border-left:3px solid #888888}
+/* table */
+.tbl-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;margin-bottom:16px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{padding:8px 12px;text-align:left;font-weight:600;font-size:11px;color:var(--ink3);border-bottom:1.5px solid var(--border);background:#f8f8f8;letter-spacing:.3px;text-transform:uppercase}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.7}
+.tbl tr:last-child td{border-bottom:none}
+code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:3px;color:#333}
 
-/* ── QA BOX ── */
-.qa-box{background:#f5f5f5;border:1px solid #d0d0d0;border-radius:var(--rad);padding:18px 20px;margin-top:10px}
-.qa-box-title{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.qa-box-body{font-size:13px;color:#333333;line-height:1.65}
-.qa-box-body ul{padding-left:18px;margin-top:4px}
-.qa-box-body li{margin-bottom:3px}
+/* ===== CHATBOT PANEL ===== */
+#chat-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;display:flex;flex-direction:column;height:520px}
+#chat-msgs{flex:1;overflow-y:auto;padding:20px 20px 10px;display:flex;flex-direction:column;gap:14px}
+.msg{display:flex;gap:10px;align-items:flex-start}
+.msg.bot .bubble{background:#f4f4f4;border-radius:4px 16px 16px 16px;color:var(--ink)}
+.msg.user{flex-direction:row-reverse}
+.msg.user .bubble{background:#1a1a1a;color:#fff;border-radius:16px 4px 16px 16px}
+.bubble{padding:10px 14px;font-size:13px;line-height:1.7;max-width:80%}
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+.av-bot{background:#1a1a1a;color:#fff}
+.av-user{background:#e0e0e0;color:#555}
+.quick-btns{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 0}
+.qbtn{padding:5px 12px;border:1px solid var(--border);border-radius:14px;background:#fff;color:var(--ink2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
+.qbtn:hover{background:#f0f0f0;border-color:#bbb}
+#chat-input-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);background:#fafafa}
+#chat-input{flex:1;padding:8px 14px;border:1px solid var(--border);border-radius:20px;font-size:13px;font-family:inherit;outline:none;background:#fff}
+#chat-input:focus{border-color:#888}
+#chat-send{padding:8px 16px;background:#1a1a1a;color:#fff;border:none;border-radius:20px;font-size:13px;font-family:inherit;cursor:pointer}
+#chat-send:hover{background:#333}
 
-/* ── FOOTER ── */
-.foot{margin-top:48px;padding-top:20px;border-top:1px solid #d0d0d0;font-size:12px;color:var(--ink3);text-align:center;line-height:1.8}
+/* result box */
+#result-box{display:none;background:#f8fff8;border:1.5px solid var(--gborder);border-radius:var(--rad);padding:18px 20px;margin-top:14px}
+#result-box h4{font-size:13px;font-weight:700;color:var(--green);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+#result-content{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2);line-height:2;white-space:pre-wrap}
+.copy-btn{display:inline-block;margin-top:12px;padding:6px 14px;background:#1a1a1a;color:#fff;border:none;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit}
+.copy-btn:hover{background:#333}
 
-@media(max-width:640px){
-  .wrap{padding:20px 16px 48px}
-  .role-grid{grid-template-columns:1fr}
-  .hero h2{font-size:21px}
+/* ops grid */
+.ops{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px}
+.op{background:#fff;border:1px solid var(--border);border-radius:var(--rad);padding:16px 18px}
+.op-icon{font-size:20px;margin-bottom:8px}
+.op-role{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.3px;text-transform:uppercase;margin-bottom:4px}
+.op-desc{font-size:13px;color:var(--ink2);line-height:1.65}
+.op-freq{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;background:#f0f0f0;color:#666;margin-top:8px}
+
+.footer{text-align:center;padding:28px 0 16px;font-size:12px;color:var(--ink4)}
+@media(max-width:660px){
+  .flow{flex-direction:column}
+  .fn{border-right:none;border-bottom:1px solid var(--border)}
+  .ops{grid-template-columns:1fr}
+  .tabs{overflow-x:auto}
+  .tab{padding:10px 14px;font-size:12px}
 }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo-mark">林</div>
+  <div class="logo">林</div>
   <h1>林堉璘宏泰公益 <span>儀表板作業說明</span></h1>
-  <span class="topbar-tag">內部參考文件</span>
-  <a href="index.html" style="margin-left:auto;padding:5px 14px;font-size:12px;border-radius:5px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#ffffff;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;text-decoration:none;white-space:nowrap">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  <span class="ttag">內部參考文件</span>
+  <a href="index.html" class="tbtn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     回到儀表板
   </a>
 </div>
 
-<div class="wrap">
-
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-badge">Operation Guide</div>
-    <h2>儀表板的完整作業架構</h2>
-    <p>會計同仁更新 Google Sheets，所有人就能在固定網址看到最新資料。<br>不需要任何技術背景，不需要架設伺服器。</p>
-  </div>
-
-  <!-- FLOW -->
-  <div class="sec">
-    <div class="sec-title">資料流向</div>
-    <div class="flow">
-
-      <div class="flow-node highlight">
-        <div class="flow-icon sheets">📊</div>
-        <div class="flow-text">
-          <div class="flow-label">會計同仁 → Google Sheets</div>
-          <div class="flow-sub">日常更新數字，完全不需要碰儀表板程式碼</div>
-        </div>
-      </div>
-
-      <div class="flow-arrow">↓</div>
-      <div class="flow-arrow-label">自動同步（每次有人開啟頁面時）</div>
-
-      <div class="flow-node">
-        <div class="flow-icon sync">🔄</div>
-        <div class="flow-text">
-          <div class="flow-label">Google Sheets API</div>
-          <div class="flow-sub">不需要 API Key，公開試算表直接讀取，免費</div>
-        </div>
-      </div>
-
-      <div class="flow-arrow">↓</div>
-
-      <div class="flow-node highlight">
-        <div class="flow-icon web">🌐</div>
-        <div class="flow-text">
-          <div class="flow-label">網頁（固定網址）</div>
-          <div class="flow-sub"><a href="https://yllhtef-acc-iooi.github.io/dashboard/" target="_blank" style="color:var(--accent);font-weight:500">https://yllhtef-acc-iooi.github.io/dashboard/</a></div>
-        </div>
-      </div>
-
-      <div class="flow-arrow">↓</div>
-      <div class="flow-arrow-label">用 LINE 發給閱讀者</div>
-
-      <div class="flow-node">
-        <div class="flow-icon line">💬</div>
-        <div class="flow-text">
-          <div class="flow-label">LINE 傳送連結</div>
-          <div class="flow-sub">一個連結，所有人點開都是最新資料</div>
-        </div>
-      </div>
-
-      <div class="flow-arrow">↓</div>
-
-      <div class="flow-node">
-        <div class="flow-icon user">👥</div>
-        <div class="flow-text">
-          <div class="flow-label">閱讀者</div>
-          <div class="flow-sub">開啟連結 → 看到即時資料，可提問、可查帳</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ROLES -->
-  <div class="sec">
-    <div class="sec-title">各角色的日常體驗</div>
-    <div class="role-grid">
-
-      <div class="role-card">
-        <div class="role-card-top">
-          <div class="role-avatar" style="background:#f0f0f0;border:1px solid #d0d0d0;border-radius:8px">📋</div>
-          <div class="role-name">會計同仁</div>
-        </div>
-        <div class="role-action">
-          在 Google Sheets 更新數字，存檔即完成。完全不需要碰 HTML 或任何程式。
-        </div>
-        <span class="role-tag tag-green">每次更新數字時</span>
-      </div>
-
-      <div class="role-card">
-        <div class="role-card-top">
-          <div class="role-avatar" style="background:#fff8dd">⚙️</div>
-          <div class="role-name">負責維護者</div>
-        </div>
-        <div class="role-action">
-          平時什麼都不用做。若要更新儀表板設計，上傳新的 HTML 到 GitHub 即可。
-        </div>
-        <span class="role-tag tag-gold">偶爾（設計變動時）</span>
-      </div>
-
-      <div class="role-card">
-        <div class="role-card-top">
-          <div class="role-avatar" style="background:var(--blue-bg)">🔍</div>
-          <div class="role-name">閱讀者</div>
-        </div>
-        <div class="role-action">
-          收到 LINE 連結，點開即看最新資料。有問題可用「提問與回饋」功能送出，由行政組回覆。
-        </div>
-        <span class="role-tag tag-blue">需要時隨時查閱</span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- THREE LAYERS -->
-  <div class="sec">
-    <div class="sec-title">三層架構說明</div>
-    <div class="layer-list">
-
-      <div class="layer">
-        <div class="layer-num">①</div>
-        <div class="layer-body">
-          <div class="layer-title">資料層：Google Sheets</div>
-          <div class="layer-desc">
-            所有年度支出數字存在 Google Sheets，會計同仁在熟悉的環境操作。
-            <ul>
-              <li>設定「知道連結的人可以<strong>檢視</strong>」共用權限（只讀，不怕誤改）</li>
-              <li>儀表板每次被開啟時，自動去 Sheets 抓最新資料</li>
-              <li>目前已有「帳務資料」工作表（GID: 232592658）和「彙總」工作表（GID: 1853532145）</li>
-            </ul>
-            <span class="layer-badge" style="background:#e8f5e9;color:#2e6e4a;border:1px solid #b0d8bc">✓ 已完成設定</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="layer">
-        <div class="layer-num">②</div>
-        <div class="layer-body">
-          <div class="layer-title">網頁層：GitHub Pages（免費）</div>
-          <div class="layer-desc">
-            HTML 檔案已放上 GitHub，固定網址已啟用：
-            <ul>
-              <li>固定網址：<a href="https://yllhtef-acc-iooi.github.io/dashboard/" target="_blank" style="color:#1a4a7a;font-weight:500">https://yllhtef-acc-iooi.github.io/dashboard/</a></li>
-              <li>每次要更新儀表板設計，上傳新的 <code>index.html</code> 覆蓋舊的，網址不變</li>
-              <li>GitHub 有網頁介面，不需要懂程式，直接拖曳上傳即可</li>
-            </ul>
-            <span class="layer-badge" style="background:#e8f5e9;color:#2e6e4a;border:1px solid #b0d8bc">✓ 已完成設定</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="layer">
-        <div class="layer-num">③</div>
-        <div class="layer-body">
-          <div class="layer-title">問答層：Formspree 問題收件</div>
-          <div class="layer-desc">
-            閱讀者在「問與答」介面輸入問題後送出，自動寄到團隊信箱，由同仁人工回覆。
-            <ul>
-              <li>問題連同提問者姓名、時間，直接送到 operation@yllhtef.org 和 account@yllhtef.org</li>
-              <li>Formspree 帳號：operation@yllhtef.org，Form ID：<code>maqabonq</code></li>
-              <li>若自動傳送失敗，介面會自動切換為開啟郵件程式的備援方式</li>
-            </ul>
-            <span class="layer-badge" style="background:#e8f5e9;color:#2e6e4a;border:1px solid #b0d8bc">✓ 已完成設定</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- SETUP STEPS -->
-  <div class="sec">
-    <div class="sec-title">一次性設定步驟（共 3 步）</div>
-    <div class="steps">
-
-      <div class="step" style="border:1px solid #b0ccb0;background:#f5f9f5">
-        <div class="step-title" style="color:#2d6a2d">✓ GitHub Pages 已完成設定</div>
-        <div class="step-desc">
-          固定網址：<a href="https://yllhtef-acc-iooi.github.io/dashboard/" target="_blank" style="color:#1a4a7a;font-weight:500">https://yllhtef-acc-iooi.github.io/dashboard/</a><br>
-          日後更新儀表板設計：在 GitHub Repository 點「Add file → Upload files」，上傳新的 <code>index.html</code> 覆蓋舊檔，按 Commit changes，1–2 分鐘後生效。
-        </div>
-      </div>
-
-      <div class="step" style="border:1px solid #b0ccb0;background:#f5f9f5">
-        <div class="step-title" style="color:#2d6a2d">✓ Google Sheets 已完成連接</div>
-        <div class="step-desc">
-          帳務資料（GID: 232592658）與彙總工作表（GID: 1853532145）已設定，儀表板開啟時自動同步。<br>
-          會計同仁在 Sheets 更新數字後，閱讀者下次開啟頁面即可看到最新資料。
-        </div>
-      </div>
-
-      <div class="step" style="border:1px solid #b0ccb0;background:#f5f9f5">
-        <div class="step-title" style="color:#2d6a2d">✓ Formspree 問題收件已完成設定</div>
-        <div class="step-desc">
-          帳號：operation@yllhtef.org　Form ID：<code>maqabonq</code><br>
-          收件信箱：operation@yllhtef.org、account@yllhtef.org<br>
-          閱讀者在「問與答」送出問題後，會自動寄到兩個信箱，由同仁人工回覆。
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- QA BOX -->
-  <div class="qa-box">
-    <div class="qa-box-title">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      完成後的日常作業，只有一件事
-    </div>
-    <div class="qa-box-body">
-      會計同仁在 <strong>Google Sheets 更新數字後存檔</strong>，所有人下次開啟儀表板連結時就會看到最新資料。<br>
-      其他人（閱讀者）只需要收藏連結，需要的時候開啟即可。<br>
-      <ul>
-        <li>有問題可在網頁的「提問與回饋」功能送出，由<strong>基金會行政組</strong>（operation@yllhtef.org）回覆</li>
-        <li>想查詳細帳務，點「帳務資料」從 Sheets 即時讀取</li>
-        <li>想了解整體架構，點頂部「作業說明」開啟本頁</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- PLAN B UPGRADE -->
-  <div class="sec" style="margin-top:36px">
-    <div class="sec-title">未來升級計畫：方案 B — Claude AI 即時回答</div>
-
-    <div style="background:#f5f5f5;border:1px solid #d0d0d0;border-radius:var(--rad);padding:16px 20px;margin-bottom:16px;font-size:13px;color:#333333;line-height:1.7">
-      <strong>目標：</strong>閱讀者在「問與答」輸入問題後，由 Claude AI 根據儀表板資料立即回答，不需等待人工回覆。<br>
-      <strong>現況：</strong>瀏覽器端 HTML 無法直接呼叫 Anthropic API（CORS 安全限制），需要一個「中轉服務」藏住 API Key。
-    </div>
-
-    <!-- Cost note -->
-    <div style="background:#f5f5f5;border:1px solid #d0d0d0;border-radius:var(--rad);padding:14px 18px;margin-bottom:20px;font-size:13px;color:#333333;line-height:1.75">
-      <div style="font-weight:600;margin-bottom:6px">💰 費用說明</div>
-      <strong>Cloudflare Workers：完全免費</strong>（每天 10 萬次請求，遠超實際用量）<br>
-      <strong>Anthropic API：需要費用，但金額極低</strong><br>
-      <div style="margin-top:8px;padding:8px 12px;background:white;border-radius:6px;border:1px solid #d0d0d0">
-        新帳號開通時 Anthropic 會提供少量免費測試額度（free credits）可先試用。<br>
-        用完後採<strong>按量計費</strong>（Pay-as-you-go）：最便宜的 Haiku 模型每百萬 token 約 $1 美元。<br>
-        以實際使用估算：<strong>每月 100 次問答 ≈ $0.5–1 美元（約 15–30 元台幣）</strong>，費用可忽略不計。<br>
-        可在 Anthropic Console 設定每月消費上限，完全不怕超支。
-      </div>
-    </div>
-
-    <!-- Flow B -->
-    <div class="flow" style="margin:0 0 20px">
-      <div class="flow-node" style="max-width:480px">
-        <div class="flow-icon" style="background:#f0f0f0;border:1px solid #d0d0d0;border-radius:8px">💬</div>
-        <div class="flow-text">
-          <div class="flow-label">閱讀者在儀表板提問</div>
-          <div class="flow-sub">輸入問題，點送出</div>
-        </div>
-      </div>
-      <div class="flow-arrow">↓</div>
-      <div class="flow-node highlight" style="max-width:480px">
-        <div class="flow-icon" style="background:#f0f0f0;border:1px solid #d0d0d0;border-radius:8px">⚡</div>
-        <div class="flow-text">
-          <div class="flow-label">Cloudflare Worker（免費中轉服務）</div>
-          <div class="flow-sub">藏著 Anthropic API Key，代為轉發請求</div>
-        </div>
-      </div>
-      <div class="flow-arrow">↓</div>
-      <div class="flow-node" style="max-width:480px">
-        <div class="flow-icon" style="background:#f0f0f0;border:1px solid #d0d0d0;border-radius:8px">🤖</div>
-        <div class="flow-text">
-          <div class="flow-label">Anthropic API（Claude AI）</div>
-          <div class="flow-sub">根據儀表板所有資料即時生成回答　每月費用約 $0.5–1 美元</div>
-        </div>
-      </div>
-      <div class="flow-arrow">↓</div>
-      <div class="flow-node" style="max-width:480px">
-        <div class="flow-icon" style="background:#f0f0f0;border:1px solid #d0d0d0;border-radius:8px">✅</div>
-        <div class="flow-text">
-          <div class="flow-label">回答即時顯示在問與答介面</div>
-          <div class="flow-sub">閱讀者可選擇「轉寄給團隊」留存紀錄</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Steps B -->
-    <div style="font-size:14px;font-weight:600;color:var(--topbar);margin-bottom:10px;padding-left:2px">升級所需步驟（共 3 步，預估 30 分鐘）</div>
-    <div class="layer-list">
-
-      <div class="layer">
-        <div class="layer-num" style="background:#1a1a1a">B1</div>
-        <div class="layer-body">
-          <div class="layer-title">取得 Anthropic API Key</div>
-          <div class="layer-desc">
-            前往 <code>console.anthropic.com</code> 登入後，在「API Keys」建立一個新的 Key。
-            <ul>
-              <li>Key 長得像：<code>sk-ant-api03-xxxxxxxxxx…</code></li>
-              <li>建立後請妥善保存，只會顯示一次</li>
-              <li>新帳號會收到少量免費測試額度，可先試用不需立即付款</li>
-              <li>正式使用後採按量計費，可自訂每月消費上限防止超支</li>
-            </ul>
-            <span class="layer-badge" style="background:#eeeeee;color:#555555;border:1px solid #cccccc">待辦</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="layer">
-        <div class="layer-num" style="background:#1a1a1a">B2</div>
-        <div class="layer-body">
-          <div class="layer-title">建立 Cloudflare Worker（完全免費的中轉服務）</div>
-          <div class="layer-desc">
-            前往 <code>workers.cloudflare.com</code> 免費註冊，建立一個 Worker，貼上事先準備好的程式碼，填入 API Key。
-            <ul>
-              <li><strong>完全免費</strong>：每天 10 萬次請求，不需填信用卡，無到期日</li>
-              <li>Worker 會得到一個固定網址，例如：<code>https://yllhtef-qa.workers.dev</code></li>
-              <li>程式碼由 Claude 協助產生，不需要自己寫</li>
-            </ul>
-            <span class="layer-badge" style="background:#eeeeee;color:#555555;border:1px solid #cccccc">待辦</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="layer">
-        <div class="layer-num" style="background:#1a1a1a">B3</div>
-        <div class="layer-body">
-          <div class="layer-title">更新儀表板 HTML，指向 Worker 網址</div>
-          <div class="layer-desc">
-            在儀表板 HTML 中，將問與答的 API 呼叫目標改為 Cloudflare Worker 的網址，重新上傳到 GitHub 即完成。
-            <ul>
-              <li>只需修改一行程式碼：<code>var QA_WORKER_URL = 'https://yllhtef-qa.workers.dev';</code></li>
-              <li>上傳新版 <code>index.html</code> 覆蓋舊版，網址不變</li>
-              <li>升級後「問與答」即可即時回答，Formspree 收件功能仍保留作備援</li>
-            </ul>
-            <span class="layer-badge" style="background:#eeeeee;color:#555555;border:1px solid #cccccc">待辦</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div style="margin-top:14px;padding:12px 16px;background:#f5f5f5;border:1px solid #d0d0d0;border-radius:8px;font-size:12.5px;color:#333333;line-height:1.7">
-      💡 <strong>準備好升級時</strong>，只需告訴 Claude：「我要進行方案 B 升級」，並提供 Anthropic API Key 和 Cloudflare Worker 網址，Claude 會協助產生程式碼並更新儀表板。
-    </div>
-  </div>
-
-  <div class="foot">
-    林堉璘宏泰教育基金會 ｜ 儀表板作業說明文件<br>
-    如有問題請聯絡 operation@yllhtef.org
-  </div>
-
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview')">📋 架構總覽</div>
+  <div class="tab" onclick="switchTab('chat')">💬 新增捐贈（問答）</div>
+  <div class="tab" onclick="switchTab('fields')">📐 Sheets 欄位說明</div>
+  <div class="tab" onclick="switchTab('infra')">🔧 已完成設施</div>
 </div>
+
+<!-- ① 架構總覽 -->
+<div id="panel-overview" class="panel active">
+
+  <div class="sec-h">現況資料流向</div>
+
+  <div class="flow">
+    <div class="fn f-green">
+      <div class="fn-lbl">唯一原始資料</div>
+      <div class="fn-title">📊 Google Sheets</div>
+      <div class="fn-sub">【帳看此檔】公益信託＆基金會歷年公益支出<br>帳務 GID: 232592658<br>彙總 GID: 1853532145</div>
+      <span class="fn-badge b-done">✓ 已設定共用</span>
+    </div>
+    <div class="farr">→</div>
+    <div class="fn f-amber">
+      <div class="fn-lbl">目前：手動</div>
+      <div class="fn-title">✍️ 人工更新 HTML</div>
+      <div class="fn-sub">有新資料時，維護者手動把數字更新進 index.html 及 trust_detail.html</div>
+      <span class="fn-badge b-todo">⚠ 待自動化</span>
+    </div>
+    <div class="farr">→</div>
+    <div class="fn f-blue">
+      <div class="fn-lbl">部署</div>
+      <div class="fn-title">🌐 GitHub Pages</div>
+      <div class="fn-sub">固定網址<br>yllhtef-acc-iooi<br>.github.io/dashboard/</div>
+      <span class="fn-badge b-done">✓ 已設定</span>
+    </div>
+    <div class="farr">→</div>
+    <div class="fn f-gray">
+      <div class="fn-lbl">閱讀</div>
+      <div class="fn-title">👥 閱讀者</div>
+      <div class="fn-sub">開啟連結看資料，可搜尋 Sheets，可提問，可查信託明細</div>
+      <span class="fn-badge b-done">✓ 可用</span>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:var(--ink3);margin-bottom:24px">
+    ▸ 年度彙總數字（總額）已可從 Sheets 自動讀取。尚未自動化的是：<strong>年度明細 items</strong>（index.html）和<strong>逐筆信託帳務</strong>（trust_detail.html）。
+  </p>
+
+  <div class="sec-h">自動化路線圖</div>
+
+  <div class="rm">
+    <div class="rm-step">
+      <div class="rm-num n-done">✓</div>
+      <div class="rm-body">
+        <div class="rm-tag rt-done">現況已完成</div>
+        <h4>三頁面部署，年度彙總自動同步</h4>
+        <p>年度總額（信託/基金會/公捐基）已從 Sheets 彙總表自動 fetch。搜尋、提問、信託明細連結皆可用。</p>
+        <span class="effort">人力：上傳 HTML 覆蓋即完成</span>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-num n-next">1</div>
+      <div class="rm-body">
+        <div class="rm-tag rt-next">最優先</div>
+        <h4>確認 Sheets 欄位格式，讓 index.html 年度明細自動讀取</h4>
+        <p>目前 <code>const DATA{}</code> 的 items 是手動硬編碼。改為 fetch 帳務工作表（GID: 232592658），解析欄位後動態建構 items 陣列交給 renderItemTable 渲染。<strong>關鍵前提</strong>：Sheets 欄位名稱需先與程式碼對應確認（P欄顯示名稱已確認，其餘欄位需逐一比對）。</p>
+        <ul>
+          <li>Sheets 帳務工作表欄位確認（見「Sheets 欄位說明」頁）</li>
+          <li>index.html 加入 fetch → 解析 → 建構 items 邏輯</li>
+          <li>2026 年度需要 g（群組）欄，歷年只需 a（金額）欄</li>
+        </ul>
+        <span class="effort">難度：中 ／ 完成後維護人力趨零</span>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-num n-next">2</div>
+      <div class="rm-body">
+        <div class="rm-tag rt-next">配套</div>
+        <h4>trust_detail.html 信託明細從 Sheets 自動讀取</h4>
+        <p>Sheets 新增「信託明細」工作表（或確認現有欄位），trust_detail.html 改為 fetch 後動態渲染 tbody。</p>
+        <ul>
+          <li>確認欄位：單位_主題、通過年度、出帳日期、撥款年度、各年金額欄</li>
+          <li>trust_detail.html 加入 fetch → 解析 → 渲染 tbody</li>
+          <li>年度切換篩選（toggleYr）維持現有 JS 邏輯不變</li>
+        </ul>
+        <span class="effort">難度：中 ／ 需先確認 Sheets 欄位</span>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-num n-future">3</div>
+      <div class="rm-body">
+        <div class="rm-tag rt-future">升級</div>
+        <h4>方案 B — Cloudflare Worker + Claude AI 即時問答</h4>
+        <p>目前提問需人工回覆。升級後 Claude AI 根據儀表板資料即時回答，不需等待人工。</p>
+        <ul>
+          <li>建立 Cloudflare Worker（免費，每天 10 萬次）</li>
+          <li>申請 Anthropic API Key（每月約 NT$15–30 元）</li>
+          <li>index.html 改一行：<code>var QA_WORKER_URL = 'https://yllhtef-qa.workers.dev'</code></li>
+        </ul>
+        <span class="effort">難度：低 ／ 準備好隨時可執行</span>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-num n-ideal">★</div>
+      <div class="rm-body">
+        <div class="rm-tag rt-ideal">終極目標</div>
+        <h4>會計更新 Sheets → 全自動刷新，AI 即時回答，人力趨零</h4>
+        <p>完成 1–3 後，維護者幾乎不需介入。會計存檔，頁面自動更新。只需偶爾維護 Sheets 欄位格式。</p>
+        <span class="effort">達成後：人工介入 ≈ 0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-h" style="margin-top:32px">各角色的日常</div>
+  <div class="ops">
+    <div class="op">
+      <div class="op-icon">📋</div>
+      <div class="op-role">會計同仁</div>
+      <div class="op-desc">在 Google Sheets 更新數字。新增捐贈時，用「問答功能」產生完整欄位資料，填進 Sheets 即可。</div>
+      <span class="op-freq">有新資料時</span>
+    </div>
+    <div class="op">
+      <div class="op-icon">⚙️</div>
+      <div class="op-role">維護者</div>
+      <div class="op-desc">步驟 1、2 完成前：把 Sheets 明細更新進 HTML，上傳 GitHub 覆蓋，1–2 分鐘生效。步驟完成後：幾乎不需介入。</div>
+      <span class="op-freq">每次資料更新後（暫時）</span>
+    </div>
+    <div class="op">
+      <div class="op-icon">👥</div>
+      <div class="op-role">閱讀者</div>
+      <div class="op-desc">開啟連結看資料。「搜尋」直連 Sheets，「信託明細」看逐筆，「提問與回饋」送問題。</div>
+      <span class="op-freq">需要時隨時</span>
+    </div>
+  </div>
+
+  <div class="footer">如有問題請聯絡 <a href="mailto:operation@yllhtef.org" style="color:#888">operation@yllhtef.org</a></div>
+</div>
+
+<!-- ② 問答式建立捐贈 -->
+<div id="panel-chat" class="panel">
+  <div class="sec-h">問答式建立一筆捐贈資料</div>
+  <p style="font-size:13px;color:var(--ink2);margin-bottom:16px">用自然語言回答幾個問題，自動產生完整的 Sheets 欄位資料，複製後貼進 Google Sheets 即可。</p>
+
+  <div id="chat-wrap">
+    <div id="chat-msgs">
+      <!-- messages injected by JS -->
+    </div>
+    <div id="chat-input-row">
+      <input id="chat-input" type="text" placeholder="輸入你的回答，或按下方選項…" autocomplete="off">
+      <button id="chat-send" onclick="chatSend()">送出</button>
+    </div>
+  </div>
+
+  <div id="result-box">
+    <h4>✅ 已完成！以下是這筆捐贈的 Sheets 欄位資料</h4>
+    <div id="result-content"></div>
+    <button class="copy-btn" onclick="copyResult()">📋 複製全部</button>
+    <button class="copy-btn" style="margin-left:8px;background:#444" onclick="restartChat()">↺ 重新填寫</button>
+  </div>
+
+  <div style="margin-top:16px;font-size:12px;color:var(--ink3)">
+    ▸ 產生的資料請貼入 Google Sheets 帳務工作表（GID: 232592658）的對應欄位
+  </div>
+</div>
+
+<!-- ③ 欄位說明 -->
+<div id="panel-fields" class="panel">
+  <div class="sec-h">Sheets 欄位說明——資料如何串到視覺框架</div>
+
+  <p style="font-size:13px;color:var(--ink2);margin-bottom:20px;line-height:1.8">
+    每一筆捐贈在 Sheets 帳務工作表（GID: 232592658）對應一列。以下欄位填寫後，資料才能自動串到 <code>index.html</code>（年度明細）和 <code>trust_detail.html</code>（信託逐筆）。
+  </p>
+
+  <!-- index.html 必填 -->
+  <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:10px">① index.html — 年度明細 items</div>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>欄位</th><th>Sheets 欄名</th><th>可填的值</th><th>說明</th><th>必/選</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>顯示名稱</strong></td>
+          <td><code>P 欄</code></td>
+          <td style="color:var(--ink3)">任意文字</td>
+          <td>儀表板顯示的項目名稱。格式：<strong>「類別－細項說明年度」</strong>，例如「榮總醫療人才培育2026」。</td>
+          <td style="color:var(--green);font-weight:600">必填</td>
+        </tr>
+        <tr>
+          <td><strong>出帳類型</strong></td>
+          <td><code>u</code></td>
+          <td><code>t</code> 信託①<br><code>f</code> 基金會②<br><code>tf</code> 公捐基③</td>
+          <td>決定出帳來源，影響匯總表分行計算。三個值擇一。</td>
+          <td style="color:var(--green);font-weight:600">必填</td>
+        </tr>
+        <tr>
+          <td><strong>群組</strong></td>
+          <td><code>g</code></td>
+          <td><code>medical</code> 醫療<br><code>award</code> 奉獻獎<br><code>talent</code> 人才培育<br><code>fundraising</code> 募款達人<br><code>charity</code> 社會慈善<br><code>admin</code> 行政營運</td>
+          <td>決定項目在年度明細的哪個摺疊群組。<strong>2026 年度必填</strong>，歷年（2015–2025）不需填。</td>
+          <td style="color:var(--green);font-weight:600">必填*</td>
+        </tr>
+        <tr>
+          <td><strong>金額（2026）</strong></td>
+          <td><code>e</code> <code>c</code> <code>p</code></td>
+          <td style="color:var(--ink3)">數字（元），無填 0</td>
+          <td><code>e</code>=A已執行　<code>c</code>=B確定　<code>p</code>=C待討論<br><strong>歷年</strong>不分 ABC，只用 <code>a</code>（年度總金額）</td>
+          <td style="color:var(--green);font-weight:600">必填</td>
+        </tr>
+        <tr>
+          <td>備注</td>
+          <td><code>memo</code></td>
+          <td style="color:var(--ink3)">任意文字</td>
+          <td>滑鼠 hover 項目名稱時顯示的補充說明。</td>
+          <td style="color:var(--ink3)">選填</td>
+        </tr>
+        <tr>
+          <td>子群組</td>
+          <td><code>sg</code></td>
+          <td><code>sg_rongzong</code><br><code>sg_atcc_impl</code><br>或自訂</td>
+          <td>有共同前綴的多個子項目填同一代碼，會自動摺疊成一層。</td>
+          <td style="color:var(--ink3)">選填</td>
+        </tr>
+        <tr>
+          <td>成效連結</td>
+          <td><code>impact</code></td>
+          <td style="color:var(--ink3)">英文 ID<br>如 <code>ntu_plan</code></td>
+          <td>填寫後項目旁出現「成效」按鈕，連到對應成效頁。</td>
+          <td style="color:var(--ink3)">選填</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- trust_detail 必填 -->
+  <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:10px;margin-top:24px">② trust_detail.html — 信託逐筆明細</div>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Sheets 欄位名稱</th><th>說明</th><th>範例</th></tr></thead>
+      <tbody>
+        <tr><td><strong>單位_主題</strong></td><td>受款單位完整名稱</td><td style="color:var(--ink3);font-size:12px">新北市社會救濟會報專戶-八仙粉塵氣爆救助專案</td></tr>
+        <tr><td><strong>通過年度</strong></td><td>董事會通過的年度</td><td style="color:var(--ink3)">2015</td></tr>
+        <tr><td><strong>出帳日期</strong></td><td>實際撥款日期</td><td style="color:var(--ink3)">2015/08/15</td></tr>
+        <tr><td><strong>撥款年度</strong></td><td>實際撥款年度（影響哪個年度欄顯示金額）</td><td style="color:var(--ink3)">2015</td></tr>
+        <tr><td><strong>2015 / 2016 … 欄</strong></td><td>各年度撥款金額，填在對應年度欄</td><td style="color:var(--ink3)">2015 欄填 10000000</td></tr>
+        <tr><td>備註</td><td>補充說明、用途</td><td style="color:var(--ink3)">八仙塵爆災後救助</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-gray">
+    <div style="font-size:12px;font-weight:700;color:var(--ink3);margin-bottom:10px;letter-spacing:.3px;text-transform:uppercase">新增範例：一個新社會慈善專案（2026 年度）</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2);line-height:2.1">
+P 欄（顯示名稱）  弱勢家庭急難救助－北部地區
+u 欄（出帳類型）  f           ← 透過基金會出帳
+g 欄（群組）      charity     ← 社會慈善群組
+e 欄（A 已執行）  500000
+c 欄（B 確定）    1000000
+p 欄（C 待討論）  0
+memo 欄（備注）   與○○協會合作；目標 100 戶
+    </div>
+  </div>
+
+  <div class="footer">如有問題請聯絡 <a href="mailto:operation@yllhtef.org" style="color:#888">operation@yllhtef.org</a></div>
+</div>
+
+<!-- ④ 已完成設施 -->
+<div id="panel-infra" class="panel">
+  <div class="sec-h">已完成的基礎設施</div>
+
+  <div class="card c-green">
+    <div class="card-h"><span style="font-size:20px">🌐</span><span class="lbl l-done">✓ 完成</span><h3>GitHub Pages 部署</h3></div>
+    <ul style="list-style:none;padding:0;font-size:13px;color:var(--ink2)">
+      <li style="padding:3px 0">固定網址：<strong>https://yllhtef-acc-iooi.github.io/dashboard/</strong></li>
+      <li style="padding:3px 0">更新：在 GitHub Repository 上傳新版 HTML 覆蓋，1–2 分鐘生效</li>
+      <li style="padding:3px 0">三個頁面（index / trust_detail / guide）同目錄，互相連結</li>
+    </ul>
+  </div>
+
+  <div class="card c-green">
+    <div class="card-h"><span style="font-size:20px">📊</span><span class="lbl l-done">✓ 完成</span><h3>Google Sheets 已設共用（知道連結者可檢視）</h3></div>
+    <ul style="list-style:none;padding:0;font-size:13px;color:var(--ink2)">
+      <li style="padding:3px 0">Sheets ID：<code>1FapJWRqGIC9OuABmVQuBh2HPs3kvw4qVsPvG7e9mr9Q</code></li>
+      <li style="padding:3px 0">帳務工作表 GID：<code>232592658</code>　彙總工作表 GID：<code>1853532145</code></li>
+      <li style="padding:3px 0">年度彙總數字已自動 fetch（<code>loadSummaryFromSheets()</code>）</li>
+      <li style="padding:3px 0;color:var(--amber)"><strong>下一步</strong>：確認帳務工作表欄位格式，讓明細 items 也自動讀取</li>
+    </ul>
+  </div>
+
+  <div class="card c-green">
+    <div class="card-h"><span style="font-size:20px">💬</span><span class="lbl l-done">✓ 完成</span><h3>Formspree 問題收件</h3></div>
+    <ul style="list-style:none;padding:0;font-size:13px;color:var(--ink2)">
+      <li style="padding:3px 0">帳號：<strong>operation@yllhtef.org</strong>　Form ID：<code>maqabonq</code></li>
+      <li style="padding:3px 0">收件：<strong>operation@yllhtef.org</strong>、<strong>account@yllhtef.org</strong></li>
+    </ul>
+  </div>
+
+  <div class="footer">如有問題請聯絡 <a href="mailto:operation@yllhtef.org" style="color:#888">operation@yllhtef.org</a></div>
+</div>
+
+<script>
+// ── Tab switching ──
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(function(t,i){
+    t.classList.toggle('active', ['overview','chat','fields','infra'][i]===id);
+  });
+  document.querySelectorAll('.panel').forEach(function(p){
+    p.classList.toggle('active', p.id==='panel-'+id);
+  });
+}
+
+// ── Chatbot logic ──
+var state = { step: 0, data: {} };
+
+var STEPS = [
+  {
+    key: null,
+    bot: '你好！我來幫你建立一筆完整的捐贈資料 🎯\n\n請問這筆捐贈屬於哪個<strong>出帳來源</strong>？',
+    options: ['① 公益信託', '② 基金會', '③ 公捐基（公益信託捐基金會）']
+  },
+  {
+    key: 'name',
+    bot: '請輸入這筆捐贈的<strong>顯示名稱</strong>。\n\n建議格式：「類別－細項說明年度」\n例如：榮總醫療人才培育2026、ATCC 競賽與落實－心路',
+    options: null
+  },
+  {
+    key: 'year',
+    bot: '這筆捐贈屬於哪個<strong>年度</strong>？',
+    options: ['2026 年度（預估，分 A/B/C 三種狀態）', '2025 以前（歷年，填總金額）']
+  },
+  {
+    key: 'group',
+    bot: '請選擇這筆捐贈屬於哪個<strong>群組</strong>（2026 年度需要）？',
+    options: ['醫療 (medical)', '奉獻獎 (award)', '人才培育 (talent)', '募款達人 (fundraising)', '社會慈善 (charity)', '行政營運 (admin)']
+  },
+  {
+    key: 'amount_type',
+    bot: '請問金額的狀態是？（可多選，請依序輸入）',
+    options: ['A 已執行（已撥款）', 'B 確定（已通過，待撥）', 'C 待討論（預估中）', '歷年總金額（一個數字）']
+  },
+  {
+    key: 'amount_e',
+    bot: '請輸入 <strong>A 已執行</strong> 的金額（元，如 3500000，無則輸入 0）：',
+    options: null
+  },
+  {
+    key: 'amount_c',
+    bot: '請輸入 <strong>B 確定</strong> 的金額（元，如 15000000，無則輸入 0）：',
+    options: null
+  },
+  {
+    key: 'amount_p',
+    bot: '請輸入 <strong>C 待討論</strong> 的金額（元，如 48090000，無則輸入 0）：',
+    options: null
+  },
+  {
+    key: 'memo',
+    bot: '是否有<strong>備注說明</strong>？（例如合作對象、金額分拆說明等，沒有請輸入「無」）',
+    options: ['無']
+  },
+  {
+    key: 'subgroup',
+    bot: '這個項目是否屬於某個<strong>子群組</strong>（例如 ATCC 系列、榮總系列）？',
+    options: ['榮總醫療系列 (sg_rongzong)', 'ATCC 競賽與落實系列 (sg_atcc_impl)', '不屬於任何子群組']
+  }
+];
+
+function initChat(){
+  document.getElementById('chat-msgs').innerHTML='';
+  document.getElementById('result-box').style.display='none';
+  state = { step: 0, data: {}, yearType: 'new' };
+  showStep(0);
+}
+
+function showStep(i){
+  var s = STEPS[i];
+  if(!s) { buildResult(); return; }
+  addBotMsg(s.bot, s.options);
+}
+
+function addBotMsg(text, options){
+  var msgs = document.getElementById('chat-msgs');
+  var div = document.createElement('div');
+  div.className = 'msg bot';
+  var html = '<div class="avatar av-bot">林</div><div style="flex:1"><div class="bubble">'+text.replace(/\n/g,'<br>')+'</div>';
+  if(options){
+    html += '<div class="quick-btns">';
+    options.forEach(function(o){ html += '<button class="qbtn" onclick="quickReply(this,\''+o.replace(/'/g,"\\'")+'\')">' + o + '</button>'; });
+    html += '</div>';
+  }
+  html += '</div>';
+  div.innerHTML = html;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUserMsg(text){
+  var msgs = document.getElementById('chat-msgs');
+  var div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = '<div class="avatar av-user">我</div><div class="bubble">'+text+'</div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function quickReply(btn, val){
+  // disable all buttons in that group
+  btn.closest('.quick-btns').querySelectorAll('.qbtn').forEach(function(b){ b.disabled=true; b.style.opacity='.4'; });
+  btn.style.opacity='1'; btn.style.background='#1a1a1a'; btn.style.color='#fff';
+  processReply(val);
+}
+
+function chatSend(){
+  var inp = document.getElementById('chat-input');
+  var val = inp.value.trim();
+  if(!val) return;
+  inp.value = '';
+  addUserMsg(val);
+  processReply(val);
+}
+
+document.getElementById('chat-input').addEventListener('keydown', function(e){ if(e.key==='Enter') chatSend(); });
+
+function processReply(val){
+  var s = state;
+  var step = s.step;
+
+  // step 0: 出帳類型
+  if(step===0){
+    if(val.includes('信託') && !val.includes('公捐')) s.data.u = 't';
+    else if(val.includes('公捐')) s.data.u = 'tf';
+    else s.data.u = 'f';
+    s.step = 1; setTimeout(function(){ showStep(1); }, 300); return;
+  }
+
+  // step 1: 顯示名稱
+  if(step===1){
+    s.data.n = val;
+    s.step = 2; setTimeout(function(){ showStep(2); }, 300); return;
+  }
+
+  // step 2: 年度
+  if(step===2){
+    s.yearType = val.includes('2026') ? 'new' : 'hist';
+    if(s.yearType==='hist'){
+      // 歷年跳過 group、ABC，直接問年份和金額
+      s.step = 98; setTimeout(function(){ askHistYear(); }, 300); return;
+    }
+    s.step = 3; setTimeout(function(){ showStep(3); }, 300); return;
+  }
+
+  // step 3: 群組
+  if(step===3){
+    var gmap = {醫療:'medical',奉獻獎:'award',人才:'talent',募款:'fundraising',慈善:'charity',行政:'admin'};
+    Object.keys(gmap).forEach(function(k){ if(val.includes(k)) s.data.g = gmap[k]; });
+    if(!s.data.g) s.data.g = 'charity';
+    s.step = 5; // 直接到金額 e
+    setTimeout(function(){ showStep(5); }, 300); return;
+  }
+
+  // step 5: 金額 e
+  if(step===5){
+    s.data.e = parseInt(val.replace(/[^0-9]/g,''))||0;
+    s.step = 6; setTimeout(function(){ showStep(6); }, 300); return;
+  }
+
+  // step 6: 金額 c
+  if(step===6){
+    s.data.c = parseInt(val.replace(/[^0-9]/g,''))||0;
+    s.step = 7; setTimeout(function(){ showStep(7); }, 300); return;
+  }
+
+  // step 7: 金額 p
+  if(step===7){
+    s.data.p = parseInt(val.replace(/[^0-9]/g,''))||0;
+    s.step = 8; setTimeout(function(){ showStep(8); }, 300); return;
+  }
+
+  // step 8: memo
+  if(step===8){
+    s.data.memo = (val==='無'||val==='no'||val==='沒有') ? '' : val;
+    s.step = 9; setTimeout(function(){ showStep(9); }, 300); return;
+  }
+
+  // step 9: subgroup
+  if(step===9){
+    if(val.includes('榮總')) s.data.sg = 'sg_rongzong';
+    else if(val.includes('ATCC')) s.data.sg = 'sg_atcc_impl';
+    else s.data.sg = '';
+    s.step = 99; setTimeout(function(){ buildResult(); }, 300); return;
+  }
+
+  // 歷年流程
+  if(step===98){
+    // already in askHistYear
+  }
+}
+
+function askHistYear(){
+  addBotMsg('這筆歷年捐贈是哪一年？（例如 2024）', null);
+  state.step = 981;
+}
+
+document.getElementById('chat-input').addEventListener('keydown', function(e){
+  if(e.key!=='Enter') return;
+  var inp = e.target;
+  var val = inp.value.trim();
+  if(!val) return;
+  if(state.step===981){
+    inp.value='';
+    addUserMsg(val);
+    state.data.year = parseInt(val)||2024;
+    addBotMsg('請輸入這一年的<strong>總金額</strong>（元）：', null);
+    state.step = 982; return;
+  }
+  if(state.step===982){
+    inp.value='';
+    addUserMsg(val);
+    state.data.a = parseInt(val.replace(/[^0-9]/g,''))||0;
+    addBotMsg('是否有備注說明？（沒有請輸入「無」）', ['無']);
+    state.step = 983; return;
+  }
+  if(state.step===983){
+    inp.value='';
+    addUserMsg(val);
+    state.data.memo = (val==='無') ? '' : val;
+    buildHistResult();
+  }
+});
+
+function buildResult(){
+  var d = state.data;
+  var uLabel = d.u==='t' ? '公益信託 (t)' : d.u==='tf' ? '公捐基 (tf)' : '基金會 (f)';
+  var gLabel = {medical:'醫療',award:'奉獻獎',talent:'人才培育',fundraising:'募款達人',charity:'社會慈善',admin:'行政營運'}[d.g]||d.g;
+
+  var lines = [
+    'P 欄（顯示名稱）  ' + (d.n||''),
+    'u 欄（出帳類型）  ' + uLabel,
+    'g 欄（群組）      ' + (d.g||'') + '  ← ' + gLabel,
+    'd.sg' ? ('sg 欄（子群組）    ' + (d.sg||'（無）')) : '',
+    'e 欄（A 已執行）  ' + fmt(d.e||0),
+    'c 欄（B 確定）    ' + fmt(d.c||0),
+    'p 欄（C 待討論）  ' + fmt(d.p||0),
+    'memo 欄（備注）   ' + (d.memo||'（無）'),
+  ];
+  if(d.sg) lines.splice(3, 0, 'sg 欄（子群組）    ' + d.sg);
+  else lines = lines.filter(function(l){ return l; });
+
+  // summary msg
+  var total = (d.e||0)+(d.c||0)+(d.p||0);
+  addBotMsg('✅ 完成！總金額 ' + fmt(total) + ' 元。以下是這筆捐贈的完整欄位資料，請複製後填入 Google Sheets：', null);
+
+  document.getElementById('result-content').textContent = lines.join('\n');
+  document.getElementById('result-box').style.display = 'block';
+  document.getElementById('result-box').scrollIntoView({behavior:'smooth',block:'nearest'});
+  state.step = 999;
+}
+
+function buildHistResult(){
+  var d = state.data;
+  var yr = d.year||2024;
+  var uLabel = d.u==='t' ? '公益信託 (t)' : d.u==='tf' ? '公捐基 (tf)' : '基金會 (f)';
+  var lines = [
+    'P 欄（顯示名稱）  ' + (d.n||''),
+    'u 欄（出帳類型）  ' + uLabel,
+    'a 欄（年度總金額）' + fmt(d.a||0),
+    yr + ' 欄（年度欄）  ' + fmt(d.a||0),
+    'memo 欄（備注）   ' + (d.memo||'（無）'),
+  ];
+  addBotMsg('✅ 完成！以下是 '+yr+' 年度這筆捐贈的欄位資料：', null);
+  document.getElementById('result-content').textContent = lines.join('\n');
+  document.getElementById('result-box').style.display = 'block';
+  document.getElementById('result-box').scrollIntoView({behavior:'smooth',block:'nearest'});
+  state.step = 999;
+}
+
+function fmt(n){ return n.toLocaleString('zh-TW'); }
+
+function copyResult(){
+  var text = document.getElementById('result-content').textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    var btn = event.target;
+    var orig = btn.textContent;
+    btn.textContent = '✓ 已複製！';
+    setTimeout(function(){ btn.textContent = orig; }, 2000);
+  });
+}
+
+function restartChat(){ initChat(); }
+
+// init
+initChat();
+</script>
+
 </body>
 </html>
