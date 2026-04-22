@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>如何問 Claude 好問題</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f7f7;--card:#fff;--border:#d0d0d0;
+  --topbar:#1a1a1a;--ink:#111;--ink2:#444;--ink3:#888;--ink4:#bbb;
+  --green:#2d6a2d;--gbg:#f0f6f0;--gborder:#b0ccb0;
+  --amber:#7a4400;--abg:#fdf4e8;--aborder:#e0c090;
+  --blue:#1a3a7a;--bbg:#f0f4fb;--bborder:#a0b8e0;
+  --red:#7a1a1a;--rbg:#fdf0f0;--rborder:#e0b0b0;
+  --rad:10px;
+}
+body{background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink);font-size:14px;line-height:1.75;min-height:100vh}
+
+.topbar{background:var(--topbar);color:#fff;padding:0 28px;height:52px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+
+.wrap{max-width:860px;margin:0 auto;padding:36px 24px 72px}
+
+.hero{text-align:center;padding:36px 0 28px}
+.badge{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:#888;background:#fff;border:1px solid #ccc;padding:4px 14px;border-radius:20px;margin-bottom:14px}
+.hero h2{font-size:24px;font-weight:700;color:var(--topbar);margin-bottom:10px;line-height:1.35}
+.hero p{font-size:13px;color:var(--ink3);max-width:560px;margin:0 auto;line-height:1.85}
+
+.sec-h{font-size:16px;font-weight:700;color:var(--topbar);display:flex;align-items:center;gap:9px;margin-bottom:16px;margin-top:36px}
+.sec-h:first-of-type{margin-top:0}
+.sec-h::before{content:'';width:4px;height:18px;background:#555;border-radius:2px;flex-shrink:0}
+
+/* 對照卡片 */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.ccard{border-radius:var(--rad);padding:16px 18px;font-size:13px;line-height:1.75}
+.ccard.bad{background:var(--rbg);border:1px solid var(--rborder)}
+.ccard.good{background:var(--gbg);border:1px solid var(--gborder)}
+.ccard-label{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px}
+.ccard.bad .ccard-label{color:var(--red)}
+.ccard.good .ccard-label{color:var(--green)}
+.ccard p{color:var(--ink2);font-size:13px}
+.ccard .why{margin-top:8px;font-size:12px;color:var(--ink3);border-top:0.5px solid rgba(0,0,0,.1);padding-top:8px}
+
+/* 原則卡片 */
+.principle{background:#fff;border:1px solid var(--border);border-radius:var(--rad);padding:18px 22px;margin-bottom:10px;display:flex;gap:14px}
+.p-num{width:36px;height:36px;border-radius:50%;background:var(--topbar);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;margin-top:2px}
+.p-body h3{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.p-body p{font-size:13px;color:var(--ink2);line-height:1.75}
+.p-body .tip{margin-top:8px;background:var(--gbg);border:1px solid var(--gborder);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--green)}
+
+/* 錯誤模式 */
+.pattern{background:#fff;border:1px solid var(--border);border-left:4px solid #c08030;border-radius:var(--rad);padding:14px 18px;margin-bottom:10px}
+.pattern h4{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px}
+.pattern p{font-size:13px;color:var(--ink2);line-height:1.7}
+.pattern .fix{color:var(--green);margin-top:6px;font-size:12px}
+
+code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:3px;color:#333}
+
+.footer{text-align:center;padding:28px 0 16px;font-size:12px;color:var(--ink4)}
+
+@media(max-width:640px){.compare{grid-template-columns:1fr}}
+
+/* ── 統一導覽列 ── */
+.topbar{background:var(--topbar,#1a1a1a);color:#fff;padding:0 24px;height:48px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:400;flex-wrap:nowrap}
+.logo-mark{width:28px;height:28px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#1a1a1a;flex-shrink:0}
+.topbar h1{font-size:15px;font-weight:500;color:#fff;white-space:nowrap;margin:0}
+.topbar h1 span{color:rgba(255,255,255,.55);font-weight:300}
+.nav-sep{width:1px;height:16px;background:rgba(255,255,255,.2);margin:0 2px;flex-shrink:0}
+.nav-btn{padding:4px 11px;font-size:12px;border-radius:5px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .12s}
+.nav-btn:hover{background:rgba(255,255,255,.18)}
+.nav-btn.active{background:#ffffff;color:#1a1a1a;border-color:#ffffff;font-weight:600}
+.nav-btn.active svg{stroke:#1a1a1a}
+.nav-spacer{flex:1}
+@media(max-width:680px){
+    .topbar h1 span{display:none}
+    .nav-btn-label{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-mark">林</div>
+  <h1>林堉璘宏泰公益 <span>Claude 使用筆記</span></h1>
+  <div class="nav-spacer"></div>
+  <a href="index.html" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-btn-label">首頁</span></a>
+  <a href="trust_detail.html" class="nav-btn" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nav-btn-label">信託明細</span></a>
+  <a href="guide.html" class="nav-btn" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nav-btn-label">作業說明</span></a>
+  <a href="asking_claude.html" class="nav-btn active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span class="nav-btn-label">Claude 使用筆記</span></a>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="badge">Claude 使用筆記</div>
+    <h2>如何問出好問題<br>省時、省錢、做出好工具</h2>
+    <p>這份筆記整理自儀表板開發過程的真實經驗。<br>
+    每一條都是踩過坑、走過彎路後的具體學習。</p>
+  </div>
+
+  <!-- 核心原則 -->
+  <div class="sec-h">五個核心原則</div>
+
+  <div class="principle">
+    <div class="p-num">1</div>
+    <div class="p-body">
+      <h3>先給「現況」，再說「目標」</h3>
+      <p>Claude 看不到你的螢幕，也不知道你已經做了什麼。每次提問時，先說明現在的狀態，再說想達到什麼。這樣 Claude 就不會從頭重做，也不會假設錯誤。</p>
+      <div class="tip">✓ 範本：「目前 XXX 的狀況是 ___，我想改成 ___，可以幫我做嗎？」</div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="p-num">2</div>
+    <div class="p-body">
+      <h3>把「截圖」當成最強的溝通工具</h3>
+      <p>描述問題不如直接截圖。「表格亂掉」這句話，Claude 需要猜；一張截圖，Claude 立刻知道是哪裡亂、怎麼亂。特別是 UI 問題、排版問題、資料顯示異常，截圖是最快的方式。</p>
+      <div class="tip">✓ 看到問題時，截圖 → 上傳 → 說「看截圖，第X個問題是…」</div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="p-num">3</div>
+    <div class="p-body">
+      <h3>一次問一件事，但可以列清單</h3>
+      <p>「幫我改 A、B、C、D」可以，但 A 到 D 要描述清楚，而且最好加上優先順序。問題愈模糊，答案愈需要猜，猜錯了就要重做。把想要的結果說明確，比問「你覺得怎樣最好」有效率得多。</p>
+      <div class="tip">✓ 「依照優先順序：①最重要的先做，②其次是…」</div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="p-num">4</div>
+    <div class="p-body">
+      <h3>上傳檔案是最直接的溝通</h3>
+      <p>有檔案要修改，直接上傳那個檔案。口頭描述「程式碼有個錯誤」不如直接把 HTML 上傳。有 CSV 要分析，直接上傳 CSV。Claude 看到真實的資料，答案才會準。不要只描述，要給原材料。</p>
+      <div class="tip">✓ 上傳檔案 → 說「幫我分析這份資料的問題」遠比「我的資料大概是這樣…」有效</div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="p-num">5</div>
+    <div class="p-body">
+      <h3>測試後回報結果，不要只說「不對」</h3>
+      <p>「還是有問題」讓 Claude 需要猜問題是什麼。「上傳後，點搜尋，出現錯誤訊息：COLLAPSIBLE is not defined」讓 Claude 直接找到根源。錯誤訊息、截圖、具體行為——這些是 Claude 最需要的線索。</p>
+      <div class="tip">✓ 「我做了 ___，結果出現了 ___（附截圖），應該要是 ___」</div>
+    </div>
+  </div>
+
+  <!-- 好問題 vs 模糊問題 -->
+  <div class="sec-h">好問題 vs. 模糊問題：真實對照</div>
+  <p style="font-size:13px;color:var(--ink2);margin-bottom:16px">這些都是這次開發過程中真實發生過的問題類型。</p>
+
+  <div class="compare">
+    <div class="ccard bad"><div class="ccard-label">❌ 模糊問法</div><p>「表格欄位不平均」</p><div class="why">Claude 不知道哪個表格、哪些欄寬多少、你期望的結果是什麼，只能亂猜。</div></div>
+    <div class="ccard good"><div class="ccard-label">✅ 清楚問法</div><p>「（附截圖）受贈單位欄太寬，顯示名稱應在金額左邊，金額欄標題看不到，請依截圖調整」</p><div class="why">截圖＋具體位置＋期望結果，一次說清楚。</div></div>
+  </div>
+
+  <div class="compare">
+    <div class="ccard bad"><div class="ccard-label">❌ 模糊問法</div><p>「搜尋功能壞了」</p><div class="why">哪個搜尋？什麼壞法？什麼錯誤訊息？Claude 完全無從下手。</div></div>
+    <div class="ccard good"><div class="ccard-label">✅ 清楚問法</div><p>「（附截圖）頂端列按搜尋，出現錯誤：COLLAPSIBLE is not defined，無法顯示資料」</p><div class="why">有錯誤訊息，Claude 直接定位問題。</div></div>
+  </div>
+
+  <div class="compare">
+    <div class="ccard bad"><div class="ccard-label">❌ 模糊問法</div><p>「幫我思考這幾個資料的串聯與呈現」</p><div class="why">範圍太大，Claude 不知道你最關心的是什麼，容易生出一大堆你不需要的內容。</div></div>
+    <div class="ccard good"><div class="ccard-label">✅ 清楚問法</div><p>「index.html 和 trust_detail.html 的資料目前是手動更新的，我想讓它們自動從 Google Sheets 讀取，最優先要解決的是什麼？」</p><div class="why">說清楚現況、目標、優先順序，答案才聚焦。</div></div>
+  </div>
+
+  <div class="compare">
+    <div class="ccard bad"><div class="ccard-label">❌ 模糊問法</div><p>「Sheets 的欄名是 受贈戶名(估價單台照)」</p><div class="why">只說了一個欄位，其他欄名不知道。Claude 只能猜其他欄，猜錯就得再來一次。</div></div>
+    <div class="ccard good"><div class="ccard-label">✅ 清楚問法</div><p>「（附截圖）這是 Sheets 第6列的所有欄名，請對應程式碼更新」</p><div class="why">一張截圖，所有欄名一次到位，不需要分多次確認。</div></div>
+  </div>
+
+  <!-- 本次踩到的坑 -->
+  <div class="sec-h">這次開發踩到的坑——下次如何避免</div>
+
+  <div class="pattern">
+    <h4>坑①：修改後才發現有語法錯誤，頁面整個壞掉</h4>
+    <p>Claude 改了程式碼後，有時因為引號嵌套、變數作用域等問題，讓整個頁面無法運作，但 Claude 的模擬測試沒有抓到。</p>
+    <p class="fix">→ 下次：每次上傳修改後，先在瀏覽器開 DevTools（F12）→ Console，看有沒有紅色錯誤。有的話截圖給 Claude，連同「看 Console 的錯誤訊息」一起問。</p>
+  </div>
+
+  <div class="pattern">
+    <h4>坑②：一次要求太多修改，結果改壞了其他地方</h4>
+    <p>「幫我同時修這五個問題」→ Claude 改了五個地方，其中一個引發新問題，很難追蹤是哪一步出了事。</p>
+    <p class="fix">→ 下次：優先順序排清楚，先改最重要的，確認沒問題再繼續。特別是大改動（版型、資料結構），一次只做一件事。</p>
+  </div>
+
+  <div class="pattern">
+    <h4>坑③：沒有提供 Sheets 的實際欄名，讓 Claude 猜</h4>
+    <p>Claude 猜測欄名 → 猜錯 → 資料對不上 → 再猜 → 再錯。這個循環浪費了大量時間和 token。</p>
+    <p class="fix">→ 下次：只要涉及 Sheets 欄名，第一步就截圖給 Claude 看標題列（第6列）。30秒的截圖省去幾十分鐘的猜測。</p>
+  </div>
+
+  <div class="pattern">
+    <h4>坑④：只說「不對」「還是有問題」沒給具體資訊</h4>
+    <p>Claude 沒辦法憑「不對」來判斷是什麼問題。每次來回都要再猜一次，既慢又貴。</p>
+    <p class="fix">→ 下次：說「哪裡不對」：截圖 ＋ 錯誤訊息 ＋「應該要看到的是什麼」。三個資訊，Claude 一次到位。</p>
+  </div>
+
+  <div class="pattern">
+    <h4>坑⑤：沒說清楚是要改設計還是改功能</h4>
+    <p>「搜尋應該可以顯示小計」→ Claude 不確定是要改 UI 位置、還是新增計算邏輯、還是兩者都要。</p>
+    <p class="fix">→ 下次：說清楚是「視覺調整」（改樣式）還是「功能新增」（改邏輯），或者兩者都要。</p>
+  </div>
+
+  <!-- 第二回合新增：命名與資料對齊的進階技巧 -->
+  <div class="sec-h">第二回合學到的——命名、資料對齊與進階提問</div>
+  <p style="color:#666;font-size:0.95em;margin:0 0 18px 0;">以下整理自儀表板 v9 命名對齊、資料驗證、文件產出的實際經驗。</p>
+
+  <div class="pattern">
+    <h4>進①：給「邏輯示例」而不是「規則說明」</h4>
+    <p>要 Claude 批次改名，與其描述規則，不如直接舉一個例子，Claude 會自動類推其他所有項目。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 規則說明</div><p>「社會急難救助相關的，都請依P欄邏輯補充小字」</p><div class="why">Claude 不確定「P欄邏輯」是什麼，容易猜錯。</div></div>
+      <div class="ccard good"><div class="ccard-label">✅ 邏輯示例</div><p>「薛伯輝基金會（早療教室籌建）<br>請參考：社會慈善-台灣盲人重建院 / 公務車輛 的邏輯<br>改為：社會慈善-薛伯輝基金會，小字：早療教室籌建」</p><div class="why">一個完整的例子勝過一頁規則說明。Claude 照此類推所有其他項目。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進②：指出「兩個地方不一致」而不是說「數字不對」</h4>
+    <p>當你發現邏輯矛盾，說清楚「A地方顯示X，B地方顯示Y，這兩個應該一致」，比說「不對」有效十倍。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 只說不對</div><p>「1+3公益信託總支出的已執行不太對」</p><div class="why">Claude 不知道哪裡不對、應該是多少。</div></div>
+      <div class="ccard good"><div class="ccard-label">✅ 點出不一致</div><p>「單選2026年時①+③已執行是1.5億（49%），但多年比較時2026的A已執行顯示2.4億，兩者應該一致，A已執行 = exec.t + exec.tf」</p><div class="why">說明：哪兩個地方、各自顯示什麼、期望的正確邏輯。Claude 直接知道要改哪裡、怎麼改。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進③：先說清楚「定義」，再請Claude修改</h4>
+    <p>涉及計算邏輯或資料定義時，先陳述你認為正確的定義，Claude 照此修改，不需要來回猜測。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 沒給定義</div><p>「A已執行的數字看起來不正確」</p></div>
+      <div class="ccard good"><div class="ccard-label">✅ 先給定義</div><p>「A已執行應該是：不區分從哪裡出帳，只看公益信託相關，即 exec.t + exec.tf，不含基金會自身的 exec.f。請依此定義修正。」</p><div class="why">把你腦中的邏輯說出來，Claude 就不用猜你的意思。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進④：「全面檢視」要給具體條件和反例</h4>
+    <p>請 Claude 做全面性的掃描，一定要給「具體的判斷條件」加上「你已發現的反例」，否則 Claude 不知道要找什麼。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 太模糊</div><p>「請全面檢查命名是否正確」</p></div>
+      <div class="ccard good"><div class="ccard-label">✅ 條件＋反例</div><p>「請全面檢視：只要有『奉獻獎』三個字，都請保持全名『堉璘台灣奉獻獎』。<br>例如：2026年度明細裡就只寫了『奉獻獎獎金』，不符合。」</p><div class="why">具體規則＋已知反例，Claude 知道要找什麼，不會漏掉也不會過度修改。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑤：上傳原始資料（Excel/PDF）作為命名依據</h4>
+    <p>要做大量命名對齊，直接上傳原始資料檔，比口頭描述規則有效得多。Claude 可以直接讀取完整資料，不靠猜測。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 口頭描述</div><p>「P欄的命名邏輯大概是：大分類-細項說明，請依此對齊」</p><div class="why">Claude 不知道全部的大分類是哪些，只能猜。</div></div>
+      <div class="ccard good"><div class="ccard-label">✅ 上傳檔案</div><p>「給你參考此檔的P欄（上傳帳務主檔 Excel / PDF）」</p><div class="why">Claude 直接讀取773筆完整P欄資料，找出所有唯一的大分類，再比對儀表板逐一修正。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑥：給規則的同時，說清楚「例外」</h4>
+    <p>請 Claude 套用某個規則時，如果有不想被影響的項目，一開始就說清楚，否則做完後才發現要還原，多一個來回。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 只說規則</div><p>「請全面依P欄大分類邏輯對齊所有項目名稱」</p><div class="why">Claude 把「堉璘淡海計畫」改成「利他人才培育-堉璘淡海計畫」，需要再來一次還原。</div></div>
+      <div class="ccard good"><div class="ccard-label">✅ 規則＋例外</div><p>「請依P欄大分類對齊，但以下兩個保持原名不變：<br>・堉璘 Changemaker 高中計畫<br>・堉璘淡海計畫」</p><div class="why">一次說完，省去還原的來回。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑦：說明合併的「理由」，讓 Claude 類推</h4>
+    <p>請 Claude 合併多筆項目時，說明為什麼要合併，Claude 才能判斷其他類似情況是否也應合併。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 只說要合併</div><p>「ATCC落實—心路 和 ATCC落實—弘道東石 請合併」</p></div>
+      <div class="ccard good"><div class="ccard-label">✅ 說明理由＋格式</div><p>「ATCC落實—心路、ATCC落實—弘道東石，請合併為：<br>ATCC 落實<br>小字：心路OO萬，弘道東石OO萬<br>（邏輯：右邊數字A/B/C不一定展現各單位的具體金額，所以在小字補充）」</p><div class="why">說明理由後，Claude 能類推處理其他類似情況，並在 memo 裡補正確的細節。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑧：請 Claude 寫文件，要說清楚「對象、頻率、操作範圍」</h4>
+    <p>請 Claude 產出說明文件或操作手冊時，說清楚讀者是誰，Claude 才能調整語言難度、排版和內容深度。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 沒說對象</div><p>「請寫一份自動化更新說明書」</p><div class="why">Claude 可能寫成技術文件，但讀者是沒有技術背景的會計同事。</div></div>
+      <div class="ccard good"><div class="ccard-label">✅ 說清楚對象與需求</div><p>「請寫成 Word 檔，給會計/行政同事日後接手，約每月、每年更新，他們需要：①每月更新A/B/C數字、②年底結算、③不定期新增專案項目。」</p><div class="why">Claude 會用口語化語言、逐步說明，並加入核對清單和常見問題，讓非技術者也能獨立操作。</div></div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1px solid var(--border);border-radius:var(--rad);padding:20px 24px;margin-bottom:16px">
+    <p style="font-size:13px;color:var(--ink2);line-height:1.85">
+      每一次與 Claude 的對話都消耗 token（費用）。<strong>讓每一次對話更有效率</strong>，就是省錢。以下幾個習慣可以大幅減少無效來回：
+    </p>
+    <ul style="list-style:none;padding:0;margin-top:12px;font-size:13px;color:var(--ink2)">
+      <li style="padding:6px 0 6px 20px;position:relative;border-bottom:0.5px solid #f0f0f0">
+        <span style="position:absolute;left:0;color:var(--green);font-weight:700">✓</span>
+        <strong>上傳實際的檔案</strong>，而不是描述它的內容。一份 HTML 或 CSV 遠比「程式碼大概是這樣」有效。
+      </li>
+      <li style="padding:6px 0 6px 20px;position:relative;border-bottom:0.5px solid #f0f0f0">
+        <span style="position:absolute;left:0;color:var(--green);font-weight:700">✓</span>
+        <strong>截圖取代文字描述</strong>，特別是 UI 問題、錯誤訊息、Sheets 欄名。
+      </li>
+      <li style="padding:6px 0 6px 20px;position:relative;border-bottom:0.5px solid #f0f0f0">
+        <span style="position:absolute;left:0;color:var(--green);font-weight:700">✓</span>
+        <strong>確認後再要下一步</strong>。每次修改後先確認結果正確，再提下一個需求。不要在不確定上一個問題有沒有解決的情況下繼續前進。
+      </li>
+      <li style="padding:6px 0 6px 20px;position:relative;border-bottom:0.5px solid #f0f0f0">
+        <span style="position:absolute;left:0;color:var(--green);font-weight:700">✓</span>
+        <strong>說「最重要的是」</strong>。當有多個問題時，先說哪個最重要。Claude 會優先解決它，不會把時間花在次要問題上。
+      </li>
+      <li style="padding:6px 0 6px 20px;position:relative">
+        <span style="position:absolute;left:0;color:var(--green);font-weight:700">✓</span>
+        <strong>問題還沒解決前，不要換話題</strong>。在同一個問題上堅持到底，比東跳西跳效率高得多。
+      </li>
+    </ul>
+  </div>
+
+  <!-- 問問題的模板 -->
+  <div class="sec-h">實用問題模板</div>
+
+  <div style="background:#f8f8f8;border:1px solid var(--border);border-radius:var(--rad);padding:18px 22px;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:700;color:var(--ink3);margin-bottom:10px;letter-spacing:.3px;text-transform:uppercase">回報問題時</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2);line-height:2;background:#fff;border-radius:6px;padding:12px 14px;border:1px solid #e8e8e8">
+      （附截圖）<br>
+      問題：___（具體描述看到什麼）<br>
+      錯誤訊息：___（如果有的話）<br>
+      應該要：___（期望的正確結果）<br>
+      操作步驟：我做了 ___ 之後出現這個問題
+    </div>
+  </div>
+
+  <div style="background:#f8f8f8;border:1px solid var(--border);border-radius:var(--rad);padding:18px 22px;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:700;color:var(--ink3);margin-bottom:10px;letter-spacing:.3px;text-transform:uppercase">要求新功能時</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2);line-height:2;background:#fff;border-radius:6px;padding:12px 14px;border:1px solid #e8e8e8">
+      現況：目前 ___ 的功能是 ___<br>
+      目標：我想要能夠 ___<br>
+      限制：不要改動 ___（不想動到的部分）<br>
+      優先：最重要的是 ___，其次是 ___
+    </div>
+  </div>
+
+  <div style="background:#f8f8f8;border:1px solid var(--border);border-radius:var(--rad);padding:18px 22px;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:700;color:var(--ink3);margin-bottom:10px;letter-spacing:.3px;text-transform:uppercase">確認 Claude 理解了再動手</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2);line-height:2;background:#fff;border-radius:6px;padding:12px 14px;border:1px solid #e8e8e8">
+      在 Claude 開始改之前，可以說：<br>
+      「先告訴我你打算怎麼做，我確認後再開始」<br>
+      → 複雜的功能改動，確認方向比直接動手省時間
+    </div>
+  </div>
+
+
+  <!-- 第三回合：表格工具建構的進階學習 -->
+  <div class="sec-h">第三回合學到的——表格工具建構、樣式一致性、跨檔案設計</div>
+  <p style="color:#666;font-size:0.95em;margin:0 0 18px 0;">以下整理自公益信託明細表格（trust_detail.html）的開發過程。</p>
+
+  <div class="pattern">
+    <h4>進⑨：跨對話的資訊 Claude 看不到——要上傳才有用</h4>
+    <p>說「請參考芳孜1_new 對話的方向 B 配色」→ Claude 無法跨對話讀取，只能請你再提供。說了等於沒說，浪費一輪。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 跨對話引用</div><p>「顏色請參考芳孜1_new 對話中的方向 B：黑白灰＋單一強調色…」</p><div class="why">Claude 看不到其他對話，必須再問你一次。</div></div>
+      <div class="ccard good"><div class="ccard-label">✅ 直接上傳檔案</div><p>「顏色請參考這個檔案」→ 上傳 <code>公益支出與成效儀表板_12.html</code></p><div class="why">Claude 直接讀取色票變數，完整複製設計語言，一次到位。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑩：複製現有元件比描述風格更有效</h4>
+    <p>要做「和某頁面一樣的按鈕」，上傳那個頁面遠比描述它更快。不需要說顏色、大小、圖示、hover 效果——Claude 直接讀 HTML 就知道。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 口頭描述</div><p>「頂端右側加一個回到儀表板按鈕，半透明白底、白字、有左箭頭…」</p><div class="why">描述很難精確，Claude 猜出來的結果跟你想的可能不一樣。</div></div>
+      <div class="ccard good"><div class="ccard-label">✅ 上傳參考檔</div><p>「請加一個按鈕，類似這個 guide.html 的做法」→ 上傳 <code>guide.html</code></p><div class="why">Claude 直接複製那個 <code>&lt;a&gt;</code> 元素的完整樣式，像素級一致。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑪：說「範圍」而不只說「症狀」，CSS 問題一次解決</h4>
+    <p>同一個 CSS 問題（數字換行）連改三次，每次都是說症狀（「出帳日期換行了」「合計數字超出」），Claude 每次只修那一處，下一個地方還是錯。</p>
+    <p class="fix">→ 正確問法：說清楚<strong>整體規則</strong>，而不是一個個症狀。<br>
+    「所有 td/th 預設不換行，<strong>只有文字欄</strong>（受贈單位、備註）允許換行」<br>
+    → Claude 一次從根源修，不會有遺漏的角落。</p>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑫：說明最終目的，Claude 幫你預設好架構</h4>
+    <p>「最後要互相連結，做成一套完整的帳務」這句話一開始說出來，Claude 就自動設定 <code>href="index.html"</code>，後來不需要再調整。</p>
+    <p class="fix">→ 習慣在開始時說：「這個工具最終要和 ___ 串在一起，目的是 ___」<br>
+    Claude 會在架構、命名、連結上都預先考慮好，而不是做完再改。</p>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑬：輸出檔名用英文，避免中文編碼問題</h4>
+    <p>Claude 輸出中文檔名（如「林堉璘宏泰公益信託明細.html」）→ 瀏覽器下載時編碼跑掉 → 上傳回來是一個錯誤訊息檔，整輪作廢。</p>
+    <div class="compare">
+      <div class="ccard bad"><div class="ccard-label">❌ 中文檔名</div><p>讓 Claude 輸出「林堉璘宏泰公益信託明細.html」</p><div class="why">跨平台時中文編碼常出錯，下載回來的檔案可能無法正常開啟或上傳。</div></div>
+      <div class="ccard good"><div class="ccard-label">✅ 英文檔名</div><p>請 Claude 輸出為 <code>trust_detail.html</code>、<code>index.html</code></p><div class="why">英文檔名在任何系統、瀏覽器、平台都不會有編碼問題，省去一輪麻煩。</div></div>
+    </div>
+  </div>
+
+  <div class="pattern">
+    <h4>進⑭：截圖是對齊 UI 細節最快的方式</h4>
+    <p>文字描述「＋號對齊、變小、顏色淺一點」連改兩輪還沒到位。上傳一張儀表板截圖，說「參考截圖的 ＋ 號風格」→ 一次完成。</p>
+    <p class="fix">→ 任何涉及「對齊某個現有工具的 UI 風格」的需求，截圖是最短路徑。<br>
+    文字描述顏色、大小、位置，不如直接讓 Claude 看。</p>
+  </div>
+
+  <div class="footer">
+    林堉璘宏泰教育基金會 ｜ Claude 使用筆記<br>
+    整理自儀表板開發過程的真實經驗 · 初版 2026 / 增修 v2 2026.04 / 增修 v3 2026.04
+  </div>
+
+</div>
+</body>
+</html>
