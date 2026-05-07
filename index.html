@@ -34,4 +34,3681 @@
   --cp:#888888;   /* 待討論：淺灰 */
 
   --rad:8px;
-用於Control + Shift + m切換tab關鍵的移動焦點。或者，使用esc該按鈕tab移動到頁面上的下一個互動元素。
+  --shadow:0 1px 4px rgba(0,0,0,.08);
+}
+
+html,body{min-height:100vh;background:var(--bg);font-family:Noto Sans TC,sans-serif;color:var(--ink);font-size:15px;line-height:1.6;overflow-x:hidden}
+
+.logo h1{font-size:15px;font-weight:500;letter-spacing:.3px;color:#f5ead0}
+.logo h1 span{color:rgba(255,255,255,.6);font-weight:300}
+.top-meta{font-size:11px;color:rgba(255,255,255,.55);display:flex;gap:14px;align-items:center}
+.top-leg{display:flex;gap:10px}
+.top-leg span{display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,.6)}
+.top-leg i{width:8px;height:8px;border-radius:2px}
+
+/* ── MAIN ── */
+.main{padding:16px 20px;max-width:1120px;margin:0 auto;overflow:visible}
+
+/* ── YEAR SELECTOR ── */
+.sel{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+.sb{padding:6px 14px;border-radius:5px;font-size:13px;font-weight:500;border:1.5px solid var(--border2);background:white;color:#333333;cursor:pointer;transition:all .12s;white-space:nowrap}
+.sb:hover{border-color:#555555;color:#111111}
+.sb.on{background:var(--topbar);color:#ffffff;border-color:var(--topbar)}
+.sb.yr26{border-style:dashed}
+.sb.yr26.on{background:#333333;border-color:#333333;border-style:solid;color:#ffffff}
+.sdiv{width:1px;height:18px;background:var(--border);margin:0 2px}
+
+/* 年度選擇列：固定高度單行，不換行 */
+.sel-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 20px;
+  background:var(--bg);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  position:sticky;top:48px;z-index:30;
+  overflow:hidden;
+}
+.sel-bar-label{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;flex-shrink:0}
+.sel-bar-hint{font-size:11px;color:var(--ink2);white-space:nowrap;flex-shrink:0}
+.sel-scroll{flex:1;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;min-width:0}
+.sel-scroll::-webkit-scrollbar{display:none}
+.sel-scroll .sel{flex-wrap:nowrap;margin-bottom:0;width:max-content}
+
+/* ── 年度選擇：左右箭頭 ── */
+.sel-arrow{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);background:white;color:var(--ink2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:14px;line-height:1;padding:0}
+.sel-arrow:hover{border-color:var(--ink);color:var(--ink);background:var(--hover)}
+.sel-arrow:active{transform:scale(.92)}
+.sel-clear{flex-shrink:0;font-size:11px;padding:3px 10px;border:1px solid var(--border2);border-radius:4px;background:white;color:var(--ink2);cursor:pointer;white-space:nowrap;transition:all .12s}
+.sel-clear:hover{border-color:var(--ink);color:var(--ink)}
+
+/* ── KPI STRIP ── */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:11px 13px}
+.kl{font-size:11px;color:var(--ink2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.kv{font-size:21px;font-weight:600;color:var(--ink);font-family:'Noto Sans TC',sans-serif;line-height:1.15}
+.ku{font-size:12px;color:var(--ink3);font-weight:400;margin-left:2px}
+.ks{font-size:11px;color:var(--ink4);margin-top:2px}
+.kpi.accent{border-color:var(--accent);background:linear-gradient(135deg,var(--card) 0%,#f0f0f0 100%)}
+.kpi.accent .kl{color:var(--ink)}
+
+/* ── LEGEND ── */
+.leg{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:12px;color:var(--ink3);align-items:center}
+.li{display:flex;align-items:center;gap:4px}
+.lsq{width:11px;height:11px;border-radius:3px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.leg-div{width:1px;height:14px;background:var(--border);margin:0 4px}
+
+/* ── CHART ── */
+.chart-wrap{position:relative;width:100%;height:210px;margin-bottom:6px}
+.cmt{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.cmb{padding:5px 12px;border-radius:4px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:white;color:var(--ink2);cursor:pointer;transition:all .11s}
+.cmb:hover{border-color:var(--accent)}
+.cmb.on{background:var(--topbar);color:#ffffff;border-color:var(--topbar)}
+
+/* ══════════════════════════════════════
+   CROSS-YEAR MATRIX TABLE
+══════════════════════════════════════ */
+.matrix-outer{display:none}/* removed - scrolling handled by section-scroll */
+
+/* sticky column header */
+.matrix-scroll{overflow-x:visible;position:relative}
+.matrix-table{border-collapse:collapse;width:100%;min-width:800px}
+.matrix-table th,.matrix-table td{padding:0;border:0;white-space:nowrap}
+
+/* Row label column */
+.rc{width:148px;min-width:148px;max-width:148px;position:sticky;left:0;z-index:10;background:var(--card)}
+.rc-inner{padding:9px 13px;font-size:13px;color:var(--ink2);line-height:1.35}
+
+/* Year columns */
+.yc{min-width:80px;width:80px;max-width:80px;text-align:right}
+.yc-inner{padding:6px 8px;font-variant-numeric:tabular-nums;font-size:12px;font-family:'Noto Sans TC',sans-serif;text-align:right}
+
+/* Header row */
+.mh-row{background:var(--topbar)}
+.mh-row .rc{background:var(--topbar)}
+.mh-row th{border-bottom:2px solid var(--accent)}
+.mh-yr{color:#ffffff;font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:600;text-align:right;padding:10px 10px;cursor:pointer;transition:background .1s}
+.mh-yr:hover{background:rgba(255,255,255,.08)}
+.mh-yr.on{color:#ffffff;background:rgba(255,255,255,.2);outline:1.5px solid rgba(255,255,255,.4)}
+.mh-yr.est{color:#cccccc;border-style:dashed}
+.mh-label{color:rgba(255,255,255,.5);font-size:12px;text-transform:uppercase;letter-spacing:.3px;padding:10px 13px}
+
+/* Row groups */
+.mg-head{background:var(--hover)}
+.mg-head .rc-inner{font-weight:600;font-size:13px;color:var(--ink);text-transform:uppercase;letter-spacing:.2px}
+.mg-head td .yc-inner{font-weight:600;color:var(--ink);font-size:13px}
+
+.mrow{border-bottom:0.5px solid var(--border)}
+.mrow:last-child{border-bottom:none}
+.mrow:hover td{background:var(--hover)}
+.mrow td{background:var(--bg)}
+
+/* subtotal rows */
+.msubtot{background:var(--card)}
+.msubtot .rc-inner{font-weight:500;color:var(--ink2)}
+.msubtot td .yc-inner{font-weight:500}
+
+/* grand total */
+.mgtot{background:linear-gradient(135deg,#eeeeee 0%,var(--card) 100%);border-top:2px solid var(--border2)}
+.mgtot .rc-inner{font-weight:700;font-size:14px;color:var(--ink)}
+.mgtot td .yc-inner{font-weight:700;font-size:14px;color:var(--ink);font-family:'Noto Sans TC',sans-serif}
+
+/* value helpers */
+.zero{color:var(--ink4);opacity:.4}
+.pos{color:var(--ink)}
+.est-val{color:#444444;font-weight:600}
+
+/* ── SECTION TOGGLE BAR ── */
+.sec-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.sec-btn{padding:6px 14px;border-radius:5px;font-size:13px;border:1.5px solid var(--border2);background:white;color:var(--ink2);cursor:pointer;transition:all .12s}
+.sec-btn:hover{border-color:var(--ink);color:var(--ink)}
+.sec-btn.on{background:var(--topbar);color:#ffffff;border-color:var(--topbar);font-weight:600}
+
+/* ── DETAIL PANEL (per-year) ── */
+.yr-detail{display:none;margin-bottom:18px;animation:fd .15s}
+.yr-detail.on{display:block}
+@keyframes fd{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+.yd-head{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+.dstat{background:var(--card);border-radius:var(--rad);padding:9px 12px;border:1px solid var(--border)}
+.dl{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.dv{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;font-family:'Noto Sans TC',sans-serif}
+
+/* ── ITEM TABLE ── */
+.itbl-wrap{border-radius:var(--rad);overflow:visible;box-shadow:var(--shadow);margin-bottom:8px;outline:1px solid var(--border)}
+/* 成效 modal 由 JS 控制，不需要 imp-ph-row */
+.itbl{width:100%;border-collapse:collapse;font-size:13px}
+.itbl thead{background:var(--hover)}
+.itbl thead th{padding:8px 10px;font-size:11px;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border);text-align:right;text-transform:uppercase;letter-spacing:.3px}
+.itbl thead th:first-child{text-align:left}
+.itbl thead th.c{text-align:center}
+.itbl tbody td{padding:9px 10px;border-bottom:0.5px solid var(--border);vertical-align:top}
+.itbl tbody tr:last-child td{border-bottom:none}
+.itbl tbody tr:hover td{background:var(--hover)}
+.itbl td.r{text-align:right;font-variant-numeric:tabular-nums;vertical-align:middle;font-family:'Noto Sans TC',sans-serif;font-size:13px}
+.itbl td.c{text-align:center;vertical-align:middle}
+.upill{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500;white-space:nowrap;display:inline-block}
+
+
+.st-tag{font-size:11px;padding:2px 6px;border-radius:3px;font-weight:400;white-space:nowrap;display:inline-block;margin:1px}
+.item-memo{font-size:11px;color:var(--ink4);margin-top:2px;line-height:1.4}
+
+/* ── IMPACT BTN ── */
+.imp-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:16px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:white;color:var(--ink2);cursor:pointer;transition:all .12s;white-space:nowrap;vertical-align:middle;margin-left:6px;font-family:Noto Sans TC,sans-serif}
+.imp-btn:hover,.imp-btn.glow{border-color:var(--border2);color:var(--ink);background:var(--hover)}
+.imp-btn svg{width:10px;height:10px;flex-shrink:0}
+
+/* ── IMPACT MODAL OVERLAY ── */
+.imp-overlay{
+  display:none;
+  position:fixed;inset:0;
+  z-index:2000;
+  background:rgba(30,20,0,.52);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  animation:overlayIn .18s ease-out;
+}
+.imp-overlay.on{display:flex}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+
+.imp-modal{
+  background:#ffffff;
+  border:1px solid #e0e0e0;
+  border-radius:12px;
+  box-shadow:0 24px 60px rgba(30,20,0,.28), 0 4px 12px rgba(30,20,0,.12);
+  width:min(96vw, 1200px);
+  max-height:88vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  animation:modalIn .2s cubic-bezier(.22,1,.36,1);
+;position:relative}
+@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+
+.imp-modal-head{
+  padding:14px 18px 12px;
+  background:#f8f8f8;
+  border-bottom:1px solid #e0e0e0;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  flex-shrink:0;
+  gap:12px;
+}
+.imp-modal-title-block{display:flex;flex-direction:column;gap:4px;min-width:0}
+.imp-modal-title{font-size:16px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.imp-modal-meta{font-size:12px;color:var(--ink2);display:flex;gap:14px;flex-wrap:wrap}
+.imp-modal-meta span{display:flex;align-items:center;gap:4px}
+.imp-modal-close{
+  width:32px;height:32px;border-radius:50%;border:1px solid #cccccc;
+  background:white;color:var(--ink3);font-size:20px;line-height:1;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .12s;flex-shrink:0;margin-top:2px;
+}
+.imp-modal-close:hover{background:var(--topbar);color:#ffffff;border-color:var(--topbar)}
+
+.imp-modal-body{
+  padding:14px 18px 18px;
+  overflow-y:auto;
+  flex:1;
+  min-height:0;
+  background:#ffffff;
+}
+
+/* KPI chips row */
+.imp-stat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.imp-stat-chip{
+  background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;
+  padding:7px 13px;display:flex;align-items:baseline;gap:5px;
+  box-shadow:0 1px 3px rgba(61,46,0,.06);
+}
+.imp-stat-v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink);font-family:'Noto Sans TC',monospace}
+.imp-stat-l{font-size:11px;color:var(--ink2)}
+
+/* IOII 4-column horizontal layout */
+.ioii-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-bottom:10px;
+  align-items:start;
+}
+/* Responsive: collapse to 2 cols on narrow modal */
+@media(max-width:700px){.ioii-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.ioii-grid{grid-template-columns:1fr}}
+
+.ioii-col{
+  border-radius:8px;border:1px solid #e0e0e0;
+  padding:12px 13px;background:white;
+  display:flex;flex-direction:column;
+  box-shadow:0 1px 3px rgba(61,46,0,.05);
+}
+.ioii-head{
+  font-size:13px;font-weight:700;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;color:var(--ink);
+  border-bottom:2px solid currentColor;padding-bottom:7px;
+}
+.ioii-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ioii-step-label{
+  font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  opacity:.65;margin-left:auto;font-family:'IBM Plex Mono',monospace;
+}
+.ioii-sub{font-size:12px;font-weight:600;color:var(--ink);margin:9px 0 4px;line-height:1.35}
+.ioii-sub:first-of-type{margin-top:4px}
+.ioii-item{
+  font-size:12.5px;color:var(--ink);line-height:1.65;
+  padding:4px 0 4px 14px;
+  border-bottom:0.5px solid #e8e8e8;
+  position:relative;
+}
+.ioii-item:last-child{border-bottom:none}
+.ioii-item::before{
+  content:'›';color:var(--ink2);
+  font-size:13px;font-weight:700;
+  position:absolute;left:1px;top:3px;line-height:1;
+}
+
+/* Arrow connector between columns */
+.ioii-arrow{
+  display:none; /* hidden — flow is implied by column order */
+}
+
+.imp-modal-note{
+  font-size:11px;color:var(--ink2);
+  border-top:0.5px solid #e0e0e0;
+  padding-top:9px;margin-top:2px;line-height:1.7;
+}
+
+/* stat-chip legacy aliases (keep for compat) */
+.stat-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.stat-chip{background:#f5f5f5;border:1px solid #e0e0e0;border-radius:6px;padding:5px 10px;display:flex;align-items:baseline;gap:4px}
+.stat-v{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink);font-family:'Noto Sans TC',sans-serif}
+.stat-l{font-size:12px;color:var(--ink2)}
+.imp-note{font-size:12px;color:var(--ink3);border-top:0.5px solid var(--border);padding-top:8px;margin-top:5px;line-height:1.65}
+
+/* ── FOOT NOTE ── */
+.foot-note{font-size:12px;color:var(--ink2);margin-top:10px;padding:10px 14px;border-top:0.5px solid #e0e0e0;line-height:1.7;background:#f5f5f5;border-radius:0 0 var(--rad) var(--rad)}
+
+/* ── 跨年對比：空佔位列 ── */
+.grp-empty{background:var(--bg) !important}
+.grp-empty td{border-bottom:0.5px solid var(--border) !important;opacity:1 !important}
+
+/* ── LAYOUT: stacked sections, each scrolls horizontally ── */
+
+/* Section wrapper: full viewport width, escape max-width constraint */
+.section-full{
+  width:100vw;
+  position:relative;
+  left:50%;
+  transform:translateX(-50%);
+  margin-bottom:0;
+}
+/* Scrollable inner strip */
+.section-scroll{
+  overflow-x:auto;
+  overflow-y:clip;
+  -webkit-overflow-scrolling:touch;
+  cursor:grab;
+  padding:0 20px 12px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border2) transparent;
+}
+.section-scroll::-webkit-scrollbar{height:6px}
+.section-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.section-scroll:active{cursor:grabbing}
+
+/* Section header bar (sticky within section) */
+.section-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 20px;background:var(--bg);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  position:sticky;top:48px;z-index:30;
+  flex-wrap:wrap;gap:4px;
+}
+/* 年度選擇器在 section-hd 內時不需要額外 margin */
+.section-hd .sel{margin-bottom:0;flex:0 0 100%;}
+.section-hd-title{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.2px}
+.section-hd-hint{font-size:11px;color:var(--ink2);margin-left:10px;font-weight:400}
+.section-sep{height:10px;background:var(--hover);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0}
+
+/* Matrix table fills as wide as needed */
+.matrix-table{border-collapse:collapse;white-space:nowrap}
+.matrix-table th,.matrix-table td{padding:0;border:0}
+
+/* Year columns in detail area */
+.detail-strip{
+  display:flex;gap:0;align-items:flex-start;
+  min-height:200px;
+  width:100%;
+}
+/* Horizontal 5-stat row inside each year column */
+.yr-stat-row{display:flex;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--rad);overflow:visible}
+.yr-stat{flex:1;padding:7px 9px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;gap:3px;min-width:72px}
+.yr-stat:last-child{border-right:none}
+.yr-stat.accent{background:linear-gradient(135deg,var(--card),#fffbe8)}
+.yr-stat-l{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.2px;white-space:nowrap;line-height:1.3}
+.yr-stat-v{font-size:13px;font-weight:600;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.2;white-space:nowrap}
+.yr-col{
+  flex:0 0 auto;
+  border-right:2px solid var(--border2);
+  background:var(--bg);
+  animation:slideIn .18s ease-out;
+}
+.yr-col:last-child{border-right:none}
+@keyframes slideIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+.yr-col-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;
+  background:var(--card);
+  border-bottom:2px solid var(--border2);
+}
+.yr-col-title{font-size:14px;font-weight:600;color:var(--ink)}
+.yr-col-close{
+  width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);
+  background:white;color:var(--ink3);font-size:17px;line-height:1;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .12s;flex-shrink:0;
+}
+.yr-col-close:hover{background:var(--topbar);color:#ffffff;border-color:var(--topbar)}
+.yr-col-body{padding:10px 12px}
+
+/* empty-detail prompt */
+.detail-empty{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px 20px;color:var(--ink3);font-size:13px;text-align:center;min-height:140px;
+}
+
+/* Year buttons: multi-select */
+.sb.sel{background:var(--ink);color:#ffffff;border-color:var(--ink);font-weight:600}
+.sb.sel.yr26{background:#333333;border-color:#333333;color:#ffffff}
+
+/* KPI: multi-year mode */
+.kpi-multi{display:flex;gap:6px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px}
+.kpi-yr-grp{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:10px 12px;min-width:160px}
+.kpi-yr-lbl{font-size:11px;color:var(--topbar);font-weight:600;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.kpi-row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:var(--ink2)}
+.kpi-row .kpi-v{font-family:'Noto Sans TC',sans-serif;color:var(--ink);font-weight:500}
+
+/* yd-head compact in col */
+.yr-col .yd-head{grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.yr-col .dstat{padding:7px 10px}
+.yr-col .dv{font-size:14px}
+.yr-col .dl{font-size:10px}
+
+@media(max-width:900px){
+  .compare-wrap{flex-direction:column}
+  .col-matrix.has-detail{width:100%;border-right:none;border-bottom:2px solid var(--border2)}
+  .yr-col{flex:0 0 300px}
+}
+@media(max-width:760px){
+  .main{padding:12px}
+  .topbar{padding:0 12px}.top-meta{display:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpis .kpi:last-child{grid-column:1/-1}
+  .yd-head{grid-template-columns:1fr 1fr}
+  .ioii-grid{grid-template-columns:1fr 1fr !important}
+  .yr-col{flex:0 0 280px}
+}
+
+/* ── 查帳搜尋 ── */
+#srch-overlay{position:fixed;inset:0;background:rgba(20,15,0,.5);z-index:900;display:none;align-items:flex-start;justify-content:center;padding-top:56px}
+#srch-panel{background:#ffffff;border-radius:10px;width:min(820px,95vw);max-height:82vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #e0e0e0}
+#srch-bar{padding:14px 16px;border-bottom:1px solid #e0e0e0;display:flex;gap:8px;align-items:center;background:#ffffff}
+#srch-q{flex:1;font-size:15px;padding:7px 11px;border:1.5px solid #cccccc;border-radius:6px;outline:none;font-family:inherit;color:#111111}
+#srch-q:focus{border-color:#555555}
+#srch-x{width:30px;height:30px;border-radius:50%;border:1px solid #cccccc;background:white;cursor:pointer;font-size:18px;color:#333333;flex-shrink:0}
+#srch-upload{padding:8px 16px;background:#f5f5f5;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#srch-filebtn{padding:4px 12px;font-size:12px;border-radius:4px;border:1.5px dashed #aaaaaa;background:white;color:#333333;cursor:pointer;font-family:inherit}
+#srch-files{font-size:11px;color:#888888;flex:1}
+#srch-body{overflow-y:auto;flex:1}
+#srch-status{padding:14px 18px;font-size:13px;color:#666666;text-align:center}
+.srch-row{padding:10px 18px;border-bottom:1px solid #f0e8c8}
+.srch-row:hover{background:#f5f5f5}
+.srch-src{font-size:10px;color:#888888;margin-bottom:4px}
+.srch-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.srch-tbl td{padding:2px 6px 2px 0;vertical-align:top}
+.srch-tbl td:first-child{color:#888888;white-space:nowrap;width:1%;padding-right:10px;font-size:11px}
+mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px solid #e8e040}
+
+@media(max-width:700px){
+  .tl-hide-sm{display:none!important}
+  .tl-show-sm{display:flex!important}
+}
+.tl-show-sm{display:none}
+
+/* ── SHEETS 帳務資料 ── */
+#sheets-overlay{position:fixed;inset:0;background:rgba(20,15,0,.5);z-index:900;display:none;align-items:flex-start;justify-content:center;padding-top:56px}
+#sheets-panel{background:#ffffff;border-radius:10px;width:min(1560px,97vw);height:92vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #e0e0e0}
+#sheets-head{padding:12px 18px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;background:#ffffff}
+#sheets-title{font-size:14px;font-weight:600;color:#111111;display:flex;align-items:center;gap:8px}
+#sheets-status{font-size:11px;color:#888888;font-weight:400;margin-left:6px}
+#sheets-x{width:28px;height:28px;border-radius:50%;border:1px solid #cccccc;background:white;cursor:pointer;font-size:17px;color:#333333;display:flex;align-items:center;justify-content:center}
+#sheets-controls{padding:8px 18px;background:#f5f5f5;border-bottom:1px solid #e0e0e0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#sheets-yr-filter{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.sheets-yr-btn{padding:3px 10px;font-size:12px;border-radius:4px;border:1px solid #cccccc;background:white;color:#333333;cursor:pointer;transition:all .1s}
+.sheets-yr-btn.on{background:#1a1a1a;color:#ffffff;border-color:#1a1a1a}
+#sheets-search{padding:5px 10px;font-size:13px;border:1.5px solid #cccccc;border-radius:5px;outline:none;font-family:inherit;width:200px}
+#sheets-search:focus{border-color:#333333}
+#sheets-body{overflow-y:auto;flex:1}
+.sheets-tbl{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto}
+.sheets-tbl thead{background:#eeeeee;position:sticky;top:0;z-index:5}
+.sheets-tbl thead th{padding:6px 8px;text-align:left;font-size:11px;font-weight:600;color:#111111;border-bottom:1px solid #cccccc;white-space:nowrap}
+.sheets-tbl thead th.r{text-align:right;min-width:85px;white-space:nowrap}
+.sheets-tbl tbody td{padding:5px 10px;border-bottom:0.5px solid #eeeeee;vertical-align:top;white-space:normal;word-break:break-word;overflow-wrap:anywhere}
+.sheets-tbl tbody tr:hover td{background:#f5f5f5}
+.sheets-tbl td.amt{text-align:right;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap;min-width:85px}
+.sheets-tbl td.yrc{text-align:center;color:#555555;font-family:'Noto Sans TC',sans-serif;width:52px;min-width:52px}
+.sheets-tbl td.tyc{text-align:center;width:68px;min-width:68px}
+.sheets-pill{font-size:10px;padding:1px 6px;border-radius:3px;white-space:nowrap;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+#sheets-footer{padding:7px 18px;border-top:1px solid #e0e0e0;font-size:11px;color:#666666;display:flex;justify-content:space-between;align-items:center;background:#f5f5f5}
+#sheets-expbtn{padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #cccccc;background:white;color:#333333;cursor:pointer}
+
+/* ── QA 問答面板 ── */
+#qa-overlay{position:fixed;inset:0;background:rgba(20,15,0,.5);z-index:950;display:none;align-items:flex-start;justify-content:center;padding-top:52px}
+#qa-panel{background:#ffffff;border-radius:12px;width:min(760px,96vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #e0e0e0}
+#qa-head{padding:12px 18px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;background:#ffffff;flex-shrink:0}
+#qa-head-title{font-size:14px;font-weight:600;color:#111111;display:flex;align-items:center;gap:8px}
+#qa-head-sub{font-size:11px;color:#a08820;font-weight:400;margin-left:4px}
+#qa-head-btns{display:flex;gap:6px;align-items:center}
+#qa-x{width:28px;height:28px;border-radius:50%;border:1px solid #e8d880;background:white;cursor:pointer;font-size:17px;color:#7a6400;display:flex;align-items:center;justify-content:center;transition:all .12s}
+#qa-x:hover{background:#1a1a1a;color:#ffffff;border-color:#1a1a1a}
+#qa-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-height:200px;max-height:calc(88vh - 200px);background:#fafafa}
+.qa-msg{display:flex;gap:10px;align-items:flex-start;animation:qaIn .18s ease-out}
+@keyframes qaIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.qa-msg.user{flex-direction:row-reverse}
+.qa-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.qa-avatar.bot{background:#1a1a1a;color:#ffffff}
+.qa-avatar.user{background:#555555;color:#ffffff}
+.qa-bubble{max-width:84%;padding:10px 13px;border-radius:10px;font-size:13px;line-height:1.65;position:relative}
+.qa-bubble.bot{background:#ffffff;border:1px solid #e0e0e0;color:#111111;border-radius:2px 10px 10px 10px}
+.qa-bubble.user{background:#1a1a1a;color:#ffffff;border-radius:10px 2px 10px 10px}
+.qa-bubble.typing{color:#a08820;font-style:italic}
+.qa-bubble p{margin-bottom:6px}.qa-bubble p:last-child{margin-bottom:0}
+.qa-fwd-btn{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:3px 10px;border-radius:14px;font-size:11px;border:1px solid #cccccc;background:#f5f5f5;color:#333333;cursor:pointer;transition:all .12s;font-family:inherit}
+.qa-fwd-btn:hover{border-color:#555555;color:#111111;background:#eeeeee}
+.qa-fwd-btn.sent{border-color:#2d6a2d;color:#2d6a2d;background:#eef6ee;pointer-events:none}
+#qa-input-area{padding:12px 18px;border-top:1px solid #e0e0e0;background:#f8f8f8;flex-shrink:0}
+#qa-name-row{display:flex;gap:8px;margin-bottom:8px}
+#qa-name{flex:1;font-size:12px;padding:5px 10px;border:1.5px solid #cccccc;border-radius:5px;outline:none;font-family:inherit;color:#111111;background:white}
+#qa-name:focus{border-color:#555555}
+#qa-input-row{display:flex;gap:8px;align-items:flex-end}
+#qa-input{flex:1;font-size:13px;padding:8px 12px;border:1.5px solid #cccccc;border-radius:8px;outline:none;font-family:inherit;color:#111111;resize:none;max-height:120px;min-height:40px;line-height:1.5;background:white}
+#qa-input:focus{border-color:#333333}
+#qa-send{padding:8px 18px;font-size:13px;border-radius:7px;border:none;background:#1a1a1a;color:#ffffff;cursor:pointer;font-family:inherit;font-weight:500;transition:all .12s;white-space:nowrap;height:40px}
+#qa-send:hover{background:#333333}
+#qa-send:disabled{opacity:.5;cursor:not-allowed}
+#qa-hint{font-size:11px;color:#666666;margin-top:6px;line-height:1.5}
+.qa-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.qa-qbtn{padding:4px 12px;font-size:12px;border:1px solid #cccccc;border-radius:14px;background:white;color:#333333;cursor:pointer;transition:all .11s;font-family:inherit}
+.qa-qbtn:hover{border-color:#555555;color:#111111;background:#f5f5f5}
+
+/* ── 出帳篩選 ── */
+.unit-filter{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
+.unit-filter-label{font-size:11px;color:var(--ink3);margin-right:2px}
+.ufbtn{padding:2px 8px;font-size:11px;border-radius:3px;border:1.5px solid #cccccc;background:#ffffff;color:#999999;cursor:pointer;transition:background .1s,color .1s,border-color .1s;font-family:inherit;display:inline-flex;align-items:center;gap:3px;font-weight:500;letter-spacing:.2px;box-sizing:border-box}
+.ufbtn:hover{border-color:var(--ink2);color:var(--ink)}
+.ufbtn.on{background:#1a1a1a!important;color:#ffffff!important;border:1.5px solid #1a1a1a!important;font-weight:500!important;opacity:1!important;letter-spacing:.2px;box-sizing:border-box}
+
+.ufbtn .uf-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* ── QA 打字動畫 ── */
+.qa-dots{display:inline-flex;gap:5px;align-items:center;padding:2px 0}
+.qa-dots span{width:7px;height:7px;border-radius:50%;background:#aaaaaa;display:inline-block;animation:qaDot 1.2s infinite ease-in-out}
+.qa-dots span:nth-child(1){animation-delay:0s}
+.qa-dots span:nth-child(2){animation-delay:.2s}
+.qa-dots span:nth-child(3){animation-delay:.4s}
+@keyframes qaDot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+/* ── QA badge ── */
+.qa-mode-badge{font-size:11px;background:#fff8cc;border:1px solid #e8d060;border-radius:4px;padding:2px 8px;color:#7a5800;display:inline-block;margin-top:4px}
+
+
+/* ── 統一導覽列 ── */
+.topbar{background:var(--topbar,#1a1a1a);color:#fff;padding:0 24px;height:48px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:400;flex-wrap:nowrap}
+.logo-mark{width:28px;height:28px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#1a1a1a;flex-shrink:0}
+.topbar h1{font-size:15px;font-weight:500;color:#fff;white-space:nowrap;margin:0}
+.topbar h1 span{color:rgba(255,255,255,.55);font-weight:300}
+.nav-sep{width:1px;height:16px;background:rgba(255,255,255,.2);margin:0 2px;flex-shrink:0}
+.nav-btn{padding:4px 11px;font-size:12px;border-radius:5px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .12s}
+.nav-btn:hover{background:rgba(255,255,255,.18)}
+.nav-btn.active{background:#ffffff;color:#1a1a1a;border-color:#ffffff;font-weight:600}
+.nav-btn.active svg{stroke:#1a1a1a}
+.nav-spacer{flex:1}
+@media(max-width:680px){
+    .topbar h1 span{display:none}
+    .nav-btn-label{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     登入畫面
+══════════════════════════════════════ -->
+<div id="login-screen" style="
+  position:fixed;inset:0;z-index:9999;
+  background:#f0f0f0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Noto Sans TC',sans-serif;
+">
+  <div style="
+    width:min(400px,92vw);
+    background:#ffffff;
+    border:1px solid #d8d8d8;
+    border-radius:12px;
+    padding:40px 36px 32px;
+    box-shadow:0 4px 24px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.06);
+  ">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:30px">
+      <div style="
+        width:48px;height:48px;border-radius:10px;
+        background:#1a1a1a;
+        display:inline-flex;align-items:center;justify-content:center;
+        font-size:20px;font-weight:700;color:#ffffff;
+        font-family:'IBM Plex Mono',monospace;
+        margin-bottom:14px;
+      ">林</div>
+      <div style="color:#111111;font-size:16px;font-weight:600;letter-spacing:.3px;line-height:1.4">
+        林堉璘宏泰公益
+      </div>
+      <div style="color:#888888;font-size:13px;font-weight:400;margin-top:3px">
+        支出與成效儀表板
+      </div>
+    </div>
+
+    <!-- 說明文字 -->
+    <div style="
+      color:#aaaaaa;font-size:12px;text-align:center;
+      margin-bottom:22px;line-height:1.6;
+    ">
+      本儀表板僅供內部使用，請輸入通行碼繼續
+    </div>
+
+    <!-- 輸入框 -->
+    <div style="position:relative;margin-bottom:14px">
+      <input id="login-pwd" type="password"
+        placeholder="通行碼"
+        maxlength="30"
+        onkeydown="if(event.key==='Enter')loginSubmit()"
+        style="
+          width:100%;padding:11px 44px 11px 14px;
+          background:#fafafa;
+          border:1.5px solid #d0d0d0;
+          border-radius:8px;font-size:14px;
+          color:#111111;font-family:inherit;
+          outline:none;box-sizing:border-box;
+          transition:border-color .15s,background .15s;
+          letter-spacing:2px;
+        "
+        onfocus="this.style.borderColor='#555555';this.style.background='#ffffff'"
+        onblur="this.style.borderColor='#d0d0d0';this.style.background='#fafafa'"
+      >
+      <!-- 眼睛圖示 -->
+      <button onclick="loginTogglePwd()" title="顯示／隱藏" style="
+        position:absolute;right:12px;top:50%;transform:translateY(-50%);
+        background:none;border:none;cursor:pointer;padding:4px;
+        color:#bbbbbb;transition:color .12s;
+      " onmouseover="this.style.color='#555555'" onmouseout="this.style.color='#bbbbbb'">
+        <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 錯誤訊息 -->
+    <div id="login-err" style="
+      display:none;margin-bottom:12px;
+      padding:8px 12px;border-radius:6px;
+      background:#fef5f5;border:1px solid #e8c8c8;
+      color:#c05050;font-size:12px;text-align:center;
+    ">
+      通行碼錯誤，請再試一次
+    </div>
+
+    <!-- 登入按鈕 -->
+    <button onclick="loginSubmit()" id="login-btn" style="
+      width:100%;padding:12px;
+      background:#1a1a1a;
+      border:none;border-radius:8px;
+      font-size:14px;font-weight:600;
+      color:#ffffff;cursor:pointer;
+      font-family:inherit;letter-spacing:.3px;
+      transition:background .15s;
+    "
+    onmouseover="this.style.background='#333333'"
+    onmouseout="this.style.background='#1a1a1a'"
+    >
+      進入儀表板
+    </button>
+
+    <!-- 記住我 -->
+    <div style="text-align:center;margin-top:14px">
+      <label style="color:#aaaaaa;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none">
+        <input type="checkbox" id="login-remember" style="
+          width:13px;height:13px;cursor:pointer;
+          accent-color:#555555;
+        " checked>
+        記住我 7 天
+      </label>
+    </div>
+
+    <!-- 底部聯絡 -->
+    <div style="
+      margin-top:24px;padding-top:18px;
+      border-top:1px solid #eeeeee;
+      text-align:center;font-size:11px;
+      color:#cccccc;line-height:1.8;
+    ">
+      忘記通行碼？請聯絡基金會行政組<br>
+      <a href="mailto:operation@yllhtef.org" style="color:#aaaaaa;text-decoration:none">
+        operation@yllhtef.org
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  登入驗證
+//  ⚠ 修改通行碼：將下方 LOGIN_PASSWORDS 陣列改為你想要的密碼
+// ══════════════════════════════════════
+var LOGIN_PASSWORDS = ['yllhtef2026', 'board2026'];  // ← 在此修改通行碼
+var LOGIN_STORAGE_KEY = 'yllhtef_dashboard_auth';
+var LOGIN_EXPIRE_DAYS = 7;
+
+(function(){
+  try{
+    var stored = JSON.parse(localStorage.getItem(LOGIN_STORAGE_KEY)||'null');
+    if(stored && stored.exp > Date.now()){
+      loginSuccess(false);
+      return;
+    }
+  }catch(e){}
+  setTimeout(function(){
+    var el = document.getElementById('login-pwd');
+    if(el) el.focus();
+  }, 100);
+})();
+
+function loginSubmit(){
+  var pwd = (document.getElementById('login-pwd').value||'').trim();
+  var err = document.getElementById('login-err');
+  var btn = document.getElementById('login-btn');
+
+  if(!pwd){ shakeInput(); return; }
+
+  if(LOGIN_PASSWORDS.indexOf(pwd) >= 0){
+    err.style.display='none';
+    btn.textContent='✓ 驗證成功';
+    btn.style.background='#2d6a2d';
+
+    var remember = document.getElementById('login-remember').checked;
+    if(remember){
+      try{
+        var exp = Date.now() + LOGIN_EXPIRE_DAYS*24*60*60*1000;
+        localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify({exp:exp}));
+      }catch(e){}
+    }
+
+    setTimeout(function(){ loginSuccess(true); }, 500);
+  } else {
+    err.style.display='block';
+    shakeInput();
+    document.getElementById('login-pwd').value='';
+    document.getElementById('login-pwd').focus();
+  }
+}
+
+function loginSuccess(animate){
+  var screen = document.getElementById('login-screen');
+  if(!screen) return;
+  if(animate){
+    screen.style.transition='opacity .4s ease';
+    screen.style.opacity='0';
+    setTimeout(function(){ screen.style.display='none'; }, 400);
+  } else {
+    screen.style.display='none';
+  }
+}
+
+function loginTogglePwd(){
+  var input = document.getElementById('login-pwd');
+  var icon = document.getElementById('eye-icon');
+  if(input.type==='password'){
+    input.type='text';
+    icon.innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    input.type='password';
+    icon.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+  input.focus();
+}
+
+function shakeInput(){
+  var el = document.getElementById('login-pwd');
+  el.style.animation='none';
+  el.offsetHeight;
+  el.style.animation='loginShake .35s ease';
+  el.style.borderColor='#e8a0a0';
+  setTimeout(function(){ el.style.borderColor='#d0d0d0'; }, 600);
+}
+</script>
+
+<style>
+@keyframes loginShake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-7px)}
+  40%{transform:translateX(7px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+#login-pwd::placeholder{color:#cccccc;letter-spacing:0}
+</style>
+
+
+
+<div class="topbar">
+  <div class="logo-mark">林</div>
+  <h1>林堉璘宏泰公益 <span>支出與成效儀表板</span></h1>
+  <div class="nav-sep"></div>
+  <button onclick="sheetsOpen()" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span class="nav-btn-label">搜尋</span></button>
+  <button onclick="qaOpen()" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="nav-btn-label">提問</span></button>
+  <div class="nav-spacer"></div>
+  <a href="index.html" class="nav-btn active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-btn-label">首頁</span></a>
+  <a href="trust_detail.html" class="nav-btn" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nav-btn-label">信託明細</span></a>
+  <a href="guide.html" class="nav-btn" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nav-btn-label">作業說明</span></a>
+  <a href="asking_claude.html" class="nav-btn" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span class="nav-btn-label">Claude 使用筆記</span></a>
+</div>
+
+<div class="main">
+
+  <!-- ① 歷年對比矩陣 -->
+  <div class="section-full" id="section-a">
+    <div class="section-hd">
+      <span class="section-hd-title">歷年對比（5項財務指標）</span>
+      <span class="section-hd-hint">— 點選年份展開明細，可多選比較</span>
+    </div>
+    <div class="section-scroll" id="matrix-scroll-wrap">
+      <div id="section-matrix"></div>
+    </div>
+  </div>
+
+  <div class="section-sep"></div>
+
+  <!-- ② 年度選擇（固定單列）+ KPI + 長條圖 + 圖例 -->
+  <div id="chart-area">
+    <!-- 年度選擇列：暫時收起，恢復時移除 style="display:none" -->
+    <div class="sel-bar" style="display:none">
+      <div class="sel-bar-label">年度選擇</div>
+      <div class="sel-bar-hint" id="detail-hint">點選展開明細，可多選左右比較</div>
+      <button class="sel-arrow" id="sel-arrow-l" onclick="selScroll(-120)" title="向左">‹</button>
+      <div class="sel-scroll" id="sel-scroll">
+        <div class="sel" id="sel" style="margin-bottom:0;flex-wrap:nowrap"></div>
+      </div>
+      <button class="sel-arrow" id="sel-arrow-r" onclick="selScroll(120)" title="向右">›</button>
+      <button onclick="selectedYrs.clear();openImpact={};render();" class="sel-clear">清除全部</button>
+    </div>
+
+    <!-- KPI（選了年份才顯示）-->
+    <div id="kpis-wrap" style="display:none"></div>
+
+    <!-- 長條圖（暫時隱藏，恢復時移除外層 display:none）-->
+    <div id="chart-section" style="display:none">
+      <div class="chart-wrap"><canvas id="chart" role="img" aria-label="年度公益支出趨勢圖"></canvas></div>
+      <div class="leg" id="leg"></div>
+      <div id="chart-metric-toggle" style="margin-top:2px;margin-bottom:10px;display:flex;gap:5px;flex-wrap:wrap;min-height:0"></div>
+    </div>
+  </div>
+
+  <div class="section-sep" id="sep-detail" style="display:none"></div>
+
+  <!-- ③ 年度明細 -->
+  <div class="section-full" id="section-b" style="display:none">
+    <div class="section-hd">
+      <span>
+        <span class="section-hd-title">年度明細</span>
+        <span class="section-hd-hint" id="detail-hint2"></span>
+      </span>
+      <button onclick="selectedYrs.clear();openImpact={};render();" style="font-size:11px;padding:3px 10px;border:1px solid var(--border2);border-radius:4px;background:white;color:var(--ink2);cursor:pointer;flex-shrink:0">清除全部</button>
+    </div>
+    <div class="section-scroll" id="detail-scroll-wrap">
+      <div class="detail-strip" id="col-details"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── IMPACT MODAL OVERLAY ── -->
+<div class="imp-overlay" id="imp-overlay" onclick="handleOverlayClick(event)">
+  <div class="imp-modal" id="imp-modal">
+    <div class="imp-modal-head" id="imp-modal-head"></div>
+    <div class="imp-modal-body" id="imp-modal-body"></div>
+    <button id="modal-top-btn" onclick="document.getElementById('imp-modal-body').scrollTo({top:0,behavior:'smooth'})"
+      title="回到頂部" style="display:none;position:absolute;bottom:16px;right:16px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:white;color:var(--ink2);font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);z-index:10">↑</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  COLOUR TOKENS
+// ═══════════════════════════════════════════════════════
+const CA='#5a3e1e',CB='#8a6030',CC='#b08858';
+const CE='#2e6e4a',CD='#9a5210',CP='#6e5f8a',CO='#c9a800';
+const UB={t:'#f5edd0',f:'#e8edd8',tf:'#ddeae8'};
+const UT={t:'#4a3a08',f:'#2a3820',tf:'#1a3840'};
+const UL={t:'公益信託',f:'透過基金會執行',tf:'公捐基'};
+const UC={t:CA,f:CB,tf:CC};
+const GOAL=300000000;
+
+// ═══════════════════════════════════════════════════════
+//  IMPACT DATA  (from PDF annual reports 2021–2026)
+// ═══════════════════════════════════════════════════════
+const IMPACT={
+  rongzong_talent:{
+    title:'榮總醫療人才培育計畫（專14）',period:'2019–2025',totalInput:'累計約 9,430 萬元',
+    stats:[{v:'104人次',l:'出國研習累計'},{v:'15+',l:'培育專業領域'},{v:'48篇',l:'高質量論文累計'},{v:'4.35倍',l:'病患整體存活期提升'}],
+    input:[
+      {sub:'經費補助',items:['2019–2025 累計約 9,430 萬元','支持中華醫學會、思源基金會、沈力揚基金會、消化基金會、放射線醫學會等']},
+      {sub:'人才培育規模',items:['出國研習累計 104 人次（全方位強化全院人才培育）','涵蓋 15 個以上專業領域：內科（心臟/胃腸/腎臟/感染/代謝）、外科（整形/一般/耳鼻喉/骨科）、腫瘤、麻醉、護理及放射線']}
+    ],
+    output:[
+      {sub:'院內標準產出（累計）',items:['產出 3 種「院內標準」：感染預防與管制、微創技術標準化、數位預警工具']},
+      {sub:'臨床研究與論文（累計）',items:['44 項臨床研究專題計畫','48 篇高質量論文轉化發表','北榮論文 Impact Factor 穩定提升至 2.4，年收稿量超過 800 篇','醫學研討會 1,000 人次以上 / 年']}
+    ],
+    outcome:[
+      {sub:'對病患',items:['透過精準化個人治療策略、AI 預測提前預警，病患整體存活期大幅提升達 4.35 倍','重粒子設備 2023/5 啟用，累計治療 680+ 位癌症患者']},
+      {sub:'對醫療人員',items:['數位轉型信心：AI 與數位工具使一線人員數位創作與管理信心提升 26.3%','計畫參與人員滿意度高達 90% 以上']}
+    ],
+    impact:[
+      {sub:'全球智慧醫療領航者',items:['連年獲 Newsweek 世界最佳智慧醫院肯定，確立本院作為國際精準醫療標竿之能見度']},
+      {sub:'國際貢獻',items:['提升國際治療指引影響力，展現台灣醫學貢獻度','AI 與數位工具全面融入臨床，手術追蹤系統標準化']}
+    ],
+    note:'資料來源：醫療專案成效 PDF（2019–2025 累計版本）。'
+  },
+  rongzong_heavy:{
+    title:'榮總重粒子癌症治療計畫（專14）',period:'2016–2025',totalInput:'3 億元設備 ＋ 人才培育 71.6 萬元',
+    stats:[{v:'680+',l:'累計治療病患'},{v:'80%',l:'胰臟癌（轉移）首年存活率'},{v:'<5%',l:'副作用（原 20%）'},{v:'全球第6',l:'擁有重粒子治療國家'}],
+    input:[
+      {sub:'設備投入',items:['2016 年捐贈 3 億元，投入最先端重粒子治癌設備','歷經 7 年建置，2023/5 正式啟用']},
+      {sub:'人才培育',items:['長期支持重粒子醫療人才培育超過 13 位醫師，累計 71.6 萬元']}
+    ],
+    output:[
+      {sub:'病患服務（累計）',items:['累積超過 680 位病患接受重粒子治療','其中 5 位弱勢病患免費治療','以攝護腺癌、胰臟癌、肝癌為主']},
+      {sub:'國際合作',items:['吸引美國 NYU 朗格尼醫學中心、梅約醫學中心合作']}
+    ],
+    outcome:[
+      {sub:'改善癌症治療指標（胰臟癌）',items:['首年存活率提升：有轉移者 傳統 20% → 重粒子 80%，無轉移者 40% → 85%','副作用大幅降低：20% → ＜5%（對比日本先前數據）','病患福祉↑，心理負擔↓']},
+      {sub:'醫院聲望',items:['助力北榮連續入選《Newsweek》世界最佳醫院前 250 名']}
+    ],
+    impact:[
+      {sub:'台灣醫療實力與國際地位↑',items:['台灣成為全球第 6 個擁有重粒子治療的國家','推動醫療外交，提升台灣國際地位']},
+      {sub:'醫療科研標準的引領',items:['建立重粒子治療臨床指引，引領醫療科研標準','感念堉璘先生接受榮總照護，期盼持續提升榮總醫療人才╱設備品質']}
+    ],
+    note:'設備於 2016 年捐贈，歷經 7 年建置，2023/5 正式啟用。資料來源：醫療專案成效 PDF（2016–2025）。'
+  },
+  fire_rescue:{
+    title:'消防急救教育計畫',period:'2017–2024',totalInput:'累計約 2.7 億元',
+    stats:[{v:'394台',l:'LUCAS自動心肺復甦機（累計）'},{v:'27.4%',l:'OHCA急救成功率（2022）'},{v:'111人',l:'累計EMTP高級救護員'},{v:'11,000+',l:'成功恢復呼吸心跳人次'}],
+    input:[
+      {sub:'設備',items:['2017–2024 累計捐贈 394 台 LUCAS（佔全台消防分隊約 4 成）','2018 年捐贈住宅用火警警報器 19 萬顆（全台低收入戶及獨居老人）']},
+      {sub:'人才培育',items:['與消防署簽訂合作備忘錄','支持 EMTP 最高等救護人員培訓課程','救護教官培訓、自動心肺復甦機教用教育訓練']}
+    ],
+    output:[
+      {sub:'設備普及',items:['394 台 LUCAS，佔全台約 4 成；一線救護車 MCPR 配備率達 100%','2023 年設備被使用搶救 6,387 人次呼吸心跳']},
+      {sub:'人才培育',items:['2022：62 位 EMT-2 考取 EMTP（台灣 EMTP 人力提升 3.6%）','2024：累計 111 位 EMTP（提升 2.33%）','推動《救護技術員管理辦法》修訂','2017–2022 急救教育訓練累計 55,148 人次']}
+    ],
+    outcome:[
+      {sub:'救護成效',items:['OHCA 急救成功率：2017 年 21.22% → 2022 年 27.40%','2017–2022 OHCA 急救成功累計 23,246 人','截至 2024 年累計成功恢復呼吸心跳約 11,000 人次']}
+    ],
+    impact:[
+      {sub:'全台最大規模公益消防捐贈',items:['2017–2019 年贊助 257 台 LUCAS，為全台最大規模的捐贈']},
+      {sub:'體制影響',items:['促進《救護技術員管理辦法》修訂','提升台灣整體緊急救護品質']}
+    ],
+    note:'OHCA=到院前心跳停止。EMTP=最高等救護技術員。資料來源：2023–2025 年度工作報告。'
+  },
+  ntu_plan:{
+    title:'堉璘台大人才培育計畫',period:'2019–2025',totalInput:'累計約 3.4 億元（承諾 4.5 億）',
+    stats:[{v:'800+',l:'年參與學生人次'},{v:'340萬',l:'2025年學生募款成果'},{v:'1,303',l:'2025年新增捐款人'},{v:'8.2/10',l:'募款操作熟悉度'}],
+    input:[
+      {sub:'計畫設計',items:['與臺大創新設計學院 D-school 合作','年度邀請 8–12 家 NPO 開放場域','設計思考工作坊＋一對一教練輔導＋出國獎學金']}
+    ],
+    output:[
+      {sub:'年度產出累計',items:['2020：26 位出國、6 場關鍵議題講座','2021：291 位講座、148 位進 NPO 實習、56 位出國','2022：800 位講座、168 位工作坊、51 位出國','2023：115/70 名（第六屆）；141/103 名（第七屆）','2024：第七屆 20 名出國；第八屆 77 人、37 名提案','2025：11 家 NPO、106 位學生、33份解方提案、募款 340 萬、新增捐款人 1,303 人']}
+    ],
+    outcome:[
+      {sub:'學生能力成長',items:['募款操作熟悉度平均 8.2 分（滿分 10）','社會影響力評估能力 7.77 分','表現優於 72% 學生']}
+    ],
+    impact:[
+      {sub:'利他人才生態',items:['建立台大學生與非營利組織深度連結的長期機制','2025 年促成大眾募款 340 萬元，新增捐款人 1,303 人']}
+    ],
+    note:'計畫自 2019 年啟動，每年兩屆（跨年運作）。資料來源：2021–2026 年度工作報告。'
+  },
+  dedication_award:{
+    title:'堉璘台灣奉獻獎計畫',period:'2017–2025（第一～九屆）',totalInput:'累計約 3.55 億元',
+    stats:[{v:'9屆',l:'已頒獎屆數'},{v:'173家',l:'2024年受益公益組織'},{v:'10萬+',l:'2024年間接受益民眾'},{v:'3,000家',l:'2024年觸及公益組織'}],
+    input:[
+      {sub:'資源投入',items:['2017–2025 累計獎金逾 3.55 億元','得主橫跨戒毒防治、身心障礙、環境、教育、社福、科學傳播、婦幼、移工等領域']}
+    ],
+    output:[
+      {sub:'各屆重點',items:['第四屆（2020）：荒野保護協會（3,000 萬）＋甘霖獎 45 NPO','第五屆（2021）：張老師基金會＋甘霖獎 65 NPO','第七屆（2023）：9 家 820＋ 公益工作者受益，50 萬民眾獲服務','第八屆（2024）：中華育幼機構兒童關懷協會（3,000 萬），成就獎×5（1,500 萬）','第九屆（2025）：心路社福（3,000 萬），成就獎×3（2,700 萬），新秀獎×5（1,500 萬）']}
+    ],
+    outcome:[
+      {sub:'公益圈生態改變',items:['觸及全台社福文教組織約 10%（2024 年）','鼓勵組織以改變理論框架論述服務，提升問責文化','「再支持」計畫具體成效：瑪利亞基金會教保員離職率降低 7.33%，募款超過 2,100 萬元；彭蒙惠偏鄉英語計畫服務 59 所國小，3,598 名學生受益']}
+    ],
+    impact:[
+      {sub:'公益文化與生態系統影響',items:['帶動台灣公益圈正向循環，強化組織治理與成效表達能力','樹立「PBL 成效框架」為台灣公益界的論述標準','建立跨領域標竿典範，促進知識交流與社會影響力擴散']}
+    ],
+    note:'「再支持」計畫自第五屆起啟動，協助得主強化組織能力。資料來源：2021–2026 年度工作報告。'
+  },
+  cm_highschool:{
+    title:'堉璘社創高中生計畫（CM計畫）',period:'2022–2025',totalInput:'累計約 1,213 萬元',
+    stats:[{v:'223位',l:'2025年受訓高中生'},{v:'135名',l:'2024年培育（設計思考）'},{v:'5組',l:'2025年為NPO募款團隊'},{v:'216,350元',l:'2025年學生募款成果'}],
+    input:[{sub:'計畫',items:['與 iEARN 協會合作，PBL 教學法結合設計思考','帶領高中生探究地方公益議題、提出社創解方並落地實作']}],
+    output:[
+      {sub:'年度成果',items:['2022：10 教育單位、70 名師生','2023：12 教育單位、84 名師生','2024：19 場教育活動、135 位同學','2025：223 位高中生培訓，5 組團隊募款 216,350 元']}
+    ],
+    outcome:[{sub:'青年社創素養',items:['高中生學習以設計思考探究地方公益議題','建立高中生與 NPO 共學的社會創新機制']}],
+    impact:[{sub:'教育生態',items:['在正規教育外建立社創素養培育管道','持續為公益圈注入具行動力與利他精神的年輕力量']}],
+    note:'資料來源：2023–2026 年度工作報告。'
+  },
+  atcc_plan:{
+    title:'ATCC NPO永續創新個案大賽與落實計畫',period:'2022–2025',totalInput:'累計約 2,481 萬元',
+    stats:[{v:'13,862',l:'2024年直接受益人數'},{v:'5,200+',l:'2025年心路觸及人次'},{v:'7.13倍',l:'青藝盟月均定期定額成長'},{v:'60%+',l:'大眾對障礙議題認知轉友善'}],
+    input:[{sub:'策略',items:['競賽激發創意＋資源輔導落地雙軌','學生與 NPO 共同以 PBL、設計思考將解方提案落地執行']}],
+    output:[
+      {sub:'2024 年落實',items:['心路基金會、青少年表演藝術聯盟、科學月刊、陽光基金會賦能','直接受益 13,862 人']},
+      {sub:'2025 年落實',items:['弘道基金會：39 組學生投入，社區參與度成長逾 1.5 倍','心路基金會：10 場行動攤車、18 天特展，觸及 5,200 人次（達成率 123.6%）','青藝盟：LINE 好友 1,123 人，月均定期定額成長 7.13 倍']}
+    ],
+    outcome:[{sub:'社會共融',items:['60.46% 大眾對障礙議題認知轉向友善','超過半數表達願意採取行動']}],
+    impact:[{sub:'協作模式驗證',items:['成功驗證「學生創意＋NPO實務＋基金會支持」協作模式','帶動非營利組織數位轉型與財務永續']}],
+    note:'資料來源：2024–2026 年度工作報告。'
+  },
+  fundraising_masters:{
+    title:'堉璘利他人才庫—募款達人計畫',period:'2022–2025',totalInput:'累計約 279 萬元',
+    stats:[{v:'800+',l:'2025年累計定期定額捐款人'},{v:'2,300萬',l:'2025年募款總金額'},{v:'20家',l:'2022年協助NPO'},{v:'500萬+',l:'2022年大眾小額捐款'}],
+    input:[{sub:'資源投入',items:['招募中小型 NPO，規劃培力課程','業界專家擔任顧問輔導，協助串接多元數位管道']}],
+    output:[
+      {sub:'2022 年',items:['20 家公益團體，7 種培力課程，19 種數位管道，募得 500 萬以上小額捐款']},
+      {sub:'2025 年',items:['3 家 NPO，六個月募資企劃，累計定期定額 800 人以上，捐款總金額超過 2,300 萬元']}
+    ],
+    outcome:[{sub:'組織財務永續',items:['有效提升 NPO 服務量能','建立 NPO 可預測的財務基礎']}],
+    impact:[{sub:'公益生態',items:['驅動更多人付諸行動，守護台灣公益圈永續創新']}],
+    note:'資料來源：2023–2026 年度工作報告。'
+  },
+  zhang_laoshi:{
+    title:'奉獻獎再支持—「張老師」基金會',period:'2022–2025',totalInput:'約 3,241 萬元',
+    stats:[{v:'4,953',l:'學生參與心理健康活動'},{v:'10所',l:'大學巡迴校園'},{v:'2,818',l:'學生參與諮商'},{v:'三成↑',l:'AI客服預計服務量提升'}],
+    input:[{sub:'支持項目',items:['品牌轉型及組織永續輔導','「笑巡計畫」—校園心理健康推廣（2023）','AI 客服系統導入 1980 話務系統（2025 年）']}],
+    output:[{sub:'校園巡迴（2023）',items:['10 所大學，4,953 位學生參與活動','2,818 位參與諮商；1,107 位有擔任志工意願','1,081 位願意參與義張儲備訓練']}],
+    outcome:[
+      {sub:'具體改變與成長',items:['品牌成功轉型，年輕世代對心理健康的認識與求助意願顯著提升','校園巡迴建立同儕倡議網絡，降低求助門檻','2025 年導入 AI 客服，預計提升約三成心理支持服務量能，每年可多服務數千人次']}
+    ],
+    impact:[
+      {sub:'系統性社會影響',items:['為台灣校園心理衛生服務的數位轉型樹立示範案例','帶動更多公益資源流入青年心理健康場域','形塑「心理健康可以被討論、主動求助是勇敢的」社會文化']}
+    ],
+    note:'張老師基金會為第五屆（2021年）奉獻獎得主。資料來源：2023–2026 年度工作報告。'
+  },
+  sky_campus:{
+    title:'Sky Campus 校園快樂課程',period:'2024–2025',totalInput:'約 190 萬元（114年度）',
+    stats:[
+      {v:'94位',l:'大學生/碩士生'},
+      {v:'6所',l:'合作大學'},
+      {v:'12小時',l:'課程時數'},
+      {v:'p<.05',l:'心理指標顯著提升'},
+    ],
+    input:[
+      {sub:'資源投入',items:['與台灣大學聯盟（台大/師大/台科大）、長庚大學、屏東大學等6校合作','以科學實證為基礎設計課程：靜心練習、呼吸技巧、情緒管理','採用心理量表（正向情緒量表、生活滿意度量表）與生理量測儀器（舒壓儀、Bio-Well 能量檢測）雙軌評估']}
+    ],
+    output:[
+      {sub:'服務產出',items:['114年度服務94位大學生與碩士生','於6所大學提供至少12小時全方位身心健康課程','建立主觀感受與客觀生理數據的雙重評估機制']}
+    ],
+    outcome:[
+      {sub:'心理層面',items:['參與學生正向情緒、生活滿意度、自我悲憫與幸福指標均顯著提升（p < .05）','壓力水平顯著下降']},
+      {sub:'生理層面',items:['心率變異度（HRV）及副交感神經活性增強','自律神經功能更具靈活性與平衡性']},
+    ],
+    impact:[
+      {sub:'整體影響',items:['在降低憂鬱、提升心理韌性、強化社會連結及促進當下覺察力等方面均有實質效果','有效提升學生整體身心健康與福祉','為校園心理健康以科學實證介入提供示範模式']}
+    ],
+    note:'資料來源：114年度捐贈項目最終受益對象報告書。'
+  },
+  puzangalan:{
+    title:'PUZANGALAN 希望兒童合唱團',period:'2024–2025',totalInput:'65 萬元（114年度贊助）',
+    stats:[
+      {v:'44位',l:'團員'},
+      {v:'2個',l:'國際音樂節'},
+      {v:'7項',l:'金獎及大會冠軍'},
+      {v:'6,500~25,000人',l:'估計接觸影響人數'},
+    ],
+    input:[
+      {sub:'資源投入',items:['支持屏東縣PUZANGALAN（排灣族語「希望」）兒童合唱團44位團員','16天赴波蘭、斯洛伐克參加2個國際音樂節及4場僑民音樂會','出國參賽總支出6,340,902元，民間贊助支持佔78.71%']}
+    ],
+    output:[
+      {sub:'競賽產出',items:['維多利亞克拉科夫國際合唱比賽：經典組、民謠組、現代組金獎第一名、特殊表演獎、大會冠軍獎盃','斯洛伐克比賽：青少年組/青年組/民謠組/聖樂組4項金獎','與國際交流人數超過5,000人']}
+    ],
+    outcome:[
+      {sub:'文化傳承與自我認同',items:['以排灣語、台語、客語歌曲完整呈現台灣在地文化','孩子透過歌唱建立自信，克服貧困與教育資源不足的困境','服裝、秩序、舞蹈獲各界貴賓與評審讚賞，爭相合影']},
+    ],
+    impact:[
+      {sub:'國際影響力',items:['估計總接觸/影響人數約6,500至25,000人（含比賽演出現場、媒體與網路曝光）','拓展國民外交，提升台灣國際能見度','傳承原住民文化，為排灣族與魯凱族孩子帶來改變人生的機會']}
+    ],
+    note:'資料來源：114年度捐贈項目最終受益對象報告書。'
+  },
+  welfare_safety:{
+    title:'弱勢家庭社會安全網建構計畫',period:'2024–2025',totalInput:'789 萬元（114年度）',
+    stats:[
+      {v:'274名',l:'清寒畢業生獎學金'},
+      {v:'2,934人',l:'年度節慶受益人'},
+      {v:'207位',l:'急難救助里民'},
+      {v:'31所',l:'國中小學覆蓋'},
+    ],
+    input:[
+      {sub:'資源投入',items:['透過林堉璘宏泰教育基金會支持新北市淡水區關懷弱勢協會及竹林慈玄宮','針對低收、單親、殘障、獨居老人及邊緣自強戶提供制度化長期援助','結合文化傳承、社會救助、教育培力三大核心支柱']}
+    ],
+    output:[
+      {sub:'直接服務產出',items:['114年度完成北海岸31所國中小學共274名清寒畢業生獎學金發放','三大節慶辦理賑濟活動，年度受益人數達2,934人','為207位里民提供即時生活、醫療及喪葬急難救助']}
+    ],
+    outcome:[
+      {sub:'家庭穩定',items:['有效發揮經濟緩衝功能，協助弱勢子女達成穩定就學目標','確保社會邊緣族群獲得穩定生活支持','增進居民文化認同與地方感']},
+    ],
+    impact:[
+      {sub:'社會安全網建構',items:['實質建構出一套守護弱勢家庭的社會安全網，確保其生命安全與長期福祉','厚植具備利他精神的人才培育基地','建立可穩固區域社會防護網的長期機制']}
+    ],
+    note:'資料來源：114年度捐贈項目最終受益對象報告書。'
+  },
+  montessori:{
+    title:'蒙特梭利教育推廣案',period:'2024–2026',totalInput:'9,500 萬元（承諾總額）',
+    stats:[
+      {v:'9,500萬',l:'承諾捐助總額'},
+      {v:'全齡',l:'教育生態系目標'},
+    ],
+    input:[
+      {sub:'資源投入',items:['承諾捐助9,500萬元推動蒙特梭利師資培育體系與優質幼托示範機構','114年底進行先期籌備，顧問執行團隊完成調查研究與規劃','完成全齡教育生態系建構計畫、營運計畫的階段推進規劃報告（含師資培育中心）']}
+    ],
+    output:[
+      {sub:'先期成果',items:['完成調查研究與全齡教育生態系建構計畫','建構專業模組化架構','擬定師資培育中心營運計畫階段推進規劃報告']}
+    ],
+    outcome:[
+      {sub:'預期成效',items:['建立台灣本土蒙特梭利師資培育標準化體系','打造可複製的優質幼托示範機構模式','推動全齡教育生態系的落地運作']},
+    ],
+    impact:[
+      {sub:'長期影響',items:['提升台灣幼兒教育品質，建立以兒童為中心的學習環境','為台灣幼教師資提供系統性在職培訓與認證機制','形塑具備蒙特梭利精神的幼兒教育文化']}
+    ],
+    note:'資料來源：114年度捐贈項目最終受益對象報告書。'
+  },
+  tahpai_ocean:{
+    title:'堉璘人才 台北海洋科技大學 助學計畫',period:'2025',totalInput:'100 萬元',
+    stats:[
+      {v:'特教/弱勢',l:'受益學生類型'},
+      {v:'全國前列',l:'特教生人數排名'},
+    ],
+    input:[
+      {sub:'資源投入',items:['為台北海洋科技大學特殊教育學生及清寒弱勢家庭學生設立專款專用獎學金','特別支持聽障等需額外資源挹注之特殊樣態生','資源轉化為專業技藝培訓、研習或競賽參與機會']}
+    ],
+    output:[
+      {sub:'計畫產出',items:['114年底完成先期合作籌備','依校方最終名額定之特教或弱勢學生，提供實質經濟支持','支持學生參與專業技藝培訓、研習或競賽']}
+    ],
+    outcome:[
+      {sub:'學習成效',items:['減輕弱勢學生經濟壓力，營造安心就學環境','提升特教學生之復學率與準時畢業率','激發學生在專業領域之潛能']},
+    ],
+    impact:[
+      {sub:'教育平權影響',items:['延續校方協助特教生獲得國際或全國級獎項之佳績，實質強化職涯競爭力','完成從「受助者」到「具專業技能人才」的身份轉化','針對特教生比例較高之技專校院，建立結合「經濟扶助」與「專業賦能」的永續支持模式']}
+    ],
+    note:'資料來源：114年度捐贈項目最終受益對象報告書。'
+  }
+};
+
+// ── 115年度目標（全域常數）──
+const G_CA=75000000,G_CB=225000000,G_CC=225000000,G_TTF=300000000,G_TF=300000000;
+
+// ═══════════════════════════════════════════════════════
+//  YEAR DATA
+// ═══════════════════════════════════════════════════════
+const DATA={
+  2015:{t:11500000,f:0,tf:0,
+    note:'公益信託成立第一年。',
+    items:[
+      {n:'社會急難救助',g:'charity',u:'t',a:10000000,memo:'八仙塵爆'},
+      {n:'公益教育推廣',u:'t',a:1500000,memo:'林建生文教基金會；社區教育講座、文化活動及藝術活動'}
+    ]},
+  2016:{t:317000000,f:0,tf:0,
+    note:'史上最大單筆捐贈：3 億予榮總重粒子癌症治療設備，2023/5 正式啟用，迄今治療逾 350 位癌症病患。',
+    items:[
+      {n:'醫療人才培育之設備提升',u:'t',a:300000000,memo:'重粒子癌症治療中心儀器設備經費',impact:'rongzong_heavy'},
+      {n:'社會急難救助',u:'t',a:10000000,memo:'0206震災'},
+      {n:'社會急難救助',u:'t',a:5000000,memo:'臺東風災'},
+      {n:'社會慈善-公益信託警察醫療及照護基金',u:'t',a:2000000,memo:''}
+    ]},
+  2017:{t:20755000,f:25050249,tf:32000000,
+    note:'第一屆台灣奉獻獎舉辦；公益信託首次撥款給基金會；全台消防局心肺復甦機捐贈啟動（新北 2 台）。',
+    items:[
+      {n:'透過基金會執行',u:'tf',a:32000000,memo:'台灣奉獻獎及教育相關專案'},
+      {n:'堉璘台灣奉獻獎-第一屆',u:'f',a:9410274,memo:'獎金暨典禮活動費用',impact:'dedication_award'},
+      {n:'基金會營運行政',u:'f',a:9255703,memo:''},
+      {n:'堉璘台灣奉獻獎-第一屆',u:'f',a:6000000,memo:'鼓勵獎-天主教中華聖母、誠致教育、愚人之友'},
+      {n:'社會慈善-急難醫療救助',u:'t',a:5070000,memo:'門諾醫院、埔基、旗山、二林基督教、聖十字架療養院'},
+      {n:'利他人才培育',u:'t',a:5015000,memo:'林建生文教基金會、哥倫比亞大學台北國際論壇'},
+      {n:'醫療人才培育',u:'t',a:5000000,memo:'榮總相關醫學基金會',impact:'rongzong_talent'},
+      {n:'消防急救教育（新北市消防局心肺復甦機 2 台）',u:'t',a:1500000,memo:'竹圍分隊、淡水分隊各 1 台',impact:'fire_rescue'},
+      {n:'社會慈善-台灣盲人重建院',u:'t',a:750000,memo:'學童交通車輛1輛'},
+      {n:'社會慈善-薛伯輝基金會',u:'t',a:420000,memo:'伯利恆早療暨融合教育中心多感官教室'},
+      {n:'社會慈善-緝毒因公殉職警察子女獎學金',u:'t',a:70000,memo:''}
+    ]},
+  2018:{t:146450000,f:48237689,tf:51000000,
+    note:'全台消防局捐贈自動心肺復甦機共 157 組（含離島）；第二屆奉獻獎舉辦；住宅用火警警報器捐贈全台低收入戶及獨居老人 19 萬顆。',
+    items:[
+      {n:'消防急救教育—全台消防局自動心肺復甦機 157 台',u:'t',a:92250000,memo:'含全台 22 縣市消防局及空軍海鷗救護隊',impact:'fire_rescue'},
+      {n:'住宅用火警警報器（全台低收入戶及獨居老人 19 萬顆）',u:'t',a:50000000,memo:''},
+      {n:'透過基金會執行',u:'tf',a:51000000,memo:'第二屆奉獻獎及教育相關專案'},
+      {n:'堉璘台灣奉獻獎-第一屆',u:'f',a:42470628,memo:'獎金-基督教晨曦會.劉民和；鼓勵獎×5',impact:'dedication_award'},
+      {n:'基金會營運行政',u:'f',a:5528966,memo:''},
+      {n:'公益教育推廣',u:'t',a:2400000,memo:'中國科技大學建築暨室內設計合作計畫'},
+      {n:'醫療人才培育',u:'t',a:1800000,memo:'',impact:'rongzong_talent'},
+      {n:'社會急難救助',u:'f',a:238095,memo:''}
+    ]},
+  2019:{t:82125000,f:184313981,tf:192000000,
+    note:'堉璘台大人才計畫正式啟動（承諾 4.5 億分年捐助）；COVID 前歷年最高支出年；消防教育大規模擴展。',
+    items:[
+      {n:'透過基金會執行',u:'tf',a:192000000,memo:'台大計畫、奉獻獎等各項專案'},
+      {n:'堉璘台大人才計畫',u:'f',a:122005649,memo:'含獎學金及行政費',impact:'ntu_plan'},
+      {n:'消防急救教育（全台消防局心肺復甦機擴大）',u:'t',a:59500000,memo:'',impact:'fire_rescue'},
+      {n:'堉璘台灣奉獻獎-第二屆',u:'f',a:42207145,memo:'獎金-瑪利亞社會福利.莊宏達；鼓勵獎-天主教善牧、劉燕明、新故鄉文教.廖嘉展',impact:'dedication_award'},
+      {n:'醫療人才培育',u:'t',a:18425000,memo:'含中華醫學會、思源基金會、沈力揚基金會',impact:'rongzong_talent'},
+      {n:'基金會營運行政',u:'f',a:11294063,memo:''},
+      {n:'公益教育/社區教育之推廣',u:'f',a:8110916,memo:''},
+      {n:'教育人才培育',u:'t',a:3600000,memo:''},
+      {n:'教育部智鐵計畫',u:'t',a:600000,memo:''}
+    ]},
+  2020:{t:31812638,f:146986137,tf:171354516,
+    note:'COVID-19 疫情嚴峻；捐贈口罩、榮總醫療設備協助防疫；第四屆奉獻獎，得主荒野保護協會。',
+    items:[
+      {n:'透過基金會執行',u:'tf',a:171354516,memo:'台大計畫、奉獻獎等各項專案'},
+      {n:'堉璘台大人才計畫',u:'f',a:59854516,memo:'',impact:'ntu_plan'},
+      {n:'堉璘台灣奉獻獎-第三/四屆',u:'f',a:55077781,memo:'第三屆獎金-第一社會福利；鼓勵獎×5；第四屆鼓勵獎×多；典禮費',impact:'dedication_award'},
+      {n:'堉璘台灣奉獻獎-第四屆',u:'t',a:30000000,memo:'獎金-荒野保護協會'},
+      {n:'基金會營運行政',u:'f',a:10344958,memo:''},
+      {n:'醫療人才培育',u:'f',a:5665000,memo:'榮總相關醫學基金會',impact:'rongzong_talent'},
+      {n:'醫療COVID-19防疫-媒體識讀',u:'f',a:5000000,memo:'三立抗疫影片'},
+      {n:'教育人才培育',u:'f',a:8774884,memo:''},
+      {n:'醫療COVID-19防疫-榮總口罩一批',u:'t',a:1312638,memo:''},
+      {n:'公益教育/社區教育之推廣',u:'t',a:500000,memo:'林建生文教基金會'}
+    ]},
+  2021:{t:60290000,f:72324236,tf:88008868,
+    note:'仍受 COVID-19 影響；捐贈榮總葉克膜 3 組、X 光機 5 組、新北市政府呼吸器 47 組；第五屆奉獻獎得主張老師基金會。',
+    items:[
+      {n:'透過基金會執行',u:'tf',a:88008868,memo:'台大計畫、奉獻獎等各項專案'},
+      {n:'堉璘台大人才計畫',u:'f',a:38008868,memo:'',impact:'ntu_plan'},
+      {n:'醫療COVID-19防疫捐贈',u:'t',a:30290000,memo:'呼吸器47組、X光機5組、葉克膜3組'},
+      {n:'堉璘台灣奉獻獎-第五屆',u:'t',a:30000000,memo:'獎金-張老師基金會'},
+      {n:'基金會營運行政',u:'f',a:12052121,memo:''},
+      {n:'堉璘台灣奉獻獎-第五屆',u:'f',a:11606011,memo:'相關業務；鼓勵獎×多',impact:'dedication_award'},
+      {n:'醫療人才培育',u:'f',a:4500000,memo:'榮總相關醫學基金會',impact:'rongzong_talent'},
+      {n:'教育人才培育',u:'f',a:3430188,memo:''}
+    ]},
+  2022:{t:30000000,f:131747148,tf:169445354,
+    note:'消防教育大規模恢復（LUCAS3 心肺復甦機全台擴大）；奉獻獎擴大為成就獎＋新秀獎三級制。',
+    items:[
+      {n:'透過基金會執行',u:'tf',a:169445354,memo:'台大計畫、奉獻獎等各項專案'},
+      {n:'消防急救教育—LUCAS3 心肺復甦機擴大捐贈',u:'f',a:43760000,memo:'含消防署救護人才培育',impact:'fire_rescue'},
+      {n:'堉璘台灣奉獻獎-第六屆',u:'t',a:30000000,memo:'獎金-肝病防治學術基金會'},
+      {n:'堉璘台大人才計畫',u:'f',a:25511354,memo:'',impact:'ntu_plan'},
+      {n:'醫療人才培育',u:'f',a:18264000,memo:'榮總心臟超音波、醫學基金會',impact:'rongzong_talent'},
+      {n:'堉璘台灣奉獻獎-第六屆',u:'f',a:15741400,memo:'相關業務；鼓勵獎×4（台北市科學出版、尚和歌仔戲劇團、天主教耶穌會新事、勵馨）',impact:'dedication_award'},
+      {n:'基金會營運行政',u:'f',a:12582894,memo:''},
+      {n:'教育人才培育',u:'f',a:5588037,memo:''},
+      {n:'ATCC 競賽',u:'f',a:2233000,memo:'',impact:'atcc_plan'}
+    ]},
+  2023:{t:30000000,f:169141273,tf:100000000,
+    note:'消防急救教育為最大單項（6,894 萬）；ATCC 競賽首次規模化；重粒子設備 2023/5 正式啟用。',
+    items:[
+      {n:'透過基金會執行',u:'tf',a:100000000,memo:''},
+      {n:'消防急救教育—LUCAS3 / 消防署品質精進',u:'f',a:68940153,memo:'含消防署專案',impact:'fire_rescue'},
+      {n:'堉璘台大人才計畫',u:'f',a:39541391,memo:'',impact:'ntu_plan'},
+      {n:'堉璘台灣奉獻獎-第七屆',u:'t',a:30000000,memo:'獎金-中華民國消費者文教基金會'},
+      {n:'堉璘台灣奉獻獎-第七屆',u:'f',a:19318287,memo:'相關業務；典禮；鼓勵獎-弘道老人福利、安寧照顧、普仁青年、當代傳奇、台灣環境資訊、報導者',impact:'dedication_award'},
+      {n:'基金會營運行政',u:'f',a:12860805,memo:''},
+      {n:'醫療人才培育',u:'f',a:10500000,memo:'榮總相關醫學基金會；重粒子設備2023/5啟用',impact:'rongzong_talent'},
+      {n:'ATCC 競賽與落實',u:'f',a:8001058,memo:'',impact:'atcc_plan'},
+      {n:'教育人才培育',u:'f',a:4538188,memo:''},
+      {n:'堉璘 Changemaker 高中計畫',u:'f',a:2500100,memo:'首年',impact:'cm_highschool'}
+    ]},
+  2024:{t:115228983,f:64817293,tf:94000000,
+    note:'奉獻獎第八屆；蒙特梭利計畫先期籌備；重粒子設備持續服務病患逾 350 位。',
+    items:[
+      {n:'堉璘台灣奉獻獎-第八屆',u:'t',a:57000000,memo:'奉獻獎、成就獎×3、新秀獎×5',impact:'dedication_award'},
+      {n:'透過基金會執行',u:'tf',a:52000000,memo:''},
+      {n:'堉璘台灣奉獻獎再支持',u:'tf',a:42000000,memo:'瑪利亞、彭蒙惠偏鄉教育'},
+      {n:'堉璘台大人才計畫',u:'t',a:34228983,memo:'',impact:'ntu_plan'},
+      {n:'社會急難救助',u:'t',a:15000000,memo:''},
+      {n:'醫療人才培育',u:'f',a:11500000,memo:'中華醫學會、思源基金會、沈力揚基金會、放射線醫學會',impact:'rongzong_talent'},
+      {n:'基金會國際連結計畫',u:'f',a:10517925,memo:''},
+      {n:'基金會營運行政',u:'f',a:9443580,memo:''},
+      {n:'消防急救教育',g:'charity',u:'t',a:9000000,memo:'',impact:'fire_rescue'},
+      {n:'消防急救教育',u:'f',a:8350000,memo:'',impact:'fire_rescue'},
+      {n:'教育人才培育',u:'f',a:7518117,memo:''},
+      {n:'ATCC 競賽與落實',u:'f',a:7797801,memo:'',impact:'atcc_plan'},
+      {n:'堉璘 Changemaker 高中計畫',u:'f',a:3000000,memo:'',impact:'cm_highschool'},
+      {n:'蒙特梭利教育推廣案—先期籌備',u:'f',a:3000000,memo:''},
+      {n:'堉璘淡海計畫',g:'charity',u:'f',a:944622,memo:''},
+      {n:'醫療人才培育',u:'t',a:500000,memo:''}
+    ]},
+  2025:{t:158316790,f:57875902,tf:144330746,
+    note:'奉獻獎第九屆（7,200 萬）；蒙特梭利教育 9,500 萬全額撥付；諮詢委員顧問案正式啟動；堉璘淡海計畫 594 萬；竹林慈玄宮 & 弱勢協會、化育文教等公益捐贈。',
+    items:[
+      {n:'堉璘台灣奉獻獎-第九屆',u:'t',a:72000000,memo:'獎金-心路社福 3,000 萬；成就獎×3-中華基督教救助、孩子的書屋、紙風車；新秀獎×5',impact:'dedication_award'},
+      {n:'蒙特梭利教育推廣案',u:'tf',a:95000000,memo:'師資培育體系與優質幼托示範機構'},
+      {n:'透過基金會執行',u:'tf',a:49330746,memo:'各項專案及管理費'},
+      {n:'堉璘台灣奉獻獎再支持',u:'f',a:15000000,memo:'鼓勵獎再支持-張老師基金會 AI 客服系統',impact:'zhang_laoshi'},
+      {n:'堉璘台大人才計畫',u:'f',a:17000000,memo:'臺大NPO專班',impact:'ntu_plan'},
+      {n:'堉璘台大人才計畫',u:'f',a:39000000,memo:'',impact:'ntu_plan'},
+      {n:'醫療人才培育',u:'t',a:20200000,memo:'中華醫學會、思源基金會、沈力揚基金會、消化基金會、放射線醫學會、麻醉醫學會',impact:'rongzong_talent'},
+      {n:'急難救助—丹娜絲颱風',u:'t',a:17000000,memo:'台南600萬、嘉義600萬、花蓮馬太鞍溪堰塞湖500萬'},
+      {n:'基金會營運行政',u:'f',a:11256780,memo:''},
+      {n:'教育人才培育',u:'f',a:11927998,memo:''},
+      {n:'律師諮詢費',u:'t',a:2811790,memo:''},
+      {n:'堉璘淡海計畫',u:'f',a:5944548,memo:'地方創生加速器',impact:'ntu_plan'},
+      {n:'堉璘 Changemaker 高中計畫',u:'f',a:3000000,memo:'',impact:'cm_highschool'},
+      {n:'ATCC 競賽與落實',u:'f',a:2800000,memo:'',impact:'atcc_plan'},
+      {n:'募款達人',u:'f',a:2476548,memo:'安寧 100 萬、第一社福 200 萬、看見齊柏林、磐石、立達等',impact:'fundraising_masters'},
+      {n:'心理健康-Sky Campus校園快樂課程',u:'f',a:903000,memo:'大專生身心韌性強化計畫',impact:'sky_campus'},
+      {n:'社會慈善-屏東希望兒童合唱團',u:'f',a:650000,memo:'PUZANGALAN 排灣族合唱團，赴波蘭、斯洛伐克獲金獎',impact:'puzangalan'},
+      {n:'竹林慈玄宮 & 淡水關懷弱勢協會',u:'f',a:5892450,memo:''},
+      {n:'化育文教基金會—捐助佛學院建校',u:'f',a:2000000,memo:''}
+    ]},
+  2026:{t:90590000,f:219708497,tf:34370000,is26:true,
+    note:'2026 年度實際總支出目標 3 億（①＋②）。資料來源：115年度公益支出及預估表。',
+    exec:{t:3500000,f:31248497,tf:34370000},
+    cert:{t:39000000,f:135970000,tf:0},
+    pend:{t:48090000,f:52490000,tf:0},
+    items:[
+      {n:'榮總醫療人才培育2025',sg:'sg_rongzong',g:'medical',u:'t',e:3500000,c:15000000,p:0,memo:'重粒子設備相關',impact:'rongzong_talent'},
+      {n:'榮總醫療人才培育2026',sg:'sg_rongzong',g:'medical',u:'f',e:19700000,c:0,p:0,memo:'思源900萬、護理300萬、沈力揚400萬、中華醫學200萬、消化100萬、放射120萬',impact:'rongzong_talent'},
+      {n:'榮總醫療人才培育之設備提升',g:'medical',u:'f',e:0,c:108000000,p:0,memo:'Histotripsy(組織碎化術/高強度聚焦超音波)',impact:'rongzong_heavy'},
+      {n:'消防急救教育',u:'f',e:0,c:9470000,p:3160000,memo:'',impact:'fire_rescue'},
+      {n:'奉獻獎獎金（第十屆）',g:'award',u:'t',e:0,c:24000000,p:48090000,memo:'第一年獎金（B確定）；第二、三年獎金（C待討論）',impact:'dedication_award'},
+      {n:'奉獻獎遴選作業＆頒獎典禮暨音樂會',g:'award',u:'f',e:0,c:0,p:9580000,memo:'',impact:'dedication_award'},
+      {n:'奉獻獎再支持－瑪利亞、彭蒙惠',g:'award',u:'f',e:0,c:9000000,p:7500000,memo:'瑪利亞第二年：對捐看成效＋人才留任200萬；彭蒙惠偏鄉英語第二年700萬',impact:'dedication_award'},
+      {n:'堉璘臺大人才計畫',g:'talent',u:'f',e:0,c:0,p:0,memo:'預算50,000萬；累計承諾4.5億；含NPO經營管理專班、成效研究；NTU帳戶約餘1.59億',impact:'ntu_plan'},
+      {n:'蒙特梭利教育專案執行',g:'talent',u:'f',e:0,c:0,p:0,memo:'預計不高於1.1億；預估5年管理費2.5萬',impact:'montessori'},
+      {n:'ATCC 競賽 2026',g:'talent',sg:'sg_atcc_impl',u:'f',e:0,c:2500000,p:0,memo:'青藝盟556,710（已提報、已簽）',impact:'atcc_plan'},
+      {n:'ATCC 競賽與落實－弘道東石',sg:'sg_atcc_impl',g:'talent',u:'f',e:0,c:2000000,p:0,memo:'學生出國 2 人共 200 萬（弘道1：30萬基金會出帳；弘道2：260.5萬，信託管理費0.5萬）',impact:'atcc_plan'},
+      {n:'ATCC 競賽與落實－心路',sg:'sg_atcc_impl',g:'talent',u:'f',e:797757,c:0,p:0,memo:'心路168,800 整理中',impact:'atcc_plan'},
+      {n:'堉璘Changemaker高中計畫',g:'talent',u:'f',e:3500000,c:0,p:0,memo:'',impact:'cm_highschool'},
+      {n:'SKY CAMPUS 校園快樂課程',g:'talent',u:'f',e:1000000,c:1000000,p:0,memo:'',impact:'sky_campus'},
+      {n:'堉璘淡海計畫',u:'f',e:0,c:0,p:0,memo:'地方創生加速器；新增5%（信託）：場地租金1,850,220（2年8個月）、管理費15,000',impact:'ntu_plan'},
+      {n:'募款達人－安寧',g:'fundraising',u:'f',e:1000000,c:1000000,p:0,memo:'',impact:'fundraising_masters'},
+      {n:'募款達人－第一社福',g:'fundraising',u:'f',e:2000000,c:3000000,p:0,memo:'',impact:'fundraising_masters'},
+      {n:'林建生基金會',g:'charity',u:'f',e:1500000,c:1200000,p:0,memo:''},
+      {n:'KindShark 醫療平台專案',g:'medical',u:'f',e:0,c:0,p:29120000,memo:'美金91萬（共910,000×32）'},
+      {n:'社會急難救助',u:'f',e:0,c:0,p:0,memo:'預備金（歷年約1,700萬）'},
+      {n:'弱勢學童暑期照顧－生命之愛文教基金會',g:'charity',u:'f',e:500000,c:0,p:0,memo:''},
+      {n:'諮詢委員出席費、車馬費',g:'admin',u:'f',e:0,c:0,p:3130000,memo:'114年：5位委員出席3次、1位出席2次；115年預估6位委員出席6次'},
+      {n:'國泰行政費用',g:'admin',u:'t',e:0,c:2810000,p:0,memo:'管理費200萬＋律師費81萬'},
+      {n:'營運行政',g:'admin',u:'f',e:2150740,c:0,p:0,memo:'含蔡顧問90萬'},
+      {n:'軍人之友社',g:'charity',u:'f',e:100000,c:0,p:0,memo:''},
+      {n:'公益信託還給基金會',g:'admin',u:'tf',e:34370000,c:0,p:0,memo:''}
+    ]}
+};
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const YEARS=Object.keys(DATA).map(Number);
+let selectedYrs=new Set();  // years shown in detail columns (multi-select)
+let chartHoverYr=null;      // year hovered/highlighted in chart
+let chartInst=null;
+let openImpact={};
+// Legacy compat: activeYr for chart/KPI
+function activeYr(){return selectedYrs.size===0?'all':selectedYrs.size===1?[...selectedYrs][0]:'multi';}
+
+// ── helpers ──
+const f=n=>{if(!n||n===0)return'—';const a=Math.abs(n);if(a>=1e8){const v=(n/1e8).toFixed(1);return(v.endsWith('.0')?v.slice(0,-2):v)+'億';}return a>=1e4?Math.round(n/1e4)+'萬':n.toLocaleString()};
+const ff=n=>n?n.toLocaleString('en-US'):'—';
+const pct=(n,d)=>d>0?Math.round(n/d*100):0;
+const sm=a=>a.reduce((s,v)=>s+(v||0),0);
+function t5(d){
+  const t=d.t||0,fv=d.f||0,tf=d.tf||0;
+  return {t,f:fv,tf,t_tf:t+tf,t_f:t+fv};
+}
+
+// ─── 跨年對齊：同概念項目群組 ─────────────────────────
+// 每組 { label:顯示名稱, keys:[關鍵字片段...] }
+// 只要項目名稱包含任一關鍵字（不分大小寫），即歸入此群組
+// 群組順序決定列的顯示順序；未歸入任何群組的項目排在最後
+const ITEM_GROUPS=[
+  {label:'公益信託撥款至基金會',         keys:['公益信託撥款','公益信託→基金會','信託撥款至基金會']},
+  {label:'臺北榮總（重粒子設備）',        keys:['重粒子癌症治療設備']},
+  {label:'醫療人才培育—榮總',            keys:['醫療人才培育','榮總醫療人才培育']},
+  {label:'消防急救教育',                 keys:['消防急救','消防教育','心肺復甦機','lucas','火警警報']},
+  {label:'堉璘台大人才計畫',             keys:['台大人才','堉璘台大']},
+  {label:'台灣奉獻獎（信託直接）',        keys:['第一屆台灣奉獻獎','第二屆台灣奉獻獎','第三屆台灣奉獻獎','第四屆台灣奉獻獎','第五屆台灣奉獻獎','第六屆台灣奉獻獎','第七屆台灣奉獻獎','第八屆台灣奉獻獎（含典禮）','第九屆台灣奉獻獎','奉獻獎獎金']},
+  {label:'台灣奉獻獎（基金會執行）',      keys:['第一屆台灣奉獻獎','第二屆台灣奉獻獎','第三屆台灣奉獻獎','第四屆台灣奉獻獎合計','第五屆台灣奉獻獎','第六屆台灣奉獻獎','第七屆台灣奉獻獎','第八屆台灣奉獻獎','奉獻獎典禮與業務執行']},
+  {label:'奉獻獎再支持',                 keys:['奉獻獎再支持','第八屆奉獻獎再支持']},
+  {label:'奉獻獎再支持—瑪利亞 / 彭蒙惠', keys:['瑪利亞','彭蒙惠']},
+  {label:'蒙特梭利教育',                 keys:['蒙特梭利']},
+  {label:'ATCC 競賽與落實',             keys:['atcc']},
+  {label:'CM 高中生計畫',               keys:['cm 高中生','cm高中生','社創高中生']},
+  {label:'SKY CAMPUS 校園快樂課程',     keys:['sky campus','sky_campus','校園快樂']},
+  {label:'堉璘淡海計畫',                keys:['淡海計畫']},
+  {label:'募款達人',                    keys:['募款達人']},
+  {label:'諮詢委員與顧問案',             keys:['諮詢委員']},
+  {label:'林建生基金會',                keys:['林建生基金會']},
+  {label:'急難救助',                   keys:['急難救助','急難醫療','八仙塵爆','0206 震災','台東風災','震災','風災','颱風']},
+  {label:'醫療設備捐贈',               keys:['葉克膜','x光機','呼吸器','醫療設備捐贈','histotripsy','kinshark','kindshark']},
+  {label:'基金會營運行政',             keys:['基金會營運行政','營運行政']},
+  {label:'教育人才培育',               keys:['教育人才培育','教育部智鐵','中國科技大學獎學金']},
+  {label:'警察獎學金',                 keys:['警察子女獎學金','緝毒因公殉職']},
+  {label:'警察之友總會',               keys:['警察之友']},
+  {label:'台灣盲人重建院',             keys:['盲人重建']},
+  {label:'薛伯輝基金會',              keys:['薛伯輝']},
+  {label:'COVID-19 防疫物資',         keys:['covid','口罩']},
+  {label:'媒體識讀',                  keys:['媒體識讀','三立']},
+  {label:'基金會國際連結',            keys:['國際連結']},
+  {label:'律師諮詢費',               keys:['律師諮詢費']},
+  {label:'國泰行政費用',             keys:['國泰行政']},
+  {label:'希望兒童合唱團',           keys:['希望兒童','puzangalan']},
+  {label:'竹林慈玄宮 & 弱勢協會',    keys:['竹林慈玄','弱勢協會','弱勢學童暑期']},
+  {label:'化育文教基金會',           keys:['化育文教']},
+  {label:'軍人之友社',              keys:['軍人之友']},
+];
+
+// 判斷某個項目名稱屬於哪個群組 index（-1=未歸組）
+function groupOf(name){
+  const low=name.toLowerCase();
+  for(let i=0;i<ITEM_GROUPS.length;i++){
+    if(ITEM_GROUPS[i].keys.some(k=>low.includes(k.toLowerCase())))return i;
+  }
+  return -1;
+}
+
+// 「台灣奉獻獎（信託直接）」與「台灣奉獻獎（基金會執行）」共用關鍵字，
+// 需用出帳類型進一步區分
+const GROUP_UNIT_FILTER={
+  5:['t'],   // 群組5=奉獻獎信託直接，只收u=t
+  6:['f'],   // 群組6=奉獻獎基金會執行，只收u=f
+};
+
+function groupOfItem(it){
+  const gi=groupOf(it.n);
+  if(gi in GROUP_UNIT_FILTER){
+    return GROUP_UNIT_FILTER[gi].includes(it.u)?gi:-1;
+  }
+  return gi;
+}
+
+// ─── SECTION SWITCHER ───────────────────────────────
+function updateLayout(){
+  const hasDetail=selectedYrs.size>0;
+  // KPI 只在有選年份時顯示
+  const kpisWrap=document.getElementById('kpis-wrap');
+  if(kpisWrap)kpisWrap.style.display='none'; // 暫時收起小圖框
+  // 年度明細 section（含標題列和捲動條）
+  const secB=document.getElementById('section-b');
+  const sepDetail=document.getElementById('sep-detail');
+  if(secB)secB.style.display=hasDetail?'block':'none';
+  if(sepDetail)sepDetail.style.display=hasDetail?'block':'none';
+  // 更新兩處 hint 文字
+  const yrs=[...selectedYrs].sort((a,b)=>a-b);
+  const hintText=hasDetail?'已選：'+yrs.join('、')+'年　點選更多年份比較':'點選展開明細，可多選左右比較';
+  ['detail-hint','detail-hint2'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=(id==='detail-hint2'&&hasDetail)?'— 已選：'+yrs.join('、')+'年':hintText;
+  });
+  // drag-to-scroll
+  ['matrix-scroll-wrap','detail-scroll-wrap','sel-scroll'].forEach(enableDragScroll);
+}
+// drag-to-scroll helper
+function enableDragScroll(id){
+  const el=document.getElementById(id);
+  if(!el||el._drag)return;
+  el._drag=true;
+  let isDown=false,startX,scrollLeft;
+  el.addEventListener('mousedown',e=>{isDown=true;startX=e.pageX-el.offsetLeft;scrollLeft=el.scrollLeft;el.style.cursor='grabbing'});
+  el.addEventListener('mouseleave',()=>{isDown=false;el.style.cursor='grab'});
+  el.addEventListener('mouseup',()=>{isDown=false;el.style.cursor='grab'});
+  el.addEventListener('mousemove',e=>{if(!isDown)return;e.preventDefault();const x=e.pageX-el.offsetLeft;el.scrollLeft=scrollLeft-(x-startX)});
+}
+
+// ─── SELECTOR (multi-select) ────────────────────────
+function buildSel(){
+  const el=document.getElementById('sel');
+  const allSel=selectedYrs.size===0;
+  let h=`<button class="sb ${allSel?'on':''}" data-y="all">全選（歷年）</button><div class="sdiv"></div>`;
+  h+=YEARS.map(y=>{
+    const isSel=selectedYrs.has(y);
+    return `<button class="sb ${y===2026?'yr26':''} ${isSel?'sel':''}" data-y="${y}" title="${isSel?'再按一次取消':'點選展開明細，可多選比較'}">${y}${y===2026?' 預':''}</button>`;
+  }).join('');
+  el.innerHTML=h;
+  el.querySelectorAll('.sb').forEach(b=>b.addEventListener('click',()=>{
+    const y=b.dataset.y;
+    if(y==='all'){
+      selectedYrs.clear();openImpact={};render();
+    } else {
+      const yr=+y;
+      if(selectedYrs.has(yr)){selectedYrs.delete(yr);}
+      else{selectedYrs.add(yr);}
+      openImpact={};render();
+    }
+  }));
+}
+
+// ─── KPI ─────────────────────────────────────────────
+function kpiRow(label,val){
+  return `<div class="kpi-row"><span>${label}</span><span class="kpi-v">${f(val)}</span></div>`;
+}
+function buildKPI(){
+  const wrap=document.getElementById('kpis-wrap');
+  // 重置 compare strip
+  const strip=document.getElementById('yr-compare-strip');
+  if(selectedYrs.size<=1){
+    wrap.style.display='';
+    // Standard 5-card KPI strip
+    let tv,fv,tfv,t_tf,t_f;
+    if(selectedYrs.size===0){
+      tv=sm(YEARS.map(y=>DATA[y].t));fv=sm(YEARS.map(y=>DATA[y].f));
+      tfv=sm(YEARS.map(y=>DATA[y].tf));t_tf=tv+tfv;t_f=tv+fv;
+    } else {
+      const d=DATA[[...selectedYrs][0]];
+      const r=t5(d);
+      if(d.is26){
+        // 2026：KPI 顯示 A已執行 數字（不顯示 B/C 預估混入）
+        tv=d.exec?.t||0; fv=d.exec?.f||0; tfv=d.exec?.tf||0;
+        t_tf=tv+tfv; t_f=tv+fv;
+      } else {
+        tv=r.t;fv=r.f;tfv=r.tf;t_tf=r.t_tf;t_f=r.t_f;
+      }
+    }
+    wrap.className='kpis';
+    const is26single=selectedYrs.size===1&&DATA[[...selectedYrs][0]]?.is26;
+    // G_CA 等已移至全域，見下方
+    // 2026 全年預估（A+B+C）
+    const d26=is26single?DATA[[...selectedYrs][0]]:null;
+    const full_t=d26?d26.t:0, full_f=d26?d26.f:0, full_tf=d26?d26.tf:0;
+    function goalBar(val,goal,fullVal,sub){
+      if(!goal) return '';
+      const pct=Math.min(Math.round(val/goal*100),100);
+      const hasDiff=fullVal>0&&Math.abs(fullVal-goal)>100000;
+      const diffNote=hasDiff
+        ?'<div style="margin-top:8px;padding:6px 9px;background:#fff8e1;border:1px solid #e8b800;border-radius:6px;font-size:11px;color:#7a5800;line-height:1.6">'
+         +'⚠ 全年 A+B+C 總計預估 '+f(fullVal)+'，與原目標差異 '+f(Math.abs(fullVal-goal))+'，提醒：請記得確認。'
+         +'</div>'
+        :'';
+      // 概念圖結構：目標大字 → 小字說明 → 已執行小字 → 進度條 → % → 警示
+      return ''
+        // 目標大數字（主角）
+        +'<div style="font-size:28px;font-weight:800;color:var(--topbar);font-family:Noto Sans TC,sans-serif;line-height:1;margin:4px 0 2px">'+f(goal)+'<span style="font-size:14px;font-weight:400;color:var(--ink3);margin-left:3px">元</span></div>'
+        +'<div style="margin-bottom:10px"></div>'
+        // 已執行小字（綠色，與進度條一致）
+        +'<div style="font-size:11px;color:#5a8a60;font-weight:600;margin-bottom:4px">已執行 '+f(val)+'</div>'
+        // 進度條
+        +'<div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:6px">'
+        +'<div style="height:100%;width:'+pct+'%;background:#5a8a60;border-radius:4px"></div></div>'
+        // %
+        +'<div style="font-size:11px;font-weight:600;color:#5a8a60;font-family:Noto Sans TC,sans-serif">'+pct+'%</div>'
+        +diffNote;
+    }
+    function kpiCard(cls,label,val,sub,goal,fullVal){
+      if(is26single){
+        // 2026：標題 + goalBar（含大數字、進度條）
+        return '<div class="kpi '+cls+'">'
+          +'<div class="kl">'+label+'</div>'
+          +goalBar(val,goal,fullVal,sub)
+          +'</div>';
+      }
+      // 歷年：原本的大數字格式
+      return '<div class="kpi '+cls+'">'
+        +'<div class="kl">'+label+'</div>'
+        +'<div class="kv">'+f(val)+'<span class="ku">元</span></div>'
+        +'<div class="ks">'+sub+'</div>'
+        +'</div>';
+    }
+    wrap.innerHTML=
+      kpiCard('','①公益信託直接捐款',tv,'公益信託直接對外',is26single?G_CA:0,full_t)+
+      kpiCard('','②透過基金會執行',fv,'基金會實際支出',is26single?G_CB:0,full_f)+
+      kpiCard('','③公捐基',tfv,'信託→基金會撥款',is26single?G_CC:0,full_tf)+
+      kpiCard('accent','①＋③ 公益信託總支出',t_tf,is26single?'含直接捐款＋已撥基金會款':'含直接及公捐基',is26single?G_TTF:0,full_t+full_tf)+
+      kpiCard('accent','①＋② 實際總支出',t_f,'真正給社會的資源',is26single?G_TF:0,full_t+full_f);
+    wrap.style.display='none';
+    // 小圖框由 Chart.js afterDraw plugin 直接繪製在長條圖上方，不需要 DOM
+    return;
+
+    return;
+  }
+}
+
+// ─── LEGEND ──────────────────────────────────────────
+function legBadge(n,bg,fg){
+  // numbered or lettered circular badge for legend
+  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${bg};color:${fg};font-size:13px;font-weight:600;font-family:'IBM Plex Mono',monospace;flex-shrink:0;letter-spacing:0;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.18)">${n}</span>`;
+}
+function legChip(bg){
+  return `<span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:${bg};box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);flex-shrink:0"></span>`;
+}
+function buildLeg(){
+  const el=document.getElementById('leg');
+  let h=`<span style="font-size:12px;color:var(--ink2);margin-right:4px;font-weight:500">出帳來源</span>
+    <span class="li">${legBadge('①',CA,'#f5ead0')} <span style="font-size:13px;color:var(--ink)">公益信託</span></span>
+    <span class="li">${legBadge('②',CB,'#f5ead0')} <span style="font-size:13px;color:var(--ink)">基金會</span></span>
+    <span class="li">${legBadge('③',CC,'#f5ead0')} <span style="font-size:13px;color:var(--ink)">公捐基</span></span>`;
+  const ay=activeYr();if(ay===2026||ay==='all'||ay==='multi'||selectedYrs.has(2026))
+    h+=`<div class="leg-div"></div>
+      <span style="font-size:12px;color:var(--ink2);margin-right:4px;font-weight:500">當年度預估</span>
+      <span class="li">${legChip(CE)} <span style="font-size:13px;color:var(--ink)">A 已執行</span></span>
+      <span class="li">${legChip(CD)} <span style="font-size:13px;color:var(--ink)">B 確定發生</span></span>
+      <span class="li">${legChip(CP)} <span style="font-size:13px;color:var(--ink)">C 待討論</span></span>`;
+  h+=`<div class="leg-div"></div><span class="li">${legChip(CO)} <span style="font-size:13px;color:var(--ink)">有成效資料（點「成效」展開）</span></span>`;
+  el.innerHTML=h;
+}
+
+// ─── CHART ───────────────────────────────────────────
+// 5 metric colors
+const CM1='#5a3e1e',CM2='#8a6030',CM3='#b08858',CM4='#3d2810',CM5='#705028';
+let chartMetric='stacked'; // 'stacked' | 't' | 'f' | 'tf' | 'ttf' | 'tf2'
+
+function buildChartToggle(){
+  const tog=document.getElementById('chart-metric-toggle');
+  const ayt=activeYr();if(ayt!=='all'&&ayt!=='multi'){tog.innerHTML='';return;}
+  tog.style.display='flex';
+  const dotStyle=(bg)=>`<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${bg};margin-right:4px;vertical-align:middle;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)"></span>`;
+  const opts=[
+    {k:'stacked',l:`${dotStyle(CM1)}${dotStyle(CM2)} ①＋② 合計`},
+    {k:'t',l:`${dotStyle(CM1)}① 公益信託`},
+    {k:'f',l:`${dotStyle(CM2)}② 基金會`},
+    {k:'tf',l:`${dotStyle(CM3)}③ 公捐基`},
+    {k:'ttf',l:`${dotStyle(CM4)}①＋③ 信託總`},
+    {k:'tf2',l:`${dotStyle(CM5)}①＋② 實際總`},
+  ];
+  tog.innerHTML=opts.map(o=>`<button class="cmb ${chartMetric===o.k?'on':''}" data-m="${o.k}">${o.l}</button>`).join('');
+  tog.querySelectorAll('.cmb').forEach(b=>b.addEventListener('click',()=>{chartMetric=b.dataset.m;buildChart();}));
+}
+
+function buildChart(){
+  if(chartInst){chartInst.destroy();chartInst=null}
+  buildChartToggle();
+  const canvas=document.getElementById('chart');
+  const wrap=document.querySelector('.chart-wrap');
+  const labels=YEARS.map(y=>y===2026?'2026預':String(y));
+  // Track which bars are selected for highlighting
+  const selSet=selectedYrs;
+  const tickStyle={color:'#4a3c10',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}};
+  const gridStyle={color:'rgba(0,0,0,.07)'};
+
+  const ayc=activeYr();if(ayc==='all'||ayc==='multi'){
+    wrap.style.height='220px';
+    let datasets;
+    if(chartMetric==='stacked'){
+      // Apply highlight border to selected years
+      const barBorderT=YEARS.map(y=>selSet.has(y)?3:0);
+      const barBorderC=YEARS.map(y=>selSet.has(y)?'rgba(61,46,0,.7)':'transparent');
+      datasets=[
+        {label:'①公益信託直接捐款',data:YEARS.map(y=>DATA[y].t),backgroundColor:CM1,borderRadius:2,stack:'s',borderWidth:barBorderT,borderColor:barBorderC,borderSkipped:false},
+        {label:'②透過基金會執行',data:YEARS.map(y=>DATA[y].f),backgroundColor:CM2,borderRadius:2,stack:'s',borderWidth:barBorderT,borderColor:barBorderC,borderSkipped:false},
+        {label:'目標 3億',data:YEARS.map(()=>GOAL),type:'line',borderColor:'rgba(180,120,0,.65)',borderDash:[6,3],borderWidth:2,pointRadius:0,fill:false,stack:undefined}
+      ];
+    } else {
+      const metricData={
+        t:{fn:d=>d.t,color:CM1,label:'①公益信託直接捐款'},
+        f:{fn:d=>d.f,color:CM2,label:'②透過基金會執行'},
+        tf:{fn:d=>d.tf,color:CM3,label:'③公捐基'},
+        ttf:{fn:d=>d.t+d.tf,color:CM4,label:'①＋③ 公益信託總支出'},
+        tf2:{fn:d=>d.t+d.f,color:CM5,label:'①＋② 實際總支出'},
+      }[chartMetric];
+      datasets=[
+        {label:metricData.label,data:YEARS.map(y=>metricData.fn(DATA[y])),backgroundColor:metricData.color,borderRadius:3},
+        {label:'目標 3億',data:YEARS.map(()=>GOAL),type:'line',borderColor:'rgba(180,120,0,.65)',borderDash:[6,3],borderWidth:2,pointRadius:0,fill:false},
+      ];
+    }
+    // afterDraw plugin：在選取年份的長條正上方畫小資訊框
+    const statBoxPlugin={
+      id:'statBox',
+      afterDraw(chart){
+        if(selectedYrs.size<2) return;
+        const ctx=chart.ctx;
+        const meta=chart.getDatasetMeta(0);
+        selectedYrs.forEach(yr=>{
+          const idx=YEARS.indexOf(yr);
+          if(idx<0||!meta.data[idx]) return;
+          const bar=meta.data[idx];
+          const x=bar.x; // 長條中心 X
+          const d=DATA[yr];
+          const r=t5(d);
+          // 準備文字
+          let lines=[];
+          if(d.is26){
+            const eT=(d.exec?.t||0)+(d.exec?.tf||0);
+            const cT=(d.cert?.t||0)+(d.cert?.tf||0);
+            const pT=(d.pend?.t||0)+(d.pend?.tf||0);
+            lines=[yr+'預', 'A '+f(eT), 'B '+f(cT), 'C '+f(pT), '①+② '+f(eT+cT+pT)];
+          } else {
+            lines=[String(yr), '①直捐 '+f(r.t), '② '+f(r.f), '③ '+f(r.tf), '①+② '+f(r.t_f)];
+          }
+          const lineH=14, pad=8;
+          const bw=Math.max(70, lines.reduce((m,l)=>{ctx.font='11px Noto Sans TC';return Math.max(m,ctx.measureText(l).width)},0)+pad*2);
+          const bh=lines.length*lineH+pad*1.5;
+          const bx=x-bw/2;
+          const by=chart.chartArea.top-bh-6;
+          // 畫框
+          ctx.save();
+          ctx.fillStyle='rgba(253,248,232,0.97)';
+          ctx.strokeStyle='#c9a800';
+          ctx.lineWidth=1.5;
+          ctx.beginPath();
+          ctx.roundRect(bx,by,bw,bh,6);
+          ctx.fill(); ctx.stroke();
+          // 畫文字
+          lines.forEach((line,i)=>{
+            ctx.fillStyle= i===0?'#3d2e00': i===lines.length-1?'#3d2e00':'#6a5a30';
+            ctx.font= (i===0||i===lines.length-1)?'bold 11px Noto Sans TC':'11px Noto Sans TC';
+            ctx.textAlign='left';
+            ctx.fillText(line, bx+pad, by+pad+i*lineH+lineH*0.75);
+          });
+          ctx.restore();
+        });
+      }
+    };
+    chartInst=new Chart(canvas,{type:'bar',data:{labels,datasets},
+      plugins:[statBoxPlugin],
+      options:{responsive:true,maintainAspectRatio:false,
+        layout:{padding:{top:selectedYrs.size>=2?100:0}},
+        plugins:{legend:{display:false},tooltip:{callbacks:{
+          label:c=>c.dataset.label+': '+ff(c.parsed.y),
+          afterBody:function(items){
+            const yr=YEARS[items[0].dataIndex];
+            const d=DATA[yr];
+            const actual=d.t+d.f;
+            return[
+              '實際公益支出（①+②）: '+ff(actual),
+              '※ ③公捐基為內部撥款，不重複計算',
+            ];
+          }
+        }}},
+        scales:{
+          x:{ticks:{color:'#4a3c10',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}},grid:{display:false},stacked:chartMetric==='stacked'},
+          y:{ticks:{...tickStyle,callback:v=>f(v)},grid:gridStyle,stacked:chartMetric==='stacked'}
+        },
+        onClick:(_,els)=>{
+          if(!els.length)return;
+          const yr=YEARS[els[0].index];
+          if(selectedYrs.has(yr)){selectedYrs.delete(yr);}
+          else{selectedYrs.add(yr);}
+          openImpact={};render();
+        }}});
+  } else if(ayc!=='multi') {
+    const d=DATA[ayc];
+    const tog=document.getElementById('chart-metric-toggle');
+    if(tog)tog.innerHTML='';
+    if(d.is26){
+      // 2026: 5 metrics, each bar stacked by exec/cert/pend
+      wrap.style.height='220px';
+      const r26e={t:d.exec.t,f:d.exec.f,tf:d.exec.tf};
+      const r26c={t:d.cert.t,f:d.cert.f,tf:d.cert.tf};
+      const r26p={t:d.pend.t,f:d.pend.f,tf:d.pend.tf};
+      // compute 5 metrics for each status
+      const mLabels=['① 公益信託','② 基金會','③ 公捐基','①＋③ 信託總','①＋② 實際總'];
+      const mE=[r26e.t,r26e.f,r26e.tf, r26e.t+r26e.tf, r26e.t+r26e.f];
+      const mC=[r26c.t,r26c.f,r26c.tf, r26c.t+r26c.tf, r26c.t+r26c.f];
+      const mP=[r26p.t,r26p.f,r26p.tf, r26p.t+r26p.tf, r26p.t+r26p.f];
+      // 完成率 = A已執行 ÷ 115年目標
+      const mTot=mE.map((e,i)=>e+(mC[i]||0)+(mP[i]||0));
+      const mGoals=[G_CA,G_CB,G_CC,G_TTF,G_TF];
+      const mPct=mE.map((e,i)=>mGoals[i]>0?Math.round(e/mGoals[i]*100):0);
+      chartInst=new Chart(canvas,{type:'bar',
+        data:{labels:mLabels,datasets:[
+          {label:'A 已執行',data:mE,backgroundColor:CE,borderRadius:0,stack:'s'},
+          {label:'B 確定發生',data:mC,backgroundColor:CD,borderRadius:0,stack:'s'},
+          {label:'C 待討論',data:mP,backgroundColor:CP,borderRadius:[5,5,0,0],stack:'s'},
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{
+            legend:{display:false},
+            tooltip:{callbacks:{
+              title:function(items){
+                const i=items[0].dataIndex;
+                const pct=mPct[i];
+                return mLabels[i]+(pct>0?' （達成目標 '+pct+'%）':'');
+              },
+              label:function(ctx){return ctx.dataset.label+': '+ff(ctx.parsed.y);},
+              afterBody:function(items){
+                const i=items[0].dataIndex;
+                const tot=mTot[i];
+                const pct=mPct[i];
+                const lines=['合計(A+B+C): '+ff(tot),'115年目標: '+ff(mGoals[i])];
+                if(pct>0) lines.push('完成率(A÷目標) = '+pct+'%');
+                return lines;
+              }
+            }}
+          },
+          scales:{
+            x:{ticks:{color:'#4a3c10',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"},maxRotation:0},grid:{display:false},stacked:true},
+            y:{ticks:{...tickStyle,callback:v=>f(v)},grid:gridStyle,stacked:true}
+          }}});
+    } else {
+      // Single year: vertical bar with all 5 metrics
+      wrap.style.height='220px';
+      const r=t5(d);
+      const metrics=[
+        {l:'① 公益信託',v:r.t||0,c:CM1},
+        {l:'② 基金會執行',v:r.f||0,c:CM2},
+        {l:'③ 公捐基',v:r.tf||0,c:CM3},
+        {l:'①＋③ 信託總',v:r.t_tf||0,c:CM4},
+        {l:'①＋② 實際總',v:r.t_f||0,c:CM5},
+      ];
+      chartInst=new Chart(canvas,{type:'bar',
+        data:{labels:metrics.map(m=>m.l),datasets:[{label:'金額',data:metrics.map(m=>m.v),backgroundColor:metrics.map(m=>m.c),borderRadius:5,borderSkipped:false}]},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{
+            label:ctx=>ctx.dataset.label+': '+ff(ctx.parsed.y)||'—',
+            afterBody:function(items){
+              const metric=items[0].dataIndex;
+              if(metric===4) return['※ 此為實際公益支出（不重複計算）'];
+              if(metric===3) return['※ 含公捐基撥款，不建議與②合計'];
+              return[];
+            }
+          }}},
+          scales:{
+            x:{ticks:{color:'#4a3c10',font:{size:11,weight:'500',family:"'Noto Sans TC',sans-serif"}},grid:{display:false}},
+            y:{ticks:{...tickStyle,callback:v=>f(v)},grid:gridStyle,beginAtZero:true}
+          }}});
+    }
+  }
+}
+// ═══════════════════════════════════════════════════════
+//  IMPACT MODAL
+// ═══════════════════════════════════════════════════════
+
+// Column accent colours for each IOII step
+const IOII_COLORS={
+  input: {dot:'#5a7888', head:'#5a7888', border:'#c0d0d8'},
+  output:{dot:'#8a7030', head:'#8a7030', border:'#d4c080'},
+  outcome:{dot:'#4a7a58', head:'#4a7a58', border:'#b0d0b8'},
+  impact:{dot:'#c9a800', head:'#c9a800', border:'#e8d020'},
+};
+const IOII_STEPS=[
+  {key:'input',  label:'Input',   sub:'投入'},
+  {key:'output', label:'Output',  sub:'產出'},
+  {key:'outcome',label:'Outcome', sub:'成效'},
+  {key:'impact', label:'Impact',  sub:'影響力'},
+];
+
+function buildModalHTML(key){
+  const im=IMPACT[key]; if(!im) return null;
+
+  // ── Head ──
+  const headHTML=`
+    <div class="imp-modal-title-block">
+      <div class="imp-modal-title">
+        <svg viewBox="0 0 16 16" fill="none" style="width:15px;height:15px;flex-shrink:0">
+          <circle cx="8" cy="8" r="7" stroke="${IOII_COLORS.impact.dot}" stroke-width="1.5"/>
+          <path d="M8 5v4.5M8 11v.5" stroke="${IOII_COLORS.impact.dot}" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        ${im.title}
+      </div>
+      <div class="imp-modal-meta">
+        <span>🗓 ${im.period}</span>
+        <span>💰 投入 ${im.totalInput}</span>
+      </div>
+    </div>
+    <button class="imp-modal-close" onclick="closeModal()" title="關閉 (Esc)">×</button>`;
+
+  // ── KPI chips ──
+  const statHTML=im.stats&&im.stats.length
+    ? `<div class="imp-stat-row">${im.stats.map(s=>`<div class="imp-stat-chip"><span class="imp-stat-v">${s.v}</span><span class="imp-stat-l">${s.l}</span></div>`).join('')}</div>`
+    : '';
+
+  // ── IOII 4-col grid ──
+  const mkGroups=arr=>{
+    if(!arr||!arr.length) return '';
+    if(typeof arr[0]==='string') return arr.map(s=>`<div class="ioii-item">${s}</div>`).join('');
+    return arr.map(g=>`<div class="ioii-sub">${g.sub}</div>${g.items.map(s=>`<div class="ioii-item">${s}</div>`).join('')}`).join('');
+  };
+
+  // Only include columns that have data
+  const activeCols=IOII_STEPS.filter(s=>im[s.key]&&im[s.key].length>0);
+  const colCount=activeCols.length;
+  const gridStyle=colCount>=4?'grid-template-columns:repeat(4,1fr)'
+    :colCount===3?'grid-template-columns:repeat(3,1fr)'
+    :'grid-template-columns:repeat(2,1fr)';
+
+  const colsHTML=activeCols.map(s=>{
+    const c=IOII_COLORS[s.key];
+    return `<div class="ioii-col" style="border-color:${c.border}">
+      <div class="ioii-head" style="color:${c.head};border-color:${c.border}">
+        <span class="ioii-dot" style="background:${c.dot}"></span>
+        ${s.label}
+        <span class="ioii-step-label" style="color:${c.dot}">${s.sub}</span>
+      </div>
+      ${mkGroups(im[s.key])}
+    </div>`;
+  }).join('');
+
+  const noteHTML=im.note?`<div class="imp-modal-note">📋 ${im.note}</div>`:'';
+
+  const bodyHTML=`
+    ${statHTML}
+    <div class="ioii-grid" style="${gridStyle}">${colsHTML}</div>
+    ${noteHTML}`;
+
+  return {headHTML, bodyHTML};
+}
+
+let currentModalKey=null;
+
+function openModal(key,btnId){
+  currentModalKey=key;
+  // Mark all glow buttons off first, then mark this one
+  document.querySelectorAll('.imp-btn.glow').forEach(b=>b.classList.remove('glow'));
+  const btn=btnId?document.getElementById(btnId):null;
+  if(btn) btn.classList.add('glow');
+
+  const result=buildModalHTML(key);
+  if(!result) return;
+  document.getElementById('imp-modal-head').innerHTML=result.headHTML;
+  document.getElementById('imp-modal-body').innerHTML=result.bodyHTML;
+
+  const overlay=document.getElementById('imp-overlay');
+  overlay.classList.add('on');
+  document.body.style.overflow='hidden';
+
+  // Keyboard close
+  document.addEventListener('keydown',handleModalKey,{once:true});
+  // Show/hide back-to-top button
+  const mbody=document.getElementById('imp-modal-body');
+  const topBtn=document.getElementById('modal-top-btn');
+  mbody.onscroll=function(){if(topBtn)topBtn.style.display=mbody.scrollTop>120?'block':'none';};
+}
+
+function closeModal(){
+  currentModalKey=null;
+  const overlay=document.getElementById('imp-overlay');
+  overlay.classList.remove('on');
+  document.body.style.overflow='';
+  // Remove glow from all impact buttons
+  document.querySelectorAll('.imp-btn.glow').forEach(b=>b.classList.remove('glow'));
+  openImpact={};
+}
+
+function handleOverlayClick(e){
+  if(e.target===document.getElementById('imp-overlay')) closeModal();
+}
+function handleModalKey(e){
+  if(e.key==='Escape') closeModal();
+}
+
+// Legacy compat: toggleImpact now opens modal
+function toggleImpact(key,idx){
+  const btnId='impbtn-'+idx;
+  const btn=document.getElementById(btnId);
+  if(currentModalKey===key && document.getElementById('imp-overlay').classList.contains('on')){
+    closeModal();
+  } else {
+    openImpact={[idx]:true};
+    openModal(key,btnId);
+  }
+}
+function closeDrawer(idx){
+  closeModal();
+}
+window.toggleImpact=toggleImpact;
+window.closeDrawer=closeDrawer;
+window.openModal=openModal;
+window.closeModal=closeModal;
+window.handleOverlayClick=handleOverlayClick;
+
+// ═══════════════════════════════════════════════════════
+//  ITEM TABLE (for year detail)
+// ═══════════════════════════════════════════════════════
+function impBtn(key,idx){
+  return `<button class="imp-btn" id="impbtn-${idx}" onclick="toggleImpact('${key}','${idx}')">
+    <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M7 4.5v3M7 9v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>成效</button>`;
+}
+
+function renderItemTable(d,prefix){
+  const items=(d.items||[]).filter(it=>{
+    if(d.is26)return(it.e||0)+(it.c||0)+(it.p||0)>0||(it.memo&&(it.e||0)+(it.c||0)+(it.p||0)===0);
+    return(it.a||0)>0;
+  });
+  const maxA=Math.max(...items.map(it=>d.is26?(it.e||0)+(it.c||0)+(it.p||0):(it.a||0)),1);
+
+  if(d.is26){
+    // ══ 2026：A/B/C三欄 + 多選篩選 + 合計表 ══
+    let s_te=0,s_fe=0,s_tfe=0,s_tc=0,s_fc=0,s_tfc=0,s_tp=0,s_fp=0,s_tfp=0;
+    items.forEach(function(it){
+      const ev=it.e||0,cv=it.c||0,pv=it.p||0;
+      if(it.u==='t'){s_te+=ev;s_tc+=cv;s_tp+=pv;}
+      else if(it.u==='f'){s_fe+=ev;s_fc+=cv;s_fp+=pv;}
+      else if(it.u==='tf'){s_tfe+=ev;s_tfc+=cv;s_tfp+=pv;}
+    });
+    // id 對應：t=信託 f=基金會 tf=公捐基 ttf=①+③ tot=①+②
+    const mkSumRow=(label,e,c,p,bold,last,rid)=>{
+      const tot=e+c+p;
+      const bg=bold?'background:#f0f0f0;':'';
+      const fw=bold?'font-weight:700;':'';
+      return `<tr style="${bg}border-bottom:${last?'none':'0.5px solid var(--border)'}">
+        <td style="padding:0;border-right:1px solid var(--border)"></td>
+        <td colspan="2" style="padding:5px 9px;${fw}color:var(--ink2);font-size:12px">${label}</td>
+        <td data-col="e" data-sum="${rid}-e" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${e?ff(e):'—'}</td>
+        <td data-col="c" data-sum="${rid}-c" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--cd)">${c?ff(c):'—'}</td>
+        <td data-col="p" data-sum="${rid}-p" style="padding:5px 9px;text-align:right;${fw}font-variant-numeric:tabular-nums;font-size:12px;color:var(--cp)">${p?ff(p):'—'}</td>
+        <td data-sum="${rid}-tot" style="padding:5px 9px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:12px">${ff(tot)}</td>
+      </tr>`;
+    };
+    const pid26='uf-'+prefix;
+    const summaryHTML=`<div id="sum-${pid26}" style="margin-top:10px;border:1px solid var(--border2);border-radius:var(--rad);overflow:hidden">
+      <table style="width:100%;border-collapse:collapse;font-family:'Noto Sans TC',sans-serif;table-layout:fixed"><colgroup><col style="width:24px"><col style="width:31%"><col style="width:11%"><col data-col="e" style="width:13%"><col data-col="c" style="width:13%"><col data-col="p" style="width:13%"><col style="width:13%"></colgroup>
+        <thead><tr style="background:var(--hover)">
+          <th style="padding:0;width:24px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)"></th>
+          <th colspan="2" style="padding:5px 9px;text-align:left;font-size:11px;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border)">匯總</th>
+          <th data-col="e" style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--ce);border-bottom:1px solid var(--border)">A 已執行</th>
+          <th data-col="c" style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--cd);border-bottom:1px solid var(--border)">B 確定</th>
+          <th data-col="p" style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--cp);border-bottom:1px solid var(--border)">C 待討論</th>
+          <th style="padding:5px 9px;text-align:right;font-size:11px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--border)">合計</th>
+        </tr></thead>
+        <tbody>
+          ${mkSumRow('① 公益信託',s_te,s_tc,s_tp,false,false,'t')}
+          ${mkSumRow('② 基金會',s_fe,s_fc,s_fp,false,false,'f')}
+          ${mkSumRow('③ 公捐基',s_tfe,s_tfc,s_tfp,false,false,'tf')}
+          ${mkSumRow('①＋③ 信託總',s_te+s_tfe,s_tc+s_tfc,s_tp+s_tfp,true,false,'ttf')}
+          ${mkSumRow('①＋② 實際總',s_te+s_fe,s_tc+s_fc,s_tp+s_fp,true,true,'tot')}
+        </tbody>
+      </table>
+    </div>`;
+    // 群組定義
+    const GRP_ORDER=['medical','award','talent','fundraising','charity','admin'];
+    const GRP_LABELS={medical:'醫療',award:'奉獻獎',talent:'人才培育',fundraising:'募款達人',charity:'社會慈善',admin:'行政營運'};
+    // 子群組定義（同標籤前綴可再摺疊）
+    const SG_LABELS={sg_rongzong:'榮總醫療',sg_award:'奉獻獎',sg_atcc_impl:'ATCC 競賽與落實',sg_fundraising:'募款達人'};
+    // 按群組組織 items
+    const grpMap={};
+    GRP_ORDER.forEach(g=>grpMap[g]=[]);
+    items.forEach(it=>{ const g=it.g||'admin'; if(grpMap[g]) grpMap[g].push(it); else grpMap['admin'].push(it); });
+
+    // 渲染單一項目列（可傳入縮排層級）
+    function renderItemRow26(it,i,grpKey,gid,sgid,indent){
+      const idx=`${prefix}_${grpKey}_${i}`;
+      const tot=(it.e||0)+(it.c||0)+(it.p||0);
+      const abcFlag=(it.e?'e':'')+(it.c?'c':'')+(it.p?'p':'');
+      const pill=`<span style="font-size:10px;padding:1px 5px;border-radius:3px;background:${UB[it.u]};color:${UT[it.u]};white-space:nowrap">${UL[it.u].replace('透過基金會執行','基金會').replace('公益信託直接捐款','信託')}</span>`;
+      const impB=it.impact?`<button class="imp-btn" id="impbtn-${idx}" onclick="toggleImpact('${it.impact}','${idx}')" style="padding:1px 6px;font-size:10px;margin-left:3px">成效</button>`:'';
+      const tooltip=it.memo?`title="${it.memo}"`:'';
+      const pad=indent?'padding:3px 8px 3px 28px':'padding:3px 8px 3px 18px';
+      const extraAttr=sgid?`data-sgid="${sgid}"`:'';
+      return `<tr class="mrow grp-item${sgid?' sg-item':''}" data-grp="${grpKey}" data-gid="${gid}" ${extraAttr} data-unit="${it.u}" data-abc="${abcFlag}" data-visible="1" style="border-bottom:0.5px solid var(--border);display:none">
+          <td style="padding:0;border-right:1px solid #eeeeee"></td>
+          <td style="padding:3px 8px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px" ${tooltip}>${it.n}${impB}</td>
+          <td style="padding:3px 5px;text-align:center;white-space:nowrap">${pill}</td>
+          <td data-col="e" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ce)">${it.e?ff(it.e):''}</td>
+          <td data-col="c" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--cd)">${it.c?ff(it.c):''}</td>
+          <td data-col="p" style="padding:3px 6px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--cp)">${it.p?ff(it.p):''}</td>
+          <td style="padding:3px 8px;text-align:right;font-weight:600;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap">${ff(tot)}</td>
+        </tr>`;
+    }
+
+    // 產生分群 HTML（支援子群組）
+    const compactRows=GRP_ORDER.map(grpKey=>{
+      const grpItems=grpMap[grpKey];
+      if(!grpItems||!grpItems.length) return '';
+      const gid=`${prefix}_g_${grpKey}`;
+
+      // 群組標題列
+      const hdrRow=`<tr class="grp-hdr" data-grp="${grpKey}" style="background:#f8f8f8;border-bottom:1px solid #eeeeee">
+        <td style="padding:0;text-align:center;vertical-align:middle;cursor:pointer;user-select:none;border-right:1px solid #eeeeee" onclick="toggleGrp('${gid}')">
+          <span id="${gid}-arrow" style="display:inline-block;width:14px;height:14px;border:1px solid #cccccc;border-radius:2px;font-size:10px;line-height:13px;text-align:center;color:#999999;font-family:monospace">+</span>
+        </td>
+        <td style="padding:5px 8px;font-size:11px;font-weight:600;color:var(--ink);user-select:none;white-space:nowrap;cursor:pointer" onclick="toggleGrp('${gid}')">
+          ${GRP_LABELS[grpKey]}<span style="font-size:10px;font-weight:400;color:var(--ink3);margin-left:4px">(${grpItems.length}項)</span>
+        </td>
+        <td style="padding:5px 5px;font-size:10px;color:var(--ink3);text-align:center">—</td>
+        <td data-col="e" data-gsum="${gid}-e" style="padding:5px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ce)"></td>
+        <td data-col="c" data-gsum="${gid}-c" style="padding:5px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--cd)"></td>
+        <td data-col="p" data-gsum="${gid}-p" style="padding:5px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--cp)"></td>
+        <td data-gsum="${gid}-tot" style="padding:5px 8px;text-align:right;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)"></td>
+      </tr>`;
+
+      // 處理子群組：把有 sg 的項目先分組
+      const sgMap={};  // sgKey -> items[]
+      const noSgItems=[];
+      grpItems.forEach(it=>{
+        if(it.sg){ if(!sgMap[it.sg])sgMap[it.sg]=[]; sgMap[it.sg].push(it); }
+        else noSgItems.push(it);
+      });
+
+      // 渲染：子群組用小標題 + 縮排；無子群組的直接渲染
+      let itemRows='';
+      // 先渲染有子群組的
+      Object.keys(sgMap).forEach(sgKey=>{
+        const sgItems=sgMap[sgKey];
+        const sgid=`${gid}_${sgKey}`;
+        // 子群組標題列（第二層）
+        const sge=sgItems.reduce((s,it)=>s+(it.e||0),0);
+        const sgc=sgItems.reduce((s,it)=>s+(it.c||0),0);
+        const sgp=sgItems.reduce((s,it)=>s+(it.p||0),0);
+        itemRows+=`<tr class="mrow grp-item sg-hdr" data-grp="${grpKey}" data-gid="${gid}" data-unit="${sgItems[0].u}" data-abc="${(sge?'e':'')+(sgc?'c':'')+(sgp?'p':'')}" data-visible="1" style="background:#ffffff;border-bottom:0.5px solid var(--border);display:none">
+            <td style="padding:0;text-align:center;vertical-align:middle;cursor:pointer;user-select:none;border-right:1px solid #eeeeee" onclick="toggleSg('${sgid}')">
+              <span id="${sgid}-arrow" style="display:inline-block;width:12px;height:12px;border:1px solid #dddddd;border-radius:2px;font-size:9px;line-height:11px;text-align:center;color:#bbbbbb;font-family:monospace">+</span>
+            </td>
+            <td style="padding:3px 8px;font-size:11px;font-weight:600;color:var(--ink2);white-space:nowrap;cursor:pointer" onclick="toggleSg('${sgid}')">
+              ${SG_LABELS[sgKey]||sgKey}<span style="font-size:10px;font-weight:400;color:var(--ink3);margin-left:3px">(${sgItems.length})</span>
+            </td>
+            <td style="padding:3px 5px;text-align:center;font-size:10px;color:var(--ink3)">—</td>
+            <td data-col="e" data-sgsum="${sgid}-e" style="padding:3px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ce)">${sge?ff(sge):''}</td>
+            <td data-col="c" data-sgsum="${sgid}-c" style="padding:3px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--cd)">${sgc?ff(sgc):''}</td>
+            <td data-col="p" data-sgsum="${sgid}-p" style="padding:3px 6px;text-align:right;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--cp)">${sgp?ff(sgp):''}</td>
+            <td style="padding:3px 8px;text-align:right;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums">${ff(sge+sgc+sgp)}</td>
+          </tr>`;
+        // 子群組內的項目（預設隱藏，展開子群組才顯示）
+        sgItems.forEach((it,i)=>{
+          itemRows+=renderItemRow26(it,`sg_${i}`,grpKey,gid,sgid,true);
+        });
+      });
+      // 再渲染無子群組的
+      noSgItems.forEach((it,i)=>{
+        itemRows+=renderItemRow26(it,i,grpKey,gid,null,false);
+      });
+
+      return hdrRow + itemRows;
+    }).join('');
+    return `<div class="itbl-wrap" id="tbl-${pid26}"><table class="itbl" style="width:100%;table-layout:fixed">
+      <colgroup><col style="width:24px"><col style="width:31%"><col style="width:11%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
+      <thead>
+        <tr id="${pid26}" style="background:var(--hover);border-bottom:1px solid var(--border)">
+          <th style="padding:0;width:24px;text-align:center;cursor:pointer;font-weight:normal" title="全部展開/收合" onclick="toggleAllGrp('${pid26}')">
+            <span id="all-arrow-${pid26}" style="display:inline-block;width:14px;height:14px;border:1px solid #cccccc;border-radius:2px;font-size:10px;line-height:13px;text-align:center;color:#888;font-family:monospace">+</span>
+          </th>
+          <th style="padding:4px 8px;font-weight:normal;text-align:left;white-space:nowrap">
+            <button class="ufbtn on" data-u="t" onclick="ufToggle('${pid26}','t')">① 信託</button>
+            <button class="ufbtn on" data-u="f" onclick="ufToggle('${pid26}','f')">② 基金會</button>
+            <button class="ufbtn on" data-u="tf" onclick="ufToggle('${pid26}','tf')">③ 公捐基</button>
+          </th>
+          <th style="padding:4px 5px;font-size:11px;font-weight:600;text-align:center;color:var(--ink2)">出帳</th>
+          <th data-col="e" style="padding:3px 4px;text-align:center">
+            <button class="ufbtn on" data-abc="e" onclick="abcToggle('${pid26}','e')" style="width:100%;box-sizing:border-box">A 已執行</button>
+          </th>
+          <th data-col="c" style="padding:3px 4px;text-align:center">
+            <button class="ufbtn on" data-abc="c" onclick="abcToggle('${pid26}','c')" style="width:100%;box-sizing:border-box">B 確定</button>
+          </th>
+          <th data-col="p" style="padding:3px 4px;text-align:center">
+            <button class="ufbtn on" data-abc="p" onclick="abcToggle('${pid26}','p')" style="width:100%;box-sizing:border-box">C 待討論</button>
+          </th>
+          <th style="padding:4px 8px;font-size:11px;font-weight:600;text-align:right;color:var(--ink2)">小計</th>
+        </tr>
+      </thead>
+      <tbody>${compactRows}</tbody>
+    </table></div>
+    <div id="filt-sub-${pid26}" style="margin-top:6px;margin-bottom:0;border:1.5px solid var(--border2);border-radius:var(--rad);overflow:hidden;background:var(--hover)">
+      <table style="width:100%;border-collapse:collapse;table-layout:fixed;font-family:'Noto Sans TC',sans-serif">
+        <colgroup><col style="width:24px"><col style="width:31%"><col style="width:11%"><col data-col="e" style="width:13%"><col data-col="c" style="width:13%"><col data-col="p" style="width:13%"><col style="width:13%"></colgroup>
+        <thead><tr style="border-bottom:1px solid var(--border)">
+          <th style="padding:0;border-right:1px solid var(--border)"></th>
+          <th colspan="2" style="padding:4px 9px;font-size:11px;font-weight:600;color:var(--ink2);text-align:left">篩選小計</th>
+          <th data-col="e" style="padding:4px 9px;font-size:11px;font-weight:600;color:var(--ce);text-align:right">A 已執行</th>
+          <th data-col="c" style="padding:4px 9px;font-size:11px;font-weight:600;color:var(--cd);text-align:right">B 確定</th>
+          <th data-col="p" style="padding:4px 9px;font-size:11px;font-weight:600;color:var(--cp);text-align:right">C 待討論</th>
+          <th style="padding:4px 9px;font-size:11px;font-weight:600;color:var(--ink);text-align:right">合計</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:0.5px solid var(--border)">
+            <td style="padding:0;border-right:1px solid var(--border)"></td>
+            <td colspan="2" style="padding:4px 9px;font-size:11px;color:var(--ink2)">
+              共 <span data-fsub="${pid26}-count" style="font-weight:700;color:var(--ink)">0</span> 項
+              <span style="margin:0 6px;color:var(--border2)">|</span>
+              信託 <span data-fsub="${pid26}-ct" style="font-weight:600;color:var(--ink)">0</span>
+              <span style="margin:0 4px;color:var(--border2)">·</span>
+              基金會 <span data-fsub="${pid26}-cf" style="font-weight:600;color:var(--ink)">0</span>
+              <span style="margin:0 4px;color:var(--border2)">·</span>
+              公捐基 <span data-fsub="${pid26}-ctf" style="font-weight:600;color:var(--ink)">0</span>
+            </td>
+            <td data-col="e" style="padding:4px 9px;text-align:right;font-size:11px;color:var(--ink3)"><span data-fsub="${pid26}-ce" style="font-size:10px">已執行筆數</span></td>
+            <td data-col="c" style="padding:4px 9px;text-align:right;font-size:11px;color:var(--ink3)"><span data-fsub="${pid26}-cc" style="font-size:10px"></span></td>
+            <td data-col="p" style="padding:4px 9px;text-align:right;font-size:11px;color:var(--ink3)"><span data-fsub="${pid26}-cp2" style="font-size:10px"></span></td>
+            <td style="padding:4px 9px;text-align:right;font-size:11px;color:var(--ink3)"></td>
+          </tr>
+          <tr>
+            <td style="padding:0;border-right:1px solid var(--border)"></td>
+            <td colspan="2" style="padding:4px 9px;font-size:11px;font-weight:700;color:var(--ink)">金額小計</td>
+            <td data-col="e" data-fsub="${pid26}-e" style="padding:4px 9px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ce)"></td>
+            <td data-col="c" data-fsub="${pid26}-c" style="padding:4px 9px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--cd)"></td>
+            <td data-col="p" data-fsub="${pid26}-p" style="padding:4px 9px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--cp)"></td>
+            <td data-fsub="${pid26}-tot" style="padding:4px 9px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    ${summaryHTML}`;
+
+  } else {
+    // ══ 歷年：單欄金額 ══
+    const rows=items.map((it,i)=>{
+      const idx=`${prefix}_${i}`;
+      return `<tr class="mrow" data-unit="${it.u}">
+        <td><span>${it.n}</span>${it.memo?`<div class="item-memo">${it.memo}</div>`:''}</td>
+        <td class="c"><span class="upill" style="background:${UB[it.u]};color:${UT[it.u]}">${UL[it.u]}</span></td>
+        <td class="r">${it.impact?impBtn(it.impact,idx):''}</td>
+        <td class="r">${ff(it.a)}</td>
+      </tr>`;
+    }).join('');
+    const pidhist='uf-'+prefix;
+    return `<div class="unit-filter" id="${pidhist}">
+      <span class="unit-filter-label">出帳篩選</span>
+      <button class="ufbtn on" data-u="all" onclick="ufFilter('${pidhist}','all')"><span class="uf-dot" style="background:#888"></span>全部</button>
+      <button class="ufbtn" data-u="t" onclick="ufFilter('${pidhist}','t')"><span class="uf-dot" style="background:#333"></span>公益信託</button>
+      <button class="ufbtn" data-u="f" onclick="ufFilter('${pidhist}','f')"><span class="uf-dot" style="background:#666"></span>基金會</button>
+      <button class="ufbtn" data-u="tf" onclick="ufFilter('${pidhist}','tf')"><span class="uf-dot" style="background:#999"></span>公捐基</button>
+    </div>
+    <div class="itbl-wrap" id="tbl-${pidhist}"><table class="itbl"><thead><tr><th>項目</th><th class="c">出帳</th><th class="r">成效</th><th class="r">金額</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+}
+
+
+function getVal(row,yr){
+  const d=DATA[yr];
+  if(row.computed) return row.computed(d);
+  const v=d[row.key]||0;
+  return v;
+}
+
+const MROWS=[
+  {id:'t',   label:'①公益信託直接捐款',   cls:'mrow',    key:'t'},
+  {id:'f',   label:'②透過基金會執行', cls:'mrow',    key:'f'},
+  {id:'tf',  label:'③公捐基',         cls:'mrow',    key:'tf'},
+  {id:'ttf', label:'①＋③ 公益信託總支出',cls:'msubtot',computed:(d)=>d.t+d.tf},
+  {id:'ttf2',label:'①＋② 實際總支出', cls:'mgtot',  computed:(d)=>d.t+d.f},
+];
+
+function buildMatrix(){
+  const el=document.getElementById('section-matrix');
+  const yrs=YEARS;  // always show full matrix
+
+  let hdrCols='';
+  yrs.forEach(yr=>{
+    const isEst=DATA[yr].is26;
+    const isSel=selectedYrs.has(yr);
+    hdrCols+=`<th class="yc"><div class="mh-yr ${isEst?'est':''} ${isSel?'on':''}"
+      onclick="toggleYrDetail(${yr})"
+      title="${isEst?'預估：A已執行 B確定發生 C待討論':''}${isSel?' — 再按取消':' — 點擊展開明細'}"
+      >${yr}${isEst?' 預':''}</div>${isEst?`<div style="font-size:9px;color:#9c6228;text-align:center;line-height:1.3;margin-top:2px">A+B+C<br>全年預估</div>`:''}</th>`;
+  });
+  // add history total col if showing all
+  const showTotal=true;
+
+  let bodyRows='';
+  MROWS.forEach(row=>{
+    const cls=row.cls;
+    let cells='';
+    let rowTotal=0;
+    yrs.forEach(yr=>{
+      const v=getVal(row,yr);
+      rowTotal+=v;
+      const isEst=DATA[yr].is26;
+      const isSel2=selectedYrs.has(yr);
+      const valCls=v===0?'zero':isEst?'est-val':'pos';
+      const selStyle=isSel2?'font-weight:700;background:rgba(201,168,0,.08);':'';
+      // 2026 加 tooltip 說明 A/B/C 拆分
+      let tipAttr='';
+      if(isEst&&v>0){
+        const d26=DATA[yr];
+        const aVal=row.computed?row.computed({t:d26.exec?.t||0,f:d26.exec?.f||0,tf:d26.exec?.tf||0}):((d26.exec||{})[row.key]||0);
+        const bVal=row.computed?row.computed({t:d26.cert?.t||0,f:d26.cert?.f||0,tf:d26.cert?.tf||0}):((d26.cert||{})[row.key]||0);
+        const cVal=row.computed?row.computed({t:d26.pend?.t||0,f:d26.pend?.f||0,tf:d26.pend?.tf||0}):((d26.pend||{})[row.key]||0);
+        tipAttr=`title="A已執行: ${aVal>0?f(aVal):'—'}  B確定: ${bVal>0?f(bVal):'—'}  C待討論: ${cVal>0?f(cVal):'—'}"`;
+      }
+      cells+=`<td class="yc" style="${selStyle}" ${tipAttr}><div class="yc-inner ${valCls}">${v===0?'—':f(v)}</div></td>`;
+    });
+    if(showTotal){
+      cells+=`<td class="yc"><div class="yc-inner" style="font-weight:700;color:var(--topbar)">${f(rowTotal)}</div></td>`;
+    }
+    bodyRows+=`<tr class="${cls}"><td class="rc"><div class="rc-inner">${row.label}</div></td>${cells}</tr>`;
+  });
+
+  let totalHdr=`<th class="yc"><div class="mh-yr" style="color:#c9a800;font-size:11px">歷年合計</div></th>`;
+
+  el.innerHTML=`<div style="border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--shadow);display:inline-block;min-width:100%">
+      <table class="matrix-table" style="min-width:100%">
+        <thead>
+          <tr class="mh-row">
+            <th class="rc"><div class="mh-label">財務指標</div></th>
+            ${hdrCols}${totalHdr}
+          </tr>
+        </thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+    </div>`;
+}
+
+window.toggleYrDetail=function(yr){
+  if(selectedYrs.has(yr)){selectedYrs.delete(yr);}
+  else{selectedYrs.add(yr);}
+  openImpact={};render();
+};
+
+// ═══════════════════════════════════════════════════════
+//  YEAR DETAIL PANEL
+// ═══════════════════════════════════════════════════════
+function buildYrDetail(yr,showStats=true,pfxOverride=null){
+  const d=DATA[yr];
+  const r=t5(d);
+  let statsHtml;
+  if(d.is26){
+    const eT=(d.exec?.t||0)+(d.exec?.tf||0),cT=(d.cert?.t||0)+(d.cert?.tf||0),pT=(d.pend?.t||0)+(d.pend?.tf||0);
+    statsHtml=`<div style="font-size:11px;color:var(--ink3);margin-bottom:6px;padding:4px 8px;background:var(--hover);border-radius:4px;display:inline-block">
+      當年度預估：A＝已執行 &nbsp;B＝確定發生 &nbsp;C＝待討論（與 ①②③ 出帳來源無關）
+    </div>
+    <div class="yd-head">
+      <div class="dstat"><div class="dl">A &nbsp;已執行</div><div class="dv" style="color:${CE}">${ff(eT)}</div></div>
+      <div class="dstat"><div class="dl">B &nbsp;確定發生</div><div class="dv" style="color:${CD}">${ff(cT)}</div></div>
+      <div class="dstat"><div class="dl">C &nbsp;待討論</div><div class="dv" style="color:${CP}">${ff(pT)}</div></div>
+      <div class="dstat" style="border-color:var(--accent)"><div class="dl">①＋③ 公益信託總支出</div><div class="dv">${ff(r.t_tf)}</div></div>
+      <div class="dstat" style="border-color:var(--accent)"><div class="dl">①＋② 實際總支出</div><div class="dv" style="color:var(--topbar)">${ff(r.t_f)}</div></div>
+    </div>`;
+  } else {
+    statsHtml=`<div class="yd-head">
+      <div class="dstat"><div class="dl">①公益信託直接捐款</div><div class="dv" style="color:${CA}">${r.t>0?ff(r.t):'—'}</div></div>
+      <div class="dstat"><div class="dl">②透過基金會執行</div><div class="dv" style="color:${CB}">${r.f>0?ff(r.f):'—'}</div></div>
+      <div class="dstat"><div class="dl">③公捐基</div><div class="dv" style="color:${CC}">${r.tf>0?ff(r.tf):'—'}</div></div>
+      <div class="dstat" style="border-color:var(--accent)"><div class="dl">①＋③ 公益信託總支出</div><div class="dv">${r.t_tf>0?ff(r.t_tf):'—'}</div></div>
+      <div class="dstat" style="border-color:var(--accent)"><div class="dl">①＋② 實際總支出</div><div class="dv" style="color:var(--topbar)">${ff(r.t_f)}</div></div>
+    </div>`;
+  }
+  const is26note=d.is26?` <span style="font-size:11px;font-weight:400;color:var(--ink3)">— 預估中：A B C</span>`:'';
+  return `<div style="font-size:13px;font-weight:600;color:var(--topbar);margin-bottom:8px">${yr} 年度明細${is26note}</div>
+    ${showStats?statsHtml:''}
+    ${renderItemTable(d,pfxOverride||'yd'+yr)}
+    ${d.note?`<div class="foot-note">${d.note}</div>`:''}`;
+}
+
+function buildColumns(){
+  const el=document.getElementById('col-details');
+  if(!el)return;
+  if(selectedYrs.size===0){el.innerHTML='';return;}
+  const sortedYrs=[...selectedYrs].sort((a,b)=>a-b);
+  const n=sortedYrs.length;
+
+  if(n>1){
+    // ── 多年比對：用群組對齊 ─────────────────────────────
+    // Step1：每年每個項目計算所屬群組 index
+    const byYrGroup={};  // yr -> groupIdx -> item[]
+    const byYrUngrouped={}; // yr -> item[]（未歸組）
+    sortedYrs.forEach(yr=>{
+      byYrGroup[yr]={};
+      byYrUngrouped[yr]=[];
+      (DATA[yr].items||[]).forEach(it=>{
+        const gi=groupOfItem(it);
+        if(gi>=0){
+          if(!byYrGroup[yr][gi])byYrGroup[yr][gi]=[];
+          byYrGroup[yr][gi].push(it);
+        } else {
+          byYrUngrouped[yr].push(it);
+        }
+      });
+    });
+
+    // Step2：決定要顯示的列順序
+    // 先收集所有出現過的群組（用 ITEM_GROUPS 順序），再附加各年未歸組項目
+    const usedGroupIdxs=[];
+    const usedSet=new Set();
+    sortedYrs.forEach(yr=>{
+      Object.keys(byYrGroup[yr]).map(Number).forEach(gi=>{
+        if(!usedSet.has(gi)){usedSet.add(gi);usedGroupIdxs.push(gi);}
+      });
+    });
+    usedGroupIdxs.sort((a,b)=>a-b);
+
+    // Step3：收集所有未歸組的唯一名稱（跨年）
+    const ungroupedNames=[];const ungroupedSet=new Set();
+    sortedYrs.forEach(yr=>{
+      byYrUngrouped[yr].forEach(it=>{
+        if(!ungroupedSet.has(it.n)){ungroupedSet.add(it.n);ungroupedNames.push(it.n);}
+      });
+    });
+    // 建立 name->item lookup for ungrouped
+    const ungroupedByYr={};
+    sortedYrs.forEach(yr=>{ungroupedByYr[yr]={};byYrUngrouped[yr].forEach(it=>{ungroupedByYr[yr][it.n]=it;});});
+
+    // Step4：每年渲染一欄
+    el.innerHTML=sortedYrs.map(yr=>{
+      const d=DATA[yr];const r=t5(d);
+      const allItems=d.items||[];
+      const maxA=Math.max(...allItems.map(it=>d.is26?(it.e||0)+(it.c||0)+(it.p||0):(it.a||0)),1);
+      const statsHtml=buildStatsRow(yr,d,r);
+      const colgrp=d.is26
+        ?`<colgroup><col style="width:auto;min-width:0"><col style="width:58px"><col style="width:160px"><col style="width:100px"></colgroup>`
+        :`<colgroup><col style="width:auto;min-width:0"><col style="width:58px"><col style="width:60px"><col style="width:110px"></colgroup>`;
+      const tblHd=d.is26
+        ?`<tr style="background:var(--hover)"><th style="text-align:left;padding:6px 10px;font-size:11px;color:var(--ink2)">項目</th><th style="text-align:center;font-size:11px;color:var(--ink2);padding:6px 6px">出帳</th><th style="text-align:right;font-size:11px;color:var(--ink2);padding:6px 10px">狀態 · 成效</th><th style="text-align:right;font-size:11px;color:var(--ink2);padding:6px 10px">小計</th></tr>`
+        :`<tr style="background:var(--hover)"><th style="text-align:left;padding:6px 10px;font-size:11px;color:var(--ink2)">項目</th><th style="text-align:center;font-size:11px;color:var(--ink2);padding:6px 6px">出帳</th><th style="text-align:right;font-size:11px;color:var(--ink2);padding:6px 10px">成效</th><th style="text-align:right;font-size:11px;color:var(--ink2);padding:6px 10px">金額</th></tr>`;
+
+      // 渲染「群組列」：若本年有此群組則渲染（可能多項），否則渲染空佔位
+      const groupRows=usedGroupIdxs.map(gi=>{
+        const items=byYrGroup[yr][gi]||[];
+        const groupLabel=ITEM_GROUPS[gi].label;
+        if(items.length===0){
+          return`<tr style="border-bottom:0.5px solid var(--border);background:var(--bg)">
+            <td colspan="4" style="padding:6px 10px;font-size:12px;color:var(--ink4);opacity:.35;font-style:italic">
+              ${groupLabel}
+            </td></tr>`;
+        }
+        // 有資料：渲染所有屬於此群組的項目
+        return items.map((it,ii)=>{
+          const idx=`c${yr}_g${gi}_${ii}`;
+          return renderItemRow(it,d,maxA,idx);
+        }).join('');
+      }).join('');
+
+      // 渲染未歸組項目
+      const ungrpRows=ungroupedNames.map(name=>{
+        const it=ungroupedByYr[yr][name];
+        if(!it)return`<tr style="border-bottom:0.5px solid var(--border);background:var(--bg)">
+          <td colspan="4" style="padding:5px 10px;font-size:12px;color:var(--ink4);opacity:.35;font-style:italic">
+            ${name}
+          </td></tr>`;
+        const idx=`c${yr}_u_${name.slice(0,10).replace(/\W/g,'_')}`;
+        return renderItemRow(it,d,maxA,idx);
+      }).join('');
+
+      return`<div class="yr-col" id="yr-col-${yr}">
+        <div class="yr-col-head">
+          <span class="yr-col-title">${yr}${d.is26?' 預':''}</span>
+          <button class="yr-col-close" onclick="window.toggleYrDetail(${yr})" title="關閉">×</button>
+        </div>
+        <div class="yr-col-body">
+          ${statsHtml}
+          <div class="itbl-wrap"><table class="itbl" style="width:100%;table-layout:fixed"><thead>${colgrp}${tblHd}</thead><tbody>${groupRows}${ungrpRows}</tbody></table></div>
+          ${d.note?`<div class="foot-note">${d.note}</div>`:''}
+        </div>
+      </div>`;
+    }).join('');
+
+  } else {
+    // Single year: full detail (stats suppressed — shown in KPI strip above)
+    const yr=sortedYrs[0];
+    const html=buildYrDetail(yr,false,'col'+yr);
+    el.innerHTML=`<div class="yr-col" id="yr-col-${yr}">
+      <div class="yr-col-head">
+        <span class="yr-col-title">${yr}${DATA[yr].is26?' 預':''}</span>
+        <button class="yr-col-close" onclick="window.toggleYrDetail(${yr})" title="關閉">×</button>
+      </div>
+      <div class="yr-col-body">${html}</div>
+    </div>`;
+    // 渲染完成後立即初始化篩選小計
+    if(DATA[yr]&&DATA[yr].is26){
+      const filterId='uf-col'+yr;
+      if(typeof ufApply==='function') ufApply(filterId);
+    }
+  }
+
+  // Set per-column width: 2026 (is26) wider, historical narrower
+  const colEls=el.querySelectorAll('.yr-col');
+  colEls.forEach(col=>{
+    const yr=parseInt(col.id.replace('yr-col-',''));
+    const is26yr=DATA[yr]&&DATA[yr].is26;
+    if(n===1){
+      // 單欄：有內容多寬就多寬，最大不超過螢幕
+      col.style.flex='0 0 auto';
+      col.style.width=is26yr?'min(760px,90vw)':'min(500px,80vw)';
+    } else {
+      // 多欄：各欄依內容自然寬度，不強制撐滿；2026 寬一點、歷年窄一點
+      col.style.flex='0 0 auto';
+      col.style.width='auto';
+      col.style.minWidth=is26yr?'460px':'320px';
+      col.style.maxWidth=is26yr?'600px':'440px';
+    }
+  });
+  el.style.width='auto';  // let columns size naturally
+  el.style.justifyContent=n===1?'center':'flex-start';
+  // 初始化所有 is26 年度的篩選小計
+  sortedYrs.forEach(function(yr){
+    if(DATA[yr]&&DATA[yr].is26){
+      if(typeof ufApply==='function') ufApply('uf-col'+yr);
+    }
+  });
+  // 也初始化單欄的 yd 前綴
+  sortedYrs.forEach(function(yr){
+    if(DATA[yr]&&DATA[yr].is26){
+      if(typeof ufApply==='function') ufApply('uf-yd'+yr);
+    }
+  });
+  // 平滑捲動到年度明細區
+  if(n>0){
+    setTimeout(function(){
+      var secB=document.getElementById('section-b');
+      if(secB&&secB.style.display!=='none'){
+        secB.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    },80);
+  }
+}
+
+function renderItemRow(it,d,maxA,idx){
+  const UB_={t:'#f5edd0',f:'#e8edd8',tf:'#ddeae8'};
+  const UT_={t:'#4a3a08',f:'#2a3820',tf:'#1a3840'};
+  const UL_={t:'公益信託',f:'基金會',tf:'公捐基'};
+  const pill=`<span class="upill" style="background:${UB_[it.u]};color:${UT_[it.u]}">${UL_[it.u]}</span>`;
+  const impB=it.impact?impBtn(it.impact,idx):'';
+
+  if(d.is26){
+    // ── 2026：字母標籤固定位置 + 精確金額靠右
+    const tagLines=[
+      it.e>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.e)}</span>
+        <span class="st-tag" style="background:#f2ede6;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">A</span>
+      </div>`:'',
+      it.c>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.c)}</span>
+        <span class="st-tag" style="background:#ebe5dc;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">B</span>
+      </div>`:'',
+      it.p>0?`<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 0">
+        <span style="font-size:12px;font-family:'Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums;color:var(--ink2)">${ff(it.p)}</span>
+        <span class="st-tag" style="background:#e2dbd0;color:#8a7a60;font-weight:600;flex-shrink:0;width:20px;text-align:center;padding:2px 0;border-radius:3px;font-size:11px">C</span>
+      </div>`:'',
+      impB?`<div style="text-align:right;margin-top:4px">${impB}</div>`:'',
+    ].filter(Boolean).join('');
+    const tot26=(it.e||0)+(it.c||0)+(it.p||0);
+    const noData=!it.e&&!it.c&&!it.p&&!impB;
+    return`<tr class="mrow">
+      <td style="padding:6px 8px;font-size:12px;vertical-align:top;min-width:0;line-height:1.4">${it.n}${it.memo?`<div class="item-memo">${it.memo}</div>`:''}</td>
+      <td class="c" style="white-space:nowrap;vertical-align:top;padding:6px 4px">${pill}</td>
+      <td style="vertical-align:top;padding:5px 8px 5px 4px;width:200px;min-width:200px">${noData?'<span style="color:var(--ink4);font-size:11px;display:block;text-align:right">承諾中</span>':tagLines}</td>
+      <td class="r" style="font-variant-numeric:tabular-nums;font-size:12px;font-family:'Noto Sans TC',sans-serif;white-space:nowrap;vertical-align:middle;padding:6px 10px 6px 4px;font-weight:600">${tot26>0?ff(tot26):'—'}</td>
+      </tr>`;
+  }
+
+  // ── 歷年：項目 / 出帳 / 成效（獨立靠右） / 金額
+  return`<tr class="mrow">
+    <td style="padding:6px 8px;font-size:12px;vertical-align:top;min-width:0;line-height:1.4">${it.n}${it.memo?`<div class="item-memo">${it.memo}</div>`:''}</td>
+    <td class="c" style="white-space:nowrap;vertical-align:middle;padding:6px 4px">${pill}</td>
+    <td style="vertical-align:middle;padding:6px 4px;text-align:right">${impB||''}</td>
+    <td class="r" style="font-variant-numeric:tabular-nums;font-size:13px;font-family:'Noto Sans TC',sans-serif;white-space:nowrap;vertical-align:middle;padding:6px 12px 6px 4px;font-weight:600">${ff(it.a||0)}</td>
+    </tr>`;
+}
+
+function buildStatsRow(yr,d,r){
+  if(d.is26){
+    const eT=(d.exec?.t||0)+(d.exec?.tf||0),cT=(d.cert?.t||0)+(d.cert?.tf||0),pT=(d.pend?.t||0)+(d.pend?.tf||0);
+    return`<div class="yr-stat-row">
+      <div class="yr-stat"><div class="yr-stat-l">A 已執行</div><div class="yr-stat-v" style="color:${CE}">${f(eT)}</div></div>
+      <div class="yr-stat"><div class="yr-stat-l">B 確定</div><div class="yr-stat-v" style="color:${CD}">${f(cT)}</div></div>
+      <div class="yr-stat"><div class="yr-stat-l">C 待討論</div><div class="yr-stat-v" style="color:${CP}">${f(pT)}</div></div>
+      <div class="yr-stat accent"><div class="yr-stat-l">①＋③ 信託總</div><div class="yr-stat-v">${f(r.t_tf)}</div></div>
+      <div class="yr-stat accent"><div class="yr-stat-l">①＋② 實際總</div><div class="yr-stat-v">${f(r.t_f)}</div></div>
+    </div>`;
+  }
+  return`<div class="yr-stat-row">
+    <div class="yr-stat"><div class="yr-stat-l">① 公益信託</div><div class="yr-stat-v" style="color:${CA}">${r.t>0?f(r.t):'—'}</div></div>
+    <div class="yr-stat"><div class="yr-stat-l">② 基金會</div><div class="yr-stat-v" style="color:${CB}">${r.f>0?f(r.f):'—'}</div></div>
+    <div class="yr-stat"><div class="yr-stat-l">③ 公捐基</div><div class="yr-stat-v" style="color:${CC}">${r.tf>0?f(r.tf):'—'}</div></div>
+    <div class="yr-stat accent"><div class="yr-stat-l">①＋③ 信託總</div><div class="yr-stat-v">${r.t_tf>0?f(r.t_tf):'—'}</div></div>
+    <div class="yr-stat accent"><div class="yr-stat-l">①＋② 實際總</div><div class="yr-stat-v">${f(r.t_f)}</div></div>
+  </div>`;
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+function render(){
+  buildSel();buildKPI();buildLeg();buildChart();
+  buildMatrix();buildColumns();
+  updateLayout();
+}
+
+// ── 出帳 + ABC 多選篩選函式 ──
+var _ufState = {};
+
+function ufGetState(id){
+  if(!_ufState[id]){
+    _ufState[id]={units:new Set(['t','f','tf']),abcs:new Set(['e','c','p'])};
+    // 初始化後延遲執行一次 apply，更新小計
+    setTimeout(function(){ ufApply(id); },50);
+  }
+  return _ufState[id];
+}
+
+function ufApply(filterId){
+  var s=ufGetState(filterId);
+  var tbl=document.getElementById('tbl-'+filterId);
+  if(!tbl) return;
+
+  // ── 篩選邏輯：設定 data-visible（不管收合狀態）──
+  tbl.querySelectorAll('tr.grp-item').forEach(function(tr){
+    var unitOk=s.units.has(tr.dataset.unit);
+    var abc=tr.dataset.abc||'';
+    var abcOk=(s.abcs.has('e')&&abc.includes('e'))||
+               (s.abcs.has('c')&&abc.includes('c'))||
+               (s.abcs.has('p')&&abc.includes('p'));
+    var pass=unitOk&&abcOk;
+    tr.dataset.visible=pass?'1':'0';
+    // display 還要考慮群組是否展開
+    var gid=tr.dataset.gid;
+    var arrow=gid?document.getElementById(gid+'-arrow'):null;
+    var grpOpen=arrow&&arrow.textContent.includes('−');
+    var sgid=tr.dataset.sgid;
+    var sgOpen=true;
+    if(sgid){var sga=document.getElementById(sgid+'-arrow');sgOpen=sga&&sga.textContent.trim()==='▼';}
+    tr.style.display=(pass&&grpOpen&&sgOpen)?'':'none';
+  });
+  // 群組標題列：重算各群組小計 + 若無符合項目則隱藏
+  tbl.querySelectorAll('tr.grp-hdr').forEach(function(hdr){
+    var grpKey=hdr.dataset.grp;
+    var ge=0,gc=0,gp=0,hasMatch=false;
+    tbl.querySelectorAll('tr.grp-item[data-grp="'+grpKey+'"]').forEach(function(tr){
+      if(tr.dataset.visible!=='1') return;
+      hasMatch=true;
+      var eCell=tr.querySelector('[data-col="e"]');
+      var cCell=tr.querySelector('[data-col="c"]');
+      var pCell=tr.querySelector('[data-col="p"]');
+      ge+=eCell?parseNum(eCell.textContent):0;
+      gc+=cCell?parseNum(cCell.textContent):0;
+      gp+=pCell?parseNum(pCell.textContent):0;
+    });
+    hdr.style.display=hasMatch?'':'none';
+    // 寫入群組小計
+    var gid=hdr.querySelector('[id$="-arrow"]');
+    if(gid){
+      var base=gid.id.replace('-arrow','');
+      function gs(sfx,v){var el=hdr.querySelector('[data-gsum="'+base+'-'+sfx+'"]');if(el)el.textContent=v?ffNum(v):'';}
+      gs('e',ge); gs('c',gc); gs('p',gp); gs('tot',ge+gc+gp);
+    }
+  });
+
+  // ── 欄顯示：visibility 保留欄寬，避免欄位跑掉 ──
+  ['e','c','p'].forEach(function(abc){
+    var show=s.abcs.has(abc);
+    // tbody 資料欄：visibility:hidden 保留空間
+    tbl.querySelectorAll('tbody [data-col="'+abc+'"]').forEach(function(el){
+      el.style.visibility=show?'':'hidden';
+    });
+    // thead 的 th 按鈕：opacity 視覺提示，不可隱藏
+    tbl.querySelectorAll('thead [data-col="'+abc+'"]').forEach(function(el){
+      el.style.opacity=show?'1':'0.4';
+    });
+  });
+
+  // ── 動態重算合計表（只計算可見列）──
+  var sumWrap=document.getElementById('sum-'+filterId)||tbl.nextElementSibling;
+  if(sumWrap&&sumWrap.querySelector){
+    var te=0,fe=0,tfe=0,tc=0,fc=0,tfc=0,tp=0,fp=0,tfp=0;
+    tbl.querySelectorAll('tr.grp-item').forEach(function(tr){
+      if(tr.dataset.visible==='0') return;  // 篩選排除的不計，收合的仍計入
+      var u=tr.dataset.unit;
+      var eCell=tr.querySelector('[data-col="e"]');
+      var cCell=tr.querySelector('[data-col="c"]');
+      var pCell=tr.querySelector('[data-col="p"]');
+      var ev=eCell?parseNum(eCell.textContent):0;
+      var cv=cCell?parseNum(cCell.textContent):0;
+      var pv=pCell?parseNum(pCell.textContent):0;
+      if(u==='t'){te+=ev;tc+=cv;tp+=pv;}
+      else if(u==='f'){fe+=ev;fc+=cv;fp+=pv;}
+      else if(u==='tf'){tfe+=ev;tfc+=cv;tfp+=pv;}
+    });
+    function setSum(id,v){var el=sumWrap.querySelector('[data-sum="'+id+'"]');if(el)el.textContent=v?ffNum(v):'—';}
+    setSum('t-e',te);setSum('t-c',tc);setSum('t-p',tp);setSum('t-tot',te+tc+tp);
+    setSum('f-e',fe);setSum('f-c',fc);setSum('f-p',fp);setSum('f-tot',fe+fc+fp);
+    setSum('tf-e',tfe);setSum('tf-c',tfc);setSum('tf-p',tfp);setSum('tf-tot',tfe+tfc+tfp);
+    setSum('ttf-e',te+tfe);setSum('ttf-c',tc+tfc);setSum('ttf-p',tp+tfp);setSum('ttf-tot',te+tfe+tc+tfc+tp+tfp);
+    setSum('tot-e',te+fe);setSum('tot-c',tc+fc);setSum('tot-p',tp+fp);setSum('tot-tot',te+fe+tc+fc+tp+fp);
+    // 更新篩選小計（所有可見項目的加總）
+    var allE=te+fe+tfe, allC=tc+fc+tfc, allP=tp+fp+tfp;
+    var filtSub=document.getElementById('filt-sub-'+filterId);
+    if(filtSub){
+      function setFsub(sfx,v){var el=filtSub.querySelector('[data-fsub="'+filterId+'-'+sfx+'"]');if(el)el.textContent=v!==undefined?v:'';}
+      // 金額小計
+      setFsub('e',allE?ffNum(allE):''); setFsub('c',allC?ffNum(allC):''); setFsub('p',allP?ffNum(allP):''); setFsub('tot',(allE+allC+allP)?ffNum(allE+allC+allP):'');
+      // 項目計數
+      var countT=0,countF=0,countTF=0;
+      tbl.querySelectorAll('tr.grp-item').forEach(function(tr){
+        if(tr.dataset.visible!=='1') return;
+        if(tr.classList.contains('sg-hdr')) return; // 不計子群組標題
+        var u=tr.dataset.unit;
+        if(u==='t') countT++;
+        else if(u==='f') countF++;
+        else if(u==='tf') countTF++;
+      });
+      var total=countT+countF+countTF;
+      setFsub('count',total);
+      setFsub('ct',countT||'—'); setFsub('cf',countF||'—'); setFsub('ctf',countTF||'—');
+      // 各欄有值的筆數
+      var hasE=0,hasC=0,hasP=0;
+      tbl.querySelectorAll('tr.grp-item').forEach(function(tr){
+        if(tr.dataset.visible!=='1'||tr.classList.contains('sg-hdr')) return;
+        var eCell=tr.querySelector('[data-col="e"]');
+        var cCell=tr.querySelector('[data-col="c"]');
+        var pCell=tr.querySelector('[data-col="p"]');
+        if(eCell&&parseNum(eCell.textContent)) hasE++;
+        if(cCell&&parseNum(cCell.textContent)) hasC++;
+        if(pCell&&parseNum(pCell.textContent)) hasP++;
+      });
+      setFsub('ce',hasE?hasE+'筆':'');
+      setFsub('cc',hasC?hasC+'筆':'');
+      setFsub('cp2',hasP?hasP+'筆':'');
+      // 篩選小計欄：用 visibility 保留欄寬
+      ['e','c','p'].forEach(function(abc){
+        var show=s.abcs.has(abc);
+        filtSub.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
+          el.style.visibility=show?'':'hidden';
+        });
+      });
+    }
+    // 合計表欄顯示/隱藏
+    ['e','c','p'].forEach(function(abc){
+      var show=s.abcs.has(abc);
+      sumWrap.querySelectorAll('[data-col="'+abc+'"]').forEach(function(el){
+        el.style.visibility=show?'':'hidden';
+      });
+    });
+  }
+}
+
+function parseNum(s){if(!s||s==='—')return 0;return parseInt(s.replace(/,/g,''))||0;}
+function ffNum(n){return n.toLocaleString('en-US');}
+function ufBtnStyle(btn, isOn){
+  btn.style.cssText=isOn?'padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;background:#1a1a1a;color:#ffffff;border:1.5px solid #1a1a1a;font-weight:500;letter-spacing:.2px;box-sizing:border-box':'padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;background:#ffffff;color:#999999;border:1.5px solid #cccccc;font-weight:500;letter-spacing:.2px;box-sizing:border-box';
+}
+
+function ufToggle(filterId,unit){
+  var s=ufGetState(filterId);
+  if(s.units.has(unit)){if(s.units.size>1)s.units.delete(unit);}
+  else{s.units.add(unit);}
+  var bar=document.getElementById(filterId);
+  if(bar) bar.querySelectorAll('[data-u]').forEach(function(b){
+    var isOn=s.units.has(b.dataset.u);
+    b.classList.toggle('on',isOn);
+    ufBtnStyle(b,isOn);
+  });
+  ufApply(filterId);
+}
+
+function abcToggle(filterId,abc){
+  var s=ufGetState(filterId);
+  if(s.abcs.has(abc)){if(s.abcs.size>1)s.abcs.delete(abc);}
+  else{s.abcs.add(abc);}
+  var bar=document.getElementById(filterId);
+  if(bar) bar.querySelectorAll('[data-abc]').forEach(function(b){
+    var isOn=s.abcs.has(b.dataset.abc);
+    b.classList.toggle('on',isOn);
+    ufBtnStyle(b,isOn);
+  });
+  ufApply(filterId);
+}
+
+function ufFilter(filterId,unit){
+  var tbl=document.getElementById('tbl-'+filterId);
+  if(!tbl) return;
+  var bar=document.getElementById(filterId);
+  if(bar) bar.querySelectorAll('.ufbtn[data-u]').forEach(function(b){
+    b.classList.toggle('on',b.dataset.u===unit);
+  });
+  tbl.querySelectorAll('tr[data-unit]').forEach(function(tr){
+    tr.style.display=(unit==='all'||tr.dataset.unit===unit)?'':'none';
+  });
+}
+
+window.ufFilter=ufFilter;
+window.ufToggle=ufToggle;
+window.abcToggle=abcToggle;
+
+// ── 群組摺疊函式 ──
+function toggleGrp(gid){
+  var rows=document.querySelectorAll('.grp-item[data-gid="'+gid+'"]');
+  var arrow=document.getElementById(gid+'-arrow');
+  var isCollapsed=arrow&&arrow.textContent.includes('+');
+  rows.forEach(function(tr){
+    var pass=tr.dataset.visible!=='0';
+    // 子群組的子項目只在子群組展開時才顯示
+    var sgid=tr.dataset.sgid;
+    if(sgid){
+      var sgArrow=document.getElementById(sgid+'-arrow');
+      var sgOpen=sgArrow&&sgArrow.textContent.includes('▼');
+      tr.style.display=(isCollapsed&&pass&&sgOpen)?'':'none';
+    } else {
+      tr.style.display=(isCollapsed&&pass)?'':'none';
+    }
+  });
+  if(arrow) arrow.textContent=isCollapsed?'−':'+';
+}
+
+function toggleSg(sgid){
+  var rows=document.querySelectorAll('.sg-item[data-sgid="'+sgid+'"]');
+  var arrow=document.getElementById(sgid+'-arrow');
+  var isCollapsed=arrow&&arrow.textContent.trim()==='+';
+  rows.forEach(function(tr){
+    var pass=tr.dataset.visible!=='0';
+    tr.style.display=(isCollapsed&&pass)?'':'none';
+  });
+  if(arrow) arrow.textContent=isCollapsed?'−':'+';
+}
+window.toggleSg=toggleSg;
+
+// ── 全部展開 / 全部收合 ──
+function toggleAllGrp(filterId){
+  var allArrow=document.getElementById('all-arrow-'+filterId);
+  var isAllCollapsed=allArrow&&allArrow.textContent.trim()==='+';
+  // 找所有群組標題的 arrow
+  var tbl=document.getElementById('tbl-'+filterId);
+  if(!tbl) return;
+  tbl.querySelectorAll('tr.grp-hdr').forEach(function(hdr){
+    var gid=hdr.querySelector('[id$="-arrow"]');
+    if(!gid) return;
+    var grpId=gid.id.replace('-arrow','');
+    var curOpen=gid.textContent.includes('−');
+    if(isAllCollapsed&&!curOpen){
+      // 要展開：呼叫 toggleGrp
+      toggleGrp(grpId);
+    } else if(!isAllCollapsed&&curOpen){
+      // 要收合：呼叫 toggleGrp
+      toggleGrp(grpId);
+    }
+  });
+  if(allArrow) allArrow.textContent=isAllCollapsed?'−':'+';
+}
+window.toggleAllGrp=toggleAllGrp;
+window.toggleGrp=toggleGrp;
+
+render();
+// 初始化所有 2026 年度的篩選小計（渲染完成後立即執行）
+setTimeout(function(){
+  document.querySelectorAll('[id^="tbl-uf-"]').forEach(function(tbl){
+    var filterId=tbl.id.replace('tbl-','');
+    ufApply(filterId);
+  });
+},0);
+setTimeout(()=>{ if(typeof loadSummaryFromSheets==='function') loadSummaryFromSheets(); },0); // 從 Sheets 自動更新年度數字
+</script>
+
+<div id="srch-overlay" onclick="if(event.target.id==='srch-overlay')this.style.display='none'">
+  <div id="srch-panel">
+    <div id="srch-bar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="srch-q" type="text" placeholder="輸入關鍵字，例如：醫療、消防、ATCC、榮總…" oninput="srchDebounce()">
+      <button id="srch-x" onclick="document.getElementById('srch-overlay').style.display='none'">✕</button>
+    </div>
+    <div id="srch-body"><div id="srch-status">輸入關鍵字，搜尋所有年度的捐贈項目</div></div>
+  </div>
+</div>
+
+<script>
+// ── 查帳搜尋引擎 ──
+var _idx=[], _files=[];
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') document.getElementById('srch-overlay').style.display='none';
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.getElementById('srch-overlay').style.display='flex';document.getElementById('srch-q').focus();}
+});
+
+function srchDo(){
+  var q=document.getElementById('srch-q').value.trim().toLowerCase();
+  var el=document.getElementById('srch-body');
+  if(!q){el.innerHTML='<div id="srch-status">輸入關鍵字，搜尋所有年度的捐贈項目</div>';return;}
+  var terms=q.split(/\s+/).filter(function(t){return t.length>0;});
+
+  // 搜尋 DATA 所有年度的 items
+  var results=[];
+  var years=Object.keys(DATA).map(Number).sort(function(a,b){return b-a;});
+  years.forEach(function(yr){
+    var d=DATA[yr];
+    if(!d||!d.items) return;
+    d.items.forEach(function(it){
+      var haystack=(it.n+' '+(it.memo||'')).toLowerCase();
+      if(terms.every(function(t){return haystack.includes(t);})){
+        results.push({yr:yr,it:it,is26:!!d.is26});
+      }
+    });
+  });
+
+  if(!results.length){
+    el.innerHTML='<div id="srch-status">找不到「'+q+'」</div>';
+    return;
+  }
+
+  // 統計小計
+  var sumE=0,sumC=0,sumP=0,sumA=0;
+  var unitCount={t:0,f:0,tf:0};
+  results.forEach(function(r){
+    unitCount[r.it.u]=(unitCount[r.it.u]||0)+1;
+    if(r.is26){sumE+=(r.it.e||0);sumC+=(r.it.c||0);sumP+=(r.it.p||0);}
+    else{sumA+=(r.it.a||0);}
+  });
+  var total=sumE+sumC+sumP+sumA;
+  var ff=function(n){return n?n.toLocaleString('en-US'):'—';};
+  var uLabel=function(u){return u==='t'?'①信託':u==='f'?'②基金會':'③公捐基';};
+
+  var html='';
+  // 小計卡片
+  html+='<div style="background:#f8f8f8;border:1px solid #e0e0e0;border-radius:8px;padding:14px 18px;margin-bottom:14px">';
+  html+='<div style="font-size:12px;font-weight:700;color:#888;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px">搜尋小計 — '+results.length+' 筆符合「'+q+'」</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">';
+  if(sumE||sumC||sumP){
+    html+='<div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">A 已執行</div><div style="font-size:14px;font-weight:700;color:#2d6a2d">'+ff(sumE)+'</div></div>';
+    html+='<div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">B 確定</div><div style="font-size:14px;font-weight:700;color:#555">'+ff(sumC)+'</div></div>';
+    html+='<div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">C 待討論</div><div style="font-size:14px;font-weight:700;color:#888">'+ff(sumP)+'</div></div>';
+  }
+  if(sumA){
+    html+='<div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">歷年金額</div><div style="font-size:14px;font-weight:700;color:#333">'+ff(sumA)+'</div></div>';
+  }
+  html+='<div style="background:#1a1a1a;border-radius:6px;padding:8px 12px"><div style="font-size:10px;color:#aaa;margin-bottom:3px">合計</div><div style="font-size:14px;font-weight:700;color:#fff">'+ff(total)+'</div></div>';
+  html+='</div>';
+  // 出帳分布
+  html+='<div style="margin-top:8px;font-size:12px;color:#666">';
+  ['t','f','tf'].forEach(function(u){
+    if(unitCount[u]){html+='<span style="margin-right:12px">'+uLabel(u)+' '+unitCount[u]+'筆</span>';}
+  });
+  html+='</div></div>';
+
+  // 結果列表（依年度分組）
+  var byYr={};
+  results.forEach(function(r){if(!byYr[r.yr])byYr[r.yr]=[];byYr[r.yr].push(r);});
+  Object.keys(byYr).sort(function(a,b){return b-a;}).forEach(function(yr){
+    var rows=byYr[yr];
+    html+='<div style="margin-bottom:12px">';
+    html+='<div style="font-size:12px;font-weight:700;color:#444;padding:4px 0 6px;border-bottom:1px solid #e8e8e8;margin-bottom:6px">'+yr+(DATA[yr]&&DATA[yr].is26?' 預':'')+'年　'+rows.length+'筆</div>';
+    rows.forEach(function(r){
+      var it=r.it;
+      var uLbl=it.u==='t'?'信託':it.u==='f'?'基金會':'公捐基';
+      var uColor=it.u==='t'?'#333':it.u==='f'?'#555':'#888';
+      html+='<div style="display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:0.5px solid #f0f0f0">';
+      html+='<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#f0f0f0;color:'+uColor+';white-space:nowrap;flex-shrink:0">'+uLbl+'</span>';
+      html+='<span style="font-size:13px;color:#111;flex:1">'+srchHL(it.n,terms)+'</span>';
+      var amts=[];
+      if(r.is26){
+        if(it.e)amts.push('<span style="color:#2d6a2d">A '+ff(it.e)+'</span>');
+        if(it.c)amts.push('<span style="color:#555">B '+ff(it.c)+'</span>');
+        if(it.p)amts.push('<span style="color:#888">C '+ff(it.p)+'</span>');
+      } else if(it.a){
+        amts.push('<span style="color:#333">'+ff(it.a)+'</span>');
+      }
+      if(amts.length)html+='<span style="font-size:12px;font-family:monospace;white-space:nowrap">'+amts.join(' ')+'</span>';
+      html+='</div>';
+      if(it.memo){html+='<div style="font-size:11px;color:#aaa;padding:0 0 4px 0;margin-left:52px">'+it.memo+'</div>';}
+    });
+    html+='</div>';
+  });
+
+  el.innerHTML=html;
+}
+function srchHL(text, terms){
+  var s = String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  terms.forEach(function(t){
+    var re = new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')', 'gi');
+    s = s.replace(re, '<mark style="background:#ffee88;border-radius:2px">$1</mark>');
+  });
+  return s;
+}
+
+// ── 欄篩選浮動面板 ──
+var _colFilter = { col: -1, active: {} }; // active: {colIdx: Set(vals)}
+
+function sheetsColFilter(evt, thEl){
+  evt.stopPropagation();
+  // ▾ span をクリックした場合、親の <th> に補正
+  if(!thEl.dataset.colkey && thEl.closest) thEl = thEl.closest('th');
+  if(!thEl || !thEl.dataset || !thEl.dataset.colkey) return;
+  var existing = document.getElementById('col-filter-panel');
+  if(existing){
+    var sameCol = existing.dataset.colkey === thEl.dataset.colkey;
+    existing.remove();
+    if(sameCol) return;
+  }
+  var k = thEl.dataset.colkey;
+  if(!k || !_sheetsData.length) return;
+  var vals = {};
+  _sheetsData.forEach(function(r){
+    var v=(r[k]||'').trim();
+    // 過濾 CSV 解析錯誤產生的異常值（以逗號開頭、或超過100字）
+    if(v && v[0]!=',' && v.length<=100) vals[v]=1;
+  });
+  var unique = Object.keys(vals).sort();
+  if(!unique.length) return;
+  var active = _colFilter.active[k] || null;
+  // 建面板（用 createElement，完全不用字串拼接含引號的 onclick）
+  var panel = document.createElement('div');
+  panel.id = 'col-filter-panel';
+  panel.dataset.colkey = k;
+  panel.style.cssText = 'position:fixed;background:#fff;border:1.5px solid #cccccc;border-radius:8px;'
+    +'box-shadow:0 4px 20px rgba(0,0,0,.18);padding:10px;z-index:9999;'
+    +'min-width:160px;max-width:280px;max-height:340px;overflow-y:auto;font-family:inherit;font-size:13px';
+  var rect = thEl.getBoundingClientRect();
+  panel.style.top  = (rect.bottom + 4) + 'px';
+  panel.style.left = Math.min(rect.left, window.innerWidth - 290) + 'px';
+  // 標題
+  var head = document.createElement('div');
+  head.style.cssText = 'font-size:11px;font-weight:700;color:#888;padding-bottom:7px;margin-bottom:7px;border-bottom:1px solid #eee';
+  head.textContent = k;
+  panel.appendChild(head);
+  // 按鈕列（全選 / 全清 / 套用）— 用 addEventListener，不用 onclick 屬性
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:5px;margin-bottom:8px';
+  [['全選',true],['全清',false]].forEach(function(pair){
+    var btn = document.createElement('button');
+    btn.textContent = pair[0];
+    btn.style.cssText = 'flex:1;padding:4px;border:1px solid #ddd;border-radius:4px;background:#f8f8f8;cursor:pointer;font-size:11px;font-family:inherit';
+    btn.addEventListener('click', (function(chk){ return function(e){
+      e.stopPropagation();
+      panel.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked=chk; });
+    }; })(pair[1]));
+    btnRow.appendChild(btn);
+  });
+  var applyBtn = document.createElement('button');
+  applyBtn.textContent = '套用';
+  applyBtn.style.cssText = 'flex:1;padding:4px;border:1.5px solid #1a1a1a;border-radius:4px;background:#1a1a1a;color:#fff;cursor:pointer;font-size:11px;font-family:inherit';
+  applyBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var checked = new Set();
+    panel.querySelectorAll('input[type=checkbox]:checked').forEach(function(cb){ checked.add(cb.dataset.val); });
+    var total = panel.querySelectorAll('input[type=checkbox]').length;
+    if(checked.size === total) delete _colFilter.active[k];
+    else _colFilter.active[k] = checked;
+    panel.remove();
+    sheetsRender();
+  });
+  btnRow.appendChild(applyBtn);
+  panel.appendChild(btnRow);
+  // 選項列表
+  unique.forEach(function(v){
+    var label = document.createElement('label');
+    label.style.cssText = 'display:flex;align-items:center;gap:7px;padding:4px 2px;cursor:pointer';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.dataset.val = v;
+    cb.checked = (!active || active.has(v));
+    cb.style.cursor = 'pointer';
+    var span = document.createElement('span');
+    span.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px';
+    span.title = v;
+    span.textContent = v;
+    label.appendChild(cb);
+    label.appendChild(span);
+    panel.appendChild(label);
+  });
+  document.body.appendChild(panel);
+  // 點其他地方關閉
+  setTimeout(function(){
+    function closeFn(e){
+      var p = document.getElementById('col-filter-panel');
+      if(p && !p.contains(e.target)){ p.remove(); document.removeEventListener('click', closeFn); }
+    }
+    document.addEventListener('click', closeFn);
+  }, 100);
+}
+
+function sheetsToggleCol(k){
+  if(!window._sheetsCollapsed) window._sheetsCollapsed={};
+  window._sheetsCollapsed[k]=!window._sheetsCollapsed[k];
+  sheetsRender();
+}
+window.sheetsToggleCol = sheetsToggleCol;
+window.sheetsColFilter = sheetsColFilter;
+
+var _srchTimer=null;
+function srchDebounce(){
+  clearTimeout(_srchTimer);
+  _srchTimer=setTimeout(srchDo, 200);
+}
+
+window.srchDebounce=srchDebounce;
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+</script>
+
+<div id="sheets-overlay" onclick="if(event.target.id==='sheets-overlay')sheetsClose()">
+  <div id="sheets-panel">
+    <div id="sheets-head">
+      <div id="sheets-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555555" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        帳務資料 <span style="font-size:11px;font-weight:400;color:#a08820">— Google Sheets 即時同步</span>
+        <span id="sheets-status" style="font-size:11px;color:#a08820"></span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center"><button onclick="sheetsRefresh()" title="重新從 Sheets 載入" style="padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #d4c460;background:#fffef8;color:#7a6400;cursor:pointer">↻ 重新整理</button><button id="sheets-x" onclick="sheetsClose()">×</button></div>
+    </div>
+    <div id="sheets-controls">
+      <div id="sheets-yr-filter"><span style="font-size:11px;color:#a08820">載入中…</span></div>
+      <input id="sheets-search" type="text" placeholder="搜尋受贈單位、專案…" oninput="sheetsRender()">
+    </div>
+    <div id="sheets-body" style="padding:32px;text-align:center;color:#a08820;font-size:13px">點擊「帳務資料」後自動載入…</div>
+    <div id="sheets-footer">
+      <span id="sheets-count">—</span>
+      <button id="sheets-expbtn" onclick="sheetsExport()">⬇ 匯出篩選結果</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Google Sheets 帳務資料即時同步 ──
+var _SHEET_ID='1FapJWRqGIC9OuABmVQuBh2HPs3kvw4qVsPvG7e9mr9Q';
+var _SHEET_GID='232592658';
+var _SUMMARY_GID='1853532145'; // 儀表板彙總工作表
+
+// 從 Google Sheets 彙總表自動載入年度數字，更新 DATA
+function loadSummaryFromSheets(){
+  // 加 cache:'no-store' 避免瀏覽器拿舊快取；t= 參數防 CDN 快取
+  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/export?format=csv&gid='+_SUMMARY_GID+'&t='+Date.now();
+  fetch(url,{mode:'cors',credentials:'omit',cache:'no-store'}).then(r=>r.text()).then(csv=>{
+    var lines=csv.trim().split('\n').slice(1); // 跳過標題列
+    var updated=false;
+    lines.forEach(line=>{
+      var cols=line.split(',').map(s=>s.replace(/"/g,'').trim());
+      var yr=parseInt(cols[0]);
+      var ca=parseFloat(cols[1])||0;
+      var cb=parseFloat(cols[2])||0;
+      var cc=parseFloat(cols[3])||0;
+      if(yr>=2015&&yr<=2030&&DATA[yr]){
+        if(!DATA[yr].is26){ // 歷年資料直接更新
+          DATA[yr].t=ca;
+          DATA[yr].f=cb;
+          DATA[yr].tf=cc;
+        }
+        updated=true;
+      }
+    });
+    if(updated){
+      console.log('✓ 年度數字已從 Google Sheets 彙總表更新');
+      // 只重繪矩陣和圖表，不重跑整個 render()
+      buildMatrix();
+      buildChart();
+    }
+  }).catch(e=>{
+    var msg = e.message||String(e);
+    console.warn('彙總表載入失敗：', msg);
+    // 判斷常見原因
+    if(msg.includes('Failed to fetch')||msg.includes('NetworkError')){
+      console.warn('→ 可能原因：試算表未設「知道連結的任何人可檢視」，或網路離線');
+    } else if(msg.includes('Unexpected token')||msg.includes('SyntaxError')){
+      console.warn('→ 可能原因：Google 回傳非 CSV 格式（試算表不存在或無權限）');
+    }
+  });
+}
+var _sheetsData=[];
+var _sheetsYrs=[];
+var _sheetsSelYr='all';
+var _sheetsLoaded=false;
+var _sheetsFilteredCols=[];
+var _sheetsFiltered=[];
+
+function sheetsOpen(){
+  document.getElementById('sheets-overlay').style.display='flex';
+  if(!_sheetsLoaded) sheetsLoad();
+}
+function sheetsRefresh(){
+  _sheetsLoaded=false;
+  document.getElementById('sheets-body').innerHTML='<div style="padding:32px;text-align:center;color:#a08820;font-size:13px">重新載入中…</div>';
+  sheetsLoad();
+}
+function sheetsClose(){
+  document.getElementById('sheets-overlay').style.display='none';
+}
+
+function sheetsLoad(){
+  var url='https://docs.google.com/spreadsheets/d/'+_SHEET_ID+'/export?format=csv&gid='+_SHEET_GID+'&t='+Date.now();
+  sheetsStatus('載入中…');
+  fetch(url,{mode:'cors',credentials:'omit',cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+    .then(function(csv){
+      _sheetsData=sheetsParseCsv(csv);
+      _sheetsLoaded=true;
+      var yrSet={};
+      _sheetsData.forEach(function(r){
+        var y=r['年(公)']||r['年(基)']||r['年']||'';
+        var n=parseInt(y);
+        if(n>2000&&n<2100) yrSet[n]=1;
+      });
+      _sheetsYrs=Object.keys(yrSet).map(Number).sort();
+      sheetsStatus('已載入 '+_sheetsData.length.toLocaleString()+' 筆');
+      sheetsBuildYrFilter();
+      sheetsRender();
+    })
+    .catch(function(err){
+      sheetsStatus('載入失敗');
+      document.getElementById('sheets-body').innerHTML=
+        '<div style="padding:28px;text-align:center;color:#c05a10;font-size:13px">'+
+        '無法載入 Google Sheets 資料<br>'+
+        '<span style="font-size:11px;color:#a08820">請確認試算表已設定「知道連結的任何人可檢視」</span><br>'+
+        '<span style="font-size:11px;color:#a08820">'+err.message+'</span>'+
+        '<br><br><button onclick="sheetsLoad()" style="padding:5px 14px;font-size:12px;border:1px solid #cccccc;border-radius:4px;cursor:pointer">重試</button></div>';
+    });
+}
+
+function sheetsStatus(txt){
+  var el=document.getElementById('sheets-status');
+  if(el) el.textContent=txt;
+}
+
+function sheetsParseCsv(text){
+  var lines=text.replace(/\r/g,'').split('\n');
+  // 找 header 列
+  var hdrIdx=0;
+  for(var i=0;i<Math.min(12,lines.length);i++){
+    if(lines[i].indexOf('受贈')>=0||lines[i].indexOf('已捐')>=0||lines[i].indexOf('金額')>=0){
+      hdrIdx=i;break;
+    }
+  }
+  var headers=sheetsCsvLine(lines[hdrIdx]);
+  window._sheetsHdrRow=hdrIdx+1; // 資料起始的 Sheets 列號（1-based）
+  var rows=[];
+  for(var i=hdrIdx+1;i<lines.length;i++){
+    if(!lines[i].trim()) continue;
+    var cells=sheetsCsvLine(lines[i]);
+    var row={};
+    var hasVal=false;
+    headers.forEach(function(h,ci){
+      var v=(cells[ci]||'').trim();
+      row[h.trim()]=v;
+      if(v) hasVal=true;
+    });
+    if(hasVal) rows.push(row);
+  }
+  return rows;
+}
+
+function sheetsCsvLine(line){
+  var cells=[],cur='',inQ=false;
+  for(var i=0;i<line.length;i++){
+    var ch=line[i];
+    if(ch==='"'){inQ=!inQ;}
+    else if(ch===','&&!inQ){cells.push(cur);cur='';}
+    else{cur+=ch;}
+  }
+  cells.push(cur);
+  return cells;
+}
+
+function sheetsBuildYrFilter(){
+  var el=document.getElementById('sheets-yr-filter');
+  var h='<button class="sheets-yr-btn on" onclick="sheetsSetYr(\'all\',this)">全部</button>';
+  _sheetsYrs.forEach(function(y){
+    h+='<button class="sheets-yr-btn" onclick="sheetsSetYr('+y+',this)">'+y+'</button>';
+  });
+  el.innerHTML=h;
+}
+
+function sheetsSetYr(yr,btn){
+  _sheetsSelYr=yr;
+  document.querySelectorAll('.sheets-yr-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  sheetsRender();
+}
+
+function sheetsRender(){
+  var q=(document.getElementById('sheets-search').value||'').toLowerCase().trim();
+  var terms=q?q.split(' ').filter(function(t){return t.length>0;}):[]; 
+  _sheetsFiltered=_sheetsData.filter(function(r){
+    if(_sheetsSelYr!=='all'){
+      var y=r['年(公)']||r['年(基)']||r['年']||'';
+      if(parseInt(y)!==_sheetsSelYr) return false;
+    }
+    if(terms.length){
+      var txt=Object.values(r).join(' ').toLowerCase();
+      return terms.every(function(t){return txt.indexOf(t)>=0;});
+    }
+    return true;
+  });
+  // 過濾掉空行（受贈單位和金額都空的列）
+  if(NAME_KEY||AMT_KEY){
+    _sheetsFiltered=_sheetsFiltered.filter(function(r){
+      var hasName=NAME_KEY&&(r[NAME_KEY]||'').trim();
+      var hasAmt=AMT_KEY&&(r[AMT_KEY]||'').trim();
+      return hasName||hasAmt;
+    });
+  }
+  // 套用欄篩選（key 是欄名字串）
+  if(Object.keys(_colFilter.active).length){
+    _sheetsFiltered=_sheetsFiltered.filter(function(r){
+      return Object.keys(_colFilter.active).every(function(k){
+        var v=(r[k]||'').trim();
+        return _colFilter.active[k].has(v);
+      });
+    });
+  }
+  document.getElementById('sheets-count').textContent=
+    '共 '+_sheetsFiltered.length.toLocaleString()+' 筆'+(q||Object.keys(_colFilter.active).length?' (已篩選)':'');
+  if(!_sheetsFiltered.length){
+    document.getElementById('sheets-body').innerHTML=
+      '<div style="padding:24px;text-align:center;color:#a08820;font-size:13px">找不到符合的資料</div>';
+    return;
+  }
+  // 欄位優先順序
+  // 摺疊欄定義（全域，thead 和 tbody 共用）
+  var COLLAPSIBLE={'歷年已承諾':true,'歷年捐贈':true,'尚未支付':true};
+  var allKeys=Object.keys(_sheetsFiltered[0]);
+  // 動態偵測受贈單位欄名（不依賴精確欄名）
+  // 精準欄名（依 Sheets 第6列確認）
+  var NAME_KEY = allKeys.find(function(k){ return /受贈戶名/.test(k); }) || '';
+  var AMT_KEY  = allKeys.find(function(k){ return k==='已捐金額'; }) || '';
+  var STAT_KEY = allKeys.find(function(k){ return k==='款項狀況'; }) || '';
+  var TYPE_KEY = allKeys.find(function(k){ return k==='類型'; }) || '';
+  var DISP_KEY = allKeys.find(function(k){ return k==='儀表板顯示名稱'; }) || '';
+  // 建立優先排序（動態欄名）
+  // 只顯示指定欄，順序：A D G J P K L M N O
+  var SHOW_COLS=['類型','年(公)','款項狀況','受贈戶名_估價單台照','儀表板顯示名稱','已捐金額','成本分類','歷年已承諾','歷年捐贈','尚未支付'];
+  // 動態欄名補上（J欄可能有底線變體）
+  if(NAME_KEY && SHOW_COLS.indexOf(NAME_KEY)<0) SHOW_COLS[3]=NAME_KEY;
+  if(DISP_KEY && SHOW_COLS.indexOf(DISP_KEY)<0) SHOW_COLS[4]=DISP_KEY;
+  var priorityKeys = SHOW_COLS.filter(function(k){ return allKeys.indexOf(k)>=0; });
+  var seen = {};
+  var cols = [];
+  priorityKeys.forEach(function(k){ if(k&&!seen[k]&&allKeys.indexOf(k)>=0){cols.push(k);seen[k]=1;} });
+  // 只顯示指定欄，不加入其他欄
+  // 動態 label（受贈單位欄用實際欄名）
+  // 欄字母對應表（Sheets 第6列確認）
+  var COL_LETTER={'類型':'A','年(公)':'D','款項狀況':'G','尚未支付':'O',
+    '已捐金額':'K','成本分類':'L','歷年已承諾':'M','歷年捐贈':'N'};
+  if(NAME_KEY) COL_LETTER[NAME_KEY]='J';
+  if(DISP_KEY) COL_LETTER[DISP_KEY]='P';
+  if(AMT_KEY)  COL_LETTER[AMT_KEY] ='K';
+  if(STAT_KEY) COL_LETTER[STAT_KEY]='G';
+  if(TYPE_KEY) COL_LETTER[TYPE_KEY]='A';
+  function colLabel(k,name){ var c=COL_LETTER[k]||''; return c?c+' '+name:name; }
+  var dynLabel = {};
+  if(NAME_KEY) dynLabel[NAME_KEY] = colLabel(NAME_KEY,'受贈單位');
+  if(AMT_KEY)  dynLabel[AMT_KEY]  = colLabel(AMT_KEY,'金額');
+  if(STAT_KEY) dynLabel[STAT_KEY] = colLabel(STAT_KEY,'狀態');
+  if(TYPE_KEY) dynLabel[TYPE_KEY] = colLabel(TYPE_KEY,'出帳');
+  if(DISP_KEY) dynLabel[DISP_KEY] = colLabel(DISP_KEY,'顯示名稱');
+  _sheetsFilteredCols=cols; // 供 sheetsColFilter 使用
+  var label=Object.assign({'年(公)':'D 年度','成本分類':'L 成本分類','歷年已承諾':'M 已承諾','歷年捐贈':'N 歷年捐贈','尚未支付':'O 尚未支付'},dynLabel);
+  // 確保所有顯示欄都有 label（用欄名縮寫避免空白標題）
+  cols.forEach(function(k){ if(!label[k]) label[k]=k.length>8?k.slice(0,7)+'…':k; });
+  var isAmt=function(k){
+    // 欄名含金/額/元/amount，或值是數字格式
+    if(/金|額|元|amount/i.test(k)) return true;
+    // 也掃值：如果這欄有任何數值格式的資料就算金額欄
+    return _sheetsFiltered.some(function(r){
+      var v=(r[k]||'').replace(/,/g,'').replace(/\s/g,'');
+      return v.length>0 && !isNaN(parseFloat(v)) && parseFloat(v)>1000;
+    });
+  };
+  var isYr=function(k){return/^年/.test(k);};
+  var isType=function(k){return k==='類型';};
+  // ── 欄寬定義（px，未定義者彈性分配）──
+  var CW={'年(公)':38}; // 欄寬由動態欄名在下方設定
+  // 可摺疊欄位（預設收合）
+  if(!window._sheetsCollapsed) window._sheetsCollapsed={'歷年已承諾':true,'歷年捐贈':true,'尚未支付':true};
+          
+  // 動態欄寬（用偵測到的欄名作 key）
+  if(NAME_KEY) CW[NAME_KEY]=120;
+  if(DISP_KEY) CW[DISP_KEY]=170;
+  if(AMT_KEY)  CW[AMT_KEY]=88;
+  if(STAT_KEY) CW[STAT_KEY]=56;
+  if(TYPE_KEY) CW[TYPE_KEY]=110;
+  CW['成本分類']=80;
+  // 摺疊欄：展開時正常寬，收合時 18px
+  var MNO_W={'歷年已承諾':82,'歷年捐贈':78,'尚未支付':72};
+  Object.keys(MNO_W).forEach(function(k){
+    CW[k]=(window._sheetsCollapsed&&window._sheetsCollapsed[k])?18:MNO_W[k];
+  });
+    var colgroup='<colgroup><col style="width:36px;min-width:36px">'+cols.map(function(k){
+    var w=CW[k];
+    if(!w){ if(isAmt(k)) w=90; else if(isYr(k)) w=40; }
+    return w?'<col style="width:'+w+'px;min-width:'+w+'px">':'<col>';
+  }).join('')+'</colgroup>';
+  var thead=colgroup+'<tr><th style="width:32px;text-align:right;color:#ccc;font-size:10px;padding:6px 5px">#</th>'+cols.map(function(k){
+    var lbl=label[k]||k;
+    var cls=isAmt(k)?'r':'';
+    var safeK=k.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    var active=!!_colFilter.active[k];
+    // 篩選啟用：橘點 + 欄名橘色；未啟用：灰色 ▾
+    var indicator=active
+      ? ' <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#c08030;margin-left:3px;vertical-align:middle;pointer-events:none"></span>'
+      : ' <span style="font-size:10px;opacity:.4;font-weight:400;pointer-events:none">▾</span>';
+    var extra=active?';color:#c08030;font-weight:700':'';
+    return '<th class="'+cls+'" data-colkey="'+safeK+'" style="cursor:pointer;user-select:none;white-space:nowrap'+extra+'" onclick="sheetsColFilter(event,this)">'+lbl+indicator+'</th>';
+  }).join('')+'</tr>';
+  // 個資遮蔽：受贈單位欄若為3個中文字，第2字換O
+  var NAME_KEYS=allKeys.filter(function(k){return /受贈戶名/.test(k);});
+  function maskName(v){
+    // 純3個中文字（允許前後空白）
+    var m=v.trim().match(/^([一-鿿㐀-䶿])([一-鿿㐀-䶿])([一-鿿㐀-䶿])$/);
+    if(m) return m[1]+'O'+m[3];
+    return v;
+  }
+  var isNameCol=function(k){ return NAME_KEYS.indexOf(k)>=0; };
+  // 找出每列在 _sheetsData 的原始 index（用於顯示 Sheets 列號）
+  var dataIdxMap=new Map();
+  _sheetsData.forEach(function(r,i){ dataIdxMap.set(r,i); });
+  var SHEETS_HEADER_ROWS=typeof _sheetsHdrRow!=='undefined'?_sheetsHdrRow:6;
+  var show=_sheetsFiltered.slice(0,500);
+  var tbody=show.map(function(r){
+    var origIdx=_sheetsData.indexOf(r);
+    var sheetRow=SHEETS_HEADER_ROWS+1+origIdx;
+    var rowRef='<td style="font-size:10px;color:#bbb;text-align:right;padding:4px 5px;white-space:nowrap;user-select:text;cursor:text" title="Sheets 第'+sheetRow+'列">'+sheetRow+'</td>';
+    return '<tr>'+rowRef+cols.map(function(k){
+      var v=r[k]||'';
+      if(isNameCol(k)) v=maskName(v);
+      // 摺疊欄：顯示極窄的空 td
+      if(COLLAPSIBLE[k]&&window._sheetsCollapsed[k]){
+        return '<td style="width:16px;min-width:16px;padding:0;background:#fafafa;border-right:1px solid #eee"></td>';
+      }
+      if(isNameCol(k)){
+        return '<td style="max-width:140px;word-break:break-all;text-align:left">'+v+'</td>';
+      }
+      if(isAmt(k)&&v){
+        var n=parseFloat(v.replace(/,/g,''));
+        // 日期/年度欄不加千分位（值<10000且非金額欄）
+        var isDateCol=/^年|^月|日期|請款|付款/.test(k);
+        if(isNaN(n)) return '<td class="amt">'+v+'</td>';
+        if(isDateCol||n<10000) return '<td class="amt" style="white-space:nowrap">'+Math.round(n)+'</td>';
+        return '<td class="amt">'+n.toLocaleString()+'</td>';
+      }
+      if(isYr(k)) return '<td class="yrc">'+v+'</td>';
+      if(isType(k)){
+        if(!v) return '<td></td>';
+        // 過濾掉 CSV 解析錯誤的多值（含逗號開頭）
+        var vClean = v[0]===',' ? v.slice(1).split(',')[0].trim() : v;
+        var bg=vClean.indexOf('信託')>=0?'#e8e8e8':vClean.indexOf('基金')>=0?'#dddddd':'#f0f0f0';
+        var fg=vClean.indexOf('信託')>=0?'#222222':vClean.indexOf('基金')>=0?'#333333':'#666666';
+        return '<td class="tyc"><span class="sheets-pill" style="background:'+bg+';color:'+fg+';max-width:110px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle" title="'+v.replace(/"/g,"&quot;")+'">'+vClean+'</span></td>';
+      }
+      return '<td>'+v+'</td>';
+    }).join('')+'</tr>';
+  }).join('');
+  // ── 統計金額小計（thead 下 + tfoot，與各欄對齊）──
+  var amtKeys=cols.filter(function(k){return isAmt(k)&&!isYr(k);});
+  var sumMap={};
+  amtKeys.forEach(function(k){sumMap[k]=0;});
+  _sheetsFiltered.forEach(function(r){
+    amtKeys.forEach(function(k){
+      var n=parseFloat((r[k]||'').replace(/,/g,''));
+      if(!isNaN(n))sumMap[k]+=n;
+    });
+  });
+  var ff=function(n){return n.toLocaleString('en-US');};
+  var hasSum=amtKeys.some(function(k){return sumMap[k]>0;});
+  // 小計列 HTML（共用）
+  var SUB_STYLE='background:#f0f0f0;font-weight:700';
+  function mkSumRow(){
+    var row='<tr style="'+SUB_STYLE+'"><td></td>';
+    row+=cols.map(function(k){
+      if(k===cols[0]){
+        return '<td style="padding:7px 8px;font-size:12px;color:#666;white-space:nowrap;font-variant-numeric:tabular-nums">小計 '+_sheetsFiltered.length.toLocaleString()+' 筆</td>';
+      }
+      if(isAmt(k)&&!isYr(k)&&sumMap[k]>0){
+        return '<td class="amt" style="padding:7px 8px;font-size:13px;color:#111;text-align:right;font-variant-numeric:tabular-nums;font-weight:700">'+ff(sumMap[k])+'</td>';
+      }
+      return '<td></td>';
+    }).join('');
+    row+='</tr>';
+    return row;
+  }
+  var tsubhead = hasSum ? '<tbody id="sheets-sub-head" style="border-bottom:2px solid #cccccc">'+mkSumRow()+'</tbody>' : '';
+  var tfoot    = hasSum ? '<tfoot style="border-top:2px solid #cccccc">'+mkSumRow()+'</tfoot>' : '';
+  // thead 變數 = colgroup + <tr>欄標題</tr>，需拆開正確組裝
+  // colgroup 必須直接是 <table> 的子元素，不能在 <thead> 裡
+  var theadRow=thead.replace(/^<colgroup>.*?<\/colgroup>/,''); // 去掉 colgroup，只保留 <tr>
+  document.getElementById('sheets-body').innerHTML=
+    '<table class="sheets-tbl">'+colgroup+'<thead>'+theadRow+'</thead>'+tsubhead+'<tbody>'+tbody+'</tbody>'+tfoot+'</table>'+
+    (_sheetsFiltered.length>500?'<div style="padding:8px;text-align:center;font-size:11px;color:#a08820">顯示前500筆，請用搜尋縮小範圍</div>':'');
+}
+
+function sheetsExport(){
+  if(!_sheetsFiltered.length)return;
+  if(typeof XLSX==='undefined'){alert('請確認網路連線（XLSX程式庫需載入）');return;}
+  var keys=Object.keys(_sheetsFiltered[0]);
+  var aoa=[keys];
+  _sheetsFiltered.forEach(function(r){aoa.push(keys.map(function(k){return r[k]||'';}));});
+  var ws=XLSX.utils.aoa_to_sheet(aoa);
+  var wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,'帳務資料',ws);
+  XLSX.writeFile(wb,'帳務資料_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+</script>
+
+
+<!-- ── QA 問與答面板 ── -->
+<div id="qa-overlay" onclick="if(event.target.id==='qa-overlay')qaClose()">
+  <div id="qa-panel">
+    <div id="qa-head">
+      <div id="qa-head-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c9a800" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        提問與回饋
+        <span id="qa-head-sub">— 輸入問題後送出，團隊收信後回覆</span>
+      </div>
+      <div id="qa-head-btns">
+        <button onclick="qaReset()" title="清除對話" style="padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #cccccc;background:white;color:#333333;cursor:pointer">清除</button>
+        <button id="qa-x" onclick="qaClose()">×</button>
+      </div>
+    </div>
+    <div id="qa-messages"></div>
+    <div id="qa-input-area">
+      <div class="qa-quick" id="qa-quick"></div>
+      <div id="qa-name-row">
+        <input id="qa-name" type="text" placeholder="您的姓名（選填，方便團隊回覆）" maxlength="30">
+      </div>
+      <div id="qa-input-row">
+        <textarea id="qa-input" placeholder="輸入問題…（Enter 送出，Shift+Enter 換行）" rows="2"></textarea>
+        <button id="qa-send" onclick="qaSend()">送出</button>
+      </div>
+      <div id="qa-hint">💡 問題送出後將寄到團隊信箱 &nbsp;·&nbsp; 緊急事項請直接聯絡基金會行政組：<a href="mailto:operation@yllhtef.org" style="color:var(--ink2)">operation@yllhtef.org</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  QA 提問與回饋（展示版：模擬 Claude 即時回答）
+//  升級方案 B 時：將 QA_WORKER_URL 改為 Cloudflare Worker 網址即可
+// ═══════════════════════════════════════════════════════
+
+var QA_WORKER_URL = null; // 'https://yllhtef-qa.workers.dev'  ← 方案B啟用時填入
+var QA_FORMSPREE_ID = 'maqabonq';
+var _qaHistory = [];
+var _qaLoading = false;
+var _qaMsgCount = 0;
+
+var QA_QUICK = [
+  '2026年目前已執行了多少？',
+  '歷年最大單筆捐贈是哪一筆？',
+  '消防急救教育累計捐了多少？',
+  '台大人才計畫進度如何？',
+  '奉獻獎今年預計頒發多少？',
+];
+
+// ── 模擬回答資料庫（方案B啟用前使用）──
+var QA_MOCK = {
+  '2026': '2026 年度目前（A 已執行）公益信託直接捐款約 350 萬元、透過基金會執行約 9,338 萬元、公捐基約 1.42 億元。全年預估實際總支出（①＋②）目標為 3 億元，目前進度持續推進中。',
+  '執行': '2026 年已執行項目包括：醫療人才培育設備提升（組織碎化術）5,400 萬、榮總醫療人才培育 350 萬、堉璘淡海計畫 594 萬、Changemaker 高中計畫 350 萬等。',
+  '最大': '歷年最大單筆捐贈是 2016 年捐贈台北榮總的重粒子癌症治療設備，金額為 3 億元。該設備歷經 7 年建置，於 2023 年 5 月正式啟用，迄今已治療逾 680 位癌症病患。',
+  '重粒子': '重粒子癌症治療計畫由 2016 年捐贈 3 億元啟動，2023 年 5 月設備正式啟用。目前累計治療超過 680 位病患，胰臟癌（有轉移）首年存活率從傳統 20% 提升至 80%，副作用從 20% 降低至 5% 以下。',
+  '消防': '消防急救教育計畫自 2017 年啟動，累計捐贈 LUCAS 自動心肺復甦機 394 台（佔全台消防分隊約 4 成）、住宅火警警報器 19 萬顆。累計協助恢復呼吸心跳約 11,000 人次，OHCA 急救成功率從 2017 年 21.2% 提升至 2022 年 27.4%。',
+  '台大': '堉璘台大人才培育計畫自 2019 年啟動，累計承諾捐助 4.5 億元。2025 年第九屆計畫服務 106 位學生，協助 11 家 NPO，學生募款成果達 340 萬元，新增捐款人 1,303 人。',
+  '奉獻獎': '台灣奉獻獎第十屆（2026 年）預計頒發：奉獻獎 1 名、成就獎 3 名、新秀獎 5 名，目前確定發生金額 2,400 萬元，待討論金額 4,809 萬元，典禮籌備亦進行中。',
+  '蒙特梭利': '蒙特梭利教育推廣案承諾捐助總額 9,500 萬元，2025 年已全額撥付。先期完成師資培育中心營運計畫規劃，目標建立台灣本土蒙特梭利師資培育標準化體系。',
+  '歷年': '2015–2026 年累計實際總支出（①公益信託＋②基金會執行）超過 20 億元。其中 2019 年支出最高（達 2.66 億），主要來自台大計畫啟動與消防教育大規模擴展。',
+  '總支出': '以「①＋② 實際總支出」計算（不重複計算公捐基撥款）：2015–2025 年累計超過 20 億元，2026 年全年目標為 3 億元。',
+  'default': '感謝您的提問！根據儀表板資料，林堉璘宏泰公益基金會 2015–2026 年累計公益支出超過 20 億元，涵蓋醫療人才培育、消防急救教育、台灣奉獻獎、台大人才計畫等多項重點計畫。如需更詳細的資訊，歡迎點選「帳務資料」查閱明細，或透過本功能傳送問題給基金會行政組（operation@yllhtef.org）。'
+};
+
+function qaMockAnswer(q) {
+  var q_low = q.toLowerCase();
+  var keys = Object.keys(QA_MOCK).filter(function(k){ return k !== 'default'; });
+  for (var i = 0; i < keys.length; i++) {
+    if (q_low.indexOf(keys[i]) >= 0) return QA_MOCK[keys[i]];
+  }
+  return QA_MOCK['default'];
+}
+
+function qaOpen(){
+  document.getElementById('qa-overlay').style.display='flex';
+  if(_qaMsgCount===0) qaWelcome();
+  setTimeout(function(){ document.getElementById('qa-input').focus(); }, 80);
+}
+function qaClose(){
+  document.getElementById('qa-overlay').style.display='none';
+}
+function qaReset(){
+  _qaHistory=[];
+  _qaMsgCount=0;
+  document.getElementById('qa-messages').innerHTML='';
+  qaWelcome();
+}
+
+function qaWelcome(){
+  var isMock = !QA_WORKER_URL;
+  qaAppendMsg('bot',
+    '您好！我是林堉璘宏泰公益儀表板的 AI 助理。<br>' +
+    '我熟悉 2015–2026 年的所有支出明細、成效資料與年度目標。<br>' +
+    '請問有什麼想了解的？' +
+    (isMock
+      ? '<br><br><span style="font-size:11px;background:#f5f5f5;border:1px solid #cccccc;border-radius:4px;padding:2px 8px;color:#444444;display:inline-block;margin-top:4px">⚡ 展示模式：模擬 AI 即時回答</span>'
+      : '')
+  );
+  var el=document.getElementById('qa-quick');
+  el.innerHTML='';
+  QA_QUICK.forEach(function(q){
+    var btn=document.createElement('button');
+    btn.className='qa-qbtn';
+    btn.textContent=q;
+    btn.addEventListener('click',function(){
+      document.getElementById('qa-input').value=q;
+      qaSend();
+    });
+    el.appendChild(btn);
+  });
+}
+
+function qaAppendMsg(role, html, withFwd){
+  var el=document.getElementById('qa-messages');
+  var isBot=(role==='bot');
+  var id='qamsg-'+Date.now()+Math.random().toString(36).slice(2,6);
+  var fwdBtn='';
+  if(withFwd){
+    var btn=document.createElement('button');
+    fwdBtn='<br><button class="qa-fwd-btn" id="fwd-'+id+'" onclick="qaForward(\''+id+'\',this)">✉ 轉寄給行政組</button>';
+  }
+  var avatarBot='<div class="qa-avatar bot">AI</div>';
+  var avatarUser='<div class="qa-avatar user">你</div>';
+  var bubble='<div class="qa-bubble '+role+'" id="'+id+'">'+html+fwdBtn+'</div>';
+  var div=document.createElement('div');
+  div.className='qa-msg '+role;
+  div.innerHTML=(isBot?avatarBot:avatarUser)+bubble;
+  el.appendChild(div);
+  el.scrollTop=el.scrollHeight;
+  _qaMsgCount++;
+  return id;
+}
+
+function qaAppendTyping(){
+  var el=document.getElementById('qa-messages');
+  var id='typing-'+Date.now();
+  var div=document.createElement('div');
+  div.className='qa-msg bot';
+  div.id='typing-wrap-'+id;
+  div.innerHTML='<div class="qa-avatar bot">AI</div><div class="qa-bubble bot" style="padding:12px 16px"><span class="qa-dots"><span></span><span></span><span></span></span></div>';
+  el.appendChild(div);
+  el.scrollTop=el.scrollHeight;
+  return id;
+}
+
+function qaRemoveTyping(id){
+  var el=document.getElementById('typing-wrap-'+id);
+  if(el) el.remove();
+}
+
+async function qaSend(){
+  if(_qaLoading) return;
+  var input=document.getElementById('qa-input');
+  var q=(input.value||'').trim();
+  if(!q) return;
+
+  document.getElementById('qa-quick').innerHTML='';
+  input.value='';
+  input.style.height='auto';
+
+  _qaHistory.push({role:'user', content:q});
+  qaAppendMsg('user', escHtml(q));
+
+  _qaLoading=true;
+  document.getElementById('qa-send').disabled=true;
+
+  var typingId=qaAppendTyping();
+
+  // 模擬思考延遲（方案B啟用後這段會被真實API取代）
+  var delay = QA_WORKER_URL ? 0 : 800 + Math.random()*600;
+
+  await new Promise(function(res){ setTimeout(res, delay); });
+
+  try{
+    var answer;
+    if(QA_WORKER_URL){
+      // ── 方案B：真實 Claude API（透過 Cloudflare Worker）──
+      var resp = await fetch(QA_WORKER_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ messages: _qaHistory })
+      });
+      var data = await resp.json();
+      answer = data.answer || data.content || '抱歉，無法取得回應。';
+    } else {
+      // ── 展示模式：模擬回答 ──
+      answer = qaMockAnswer(q);
+    }
+
+    qaRemoveTyping(typingId);
+    _qaHistory.push({role:'assistant', content:answer});
+    var htmlAnswer = escHtml(answer).replace(/\n/g,'<br>');
+    qaAppendMsg('bot', htmlAnswer, true);
+
+  } catch(e){
+    qaRemoveTyping(typingId);
+    var errMsg = QA_WORKER_URL
+      ? '⚠ 連線失敗，已切換為人工回覆模式。'
+      : '⚠ 發生錯誤，請稍後再試。';
+    qaAppendMsg('bot', errMsg, true);
+  }
+
+  _qaLoading=false;
+  document.getElementById('qa-send').disabled=false;
+  document.getElementById('qa-input').focus();
+}
+
+async function qaForward(msgId, btn){
+  var name=(document.getElementById('qa-name').value||'').trim()||'（未填姓名）';
+  var question='', answer='';
+  for(var i=_qaHistory.length-1;i>=0;i--){
+    if(_qaHistory[i].role==='assistant'&&!answer) answer=_qaHistory[i].content;
+    else if(_qaHistory[i].role==='user'&&!question){question=_qaHistory[i].content;break;}
+  }
+  btn.textContent='傳送中…';
+  btn.disabled=true;
+  try{
+    var resp=await fetch('https://formspree.io/f/'+QA_FORMSPREE_ID,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _subject:'[林堉璘宏泰儀表板提問] '+question.slice(0,50),
+        提問者: name,
+        問題: question,
+        AI回答: answer||'（展示模式）',
+        時間: new Date().toLocaleString('zh-TW'),
+        頁面: window.location.href
+      })
+    });
+    if(resp.ok){
+      btn.textContent='✓ 已寄給行政組';
+      btn.className='qa-fwd-btn sent';
+    } else { throw new Error('HTTP '+resp.status); }
+  } catch(e){
+    var subject=encodeURIComponent('[林堉璘宏泰儀表板提問] '+question.slice(0,40));
+    var body=encodeURIComponent('提問者：'+name+'\n\n問題：\n'+question+'\n\n時間：'+new Date().toLocaleString('zh-TW'));
+    window.open('mailto:operation@yllhtef.org?subject='+subject+'&body='+body);
+    btn.textContent='✓ 已開啟郵件';
+    btn.className='qa-fwd-btn sent';
+  }
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var ta=document.getElementById('qa-input');
+  if(!ta) return;
+  ta.addEventListener('input',function(){
+    this.style.height='auto';
+    this.style.height=Math.min(this.scrollHeight,120)+'px';
+  });
+  ta.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();qaSend();}
+  });
+});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&document.getElementById('qa-overlay').style.display==='flex') qaClose();
+});
+</script>
+
+</body>
+</html>
