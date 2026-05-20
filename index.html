@@ -2970,6 +2970,36 @@ function sheetsColFilter(evt, thEl){
   head.style.cssText = 'font-size:11px;font-weight:700;color:#888;padding-bottom:7px;margin-bottom:7px;border-bottom:1px solid #eee';
   head.textContent = k;
   panel.appendChild(head);
+  // 搜尋框（選項多時即時過濾）
+  var searchWrap = document.createElement('div');
+  searchWrap.style.cssText = 'display:flex;align-items:center;gap:5px;margin-bottom:7px;padding:5px 7px;background:#f5f5f5;border-radius:5px;border:1px solid #e8e8e8';
+  var searchIcon = document.createElement('span');
+  searchIcon.textContent = '🔍';
+  searchIcon.style.cssText = 'font-size:11px;opacity:.5;flex-shrink:0';
+  var searchInp = document.createElement('input');
+  searchInp.type = 'text';
+  searchInp.placeholder = '搜尋…';
+  searchInp.style.cssText = 'flex:1;border:none;background:transparent;font-size:12px;font-family:inherit;outline:none;color:#333;min-width:0';
+  searchInp.addEventListener('input', function(){
+    var q = this.value.trim().toLowerCase();
+    panel.querySelectorAll('label[data-filter-item]').forEach(function(lbl){
+      var txt = lbl.dataset.filterVal || '';
+      lbl.style.display = (!q || txt.includes(q)) ? '' : 'none';
+    });
+  });
+  // 清除按鈕
+  var clearBtn = document.createElement('button');
+  clearBtn.textContent = '✕';
+  clearBtn.style.cssText = 'border:none;background:none;cursor:pointer;font-size:11px;color:#aaa;padding:0;line-height:1';
+  clearBtn.addEventListener('click', function(){
+    searchInp.value = '';
+    panel.querySelectorAll('label[data-filter-item]').forEach(function(lbl){ lbl.style.display = ''; });
+    searchInp.focus();
+  });
+  searchWrap.appendChild(searchIcon);
+  searchWrap.appendChild(searchInp);
+  searchWrap.appendChild(clearBtn);
+  panel.appendChild(searchWrap);
   // 按鈕列（全選 / 全清 / 套用）— 用 addEventListener，不用 onclick 屬性
   var btnRow = document.createElement('div');
   btnRow.style.cssText = 'display:flex;gap:5px;margin-bottom:8px';
@@ -2979,7 +3009,13 @@ function sheetsColFilter(evt, thEl){
     btn.style.cssText = 'flex:1;padding:4px;border:1px solid #ddd;border-radius:4px;background:#f8f8f8;cursor:pointer;font-size:11px;font-family:inherit';
     btn.addEventListener('click', (function(chk){ return function(e){
       e.stopPropagation();
-      panel.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked=chk; });
+      // 只全選/全清「目前顯示」的項目（搜尋過濾後）
+      panel.querySelectorAll('label[data-filter-item]').forEach(function(lbl){
+        if(lbl.style.display !== 'none'){
+          var cb = lbl.querySelector('input[type=checkbox]');
+          if(cb) cb.checked = chk;
+        }
+      });
     }; })(pair[1]));
     btnRow.appendChild(btn);
   });
@@ -3002,6 +3038,8 @@ function sheetsColFilter(evt, thEl){
   unique.forEach(function(v){
     var label = document.createElement('label');
     label.style.cssText = 'display:flex;align-items:center;gap:7px;padding:4px 2px;cursor:pointer';
+    label.dataset.filterItem = '1';
+    label.dataset.filterVal = v.toLowerCase();
     var cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.dataset.val = v;
