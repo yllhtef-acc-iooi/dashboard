@@ -3405,6 +3405,30 @@ function sheetsRender(){
     return v;
   }
   var isNameCol=function(k){ return NAME_KEYS.indexOf(k)>=0; };
+  function sheetsEscRe(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+  function sheetsEscAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function sheetsCleanDisplayName(v,r){
+    var out=(v||'').trim();
+    if(!out) return out;
+    var parts=[];
+    var name=NAME_KEY?(r[NAME_KEY]||'').trim():'';
+    var qty=QTY_KEY?(r[QTY_KEY]||'').trim():'';
+    var unit=UNIT_KEY?(r[UNIT_KEY]||'').trim():'';
+    if(name) parts.push(name);
+    if(qty&&unit){
+      parts.push(qty+unit);
+      parts.push(qty+' '+unit);
+    }
+    parts.forEach(function(part){
+      out=out.replace(new RegExp(sheetsEscRe(part),'g'),'');
+    });
+    return out
+      .replace(/\s*[／/]\s*/g,'/')
+      .replace(/\s*[-－—–]\s*/g,'-')
+      .replace(/[-－—–]{2,}/g,'-')
+      .replace(/^[\s\-－—–、，,\/]+|[\s\-－—–、，,\/]+$/g,'')
+      .trim();
+  }
   // 找出每列在 _sheetsData 的原始 index（用於顯示 Sheets 列號）
   var dataIdxMap=new Map();
   _sheetsData.forEach(function(r,i){ dataIdxMap.set(r,i); });
@@ -3415,7 +3439,8 @@ function sheetsRender(){
     var sheetRow=SHEETS_HEADER_ROWS+1+origIdx;
     var rowRef='<td style="font-size:10px;color:#bbb;text-align:right;padding:4px 5px;white-space:nowrap;user-select:text;cursor:text" title="Sheets 第'+sheetRow+'列">'+sheetRow+'</td>';
     return '<tr>'+rowRef+cols.map(function(k){
-      var v=r[k]||'';
+      var rawV=r[k]||'';
+      var v=(k===DISP_KEY)?sheetsCleanDisplayName(rawV,r):rawV;
       if(isNameCol(k)) v=maskName(v);
       // 摺疊欄：顯示極窄的空 td
       if(COLLAPSIBLE[k]&&window._sheetsCollapsed[k]){
@@ -3423,6 +3448,9 @@ function sheetsRender(){
       }
       if(isNameCol(k)){
         return '<td style="max-width:140px;word-break:break-all;text-align:left">'+v+'</td>';
+      }
+      if(k===DISP_KEY){
+        return '<td style="max-width:170px;word-break:break-word;text-align:left" title="'+sheetsEscAttr(rawV)+'">'+(v||'<span style="color:#bbb">—</span>')+'</td>';
       }
       if(isAmt(k)&&v){
         var n=parseFloat(v.replace(/,/g,''));
