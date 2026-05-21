@@ -1191,7 +1191,7 @@ const DATA={
       {n:'醫療人才培育之設備提升',u:'t',a:300000000,memo:'重粒子癌症治療中心儀器設備經費',impact:'rongzong_heavy'},
       {n:'社會急難救助',u:'t',a:10000000,memo:'0206震災'},
       {n:'社會急難救助',u:'t',a:5000000,memo:'臺東風災'},
-      {n:'社會慈善-公益信託警察醫療及照護基金',u:'t',a:2000000,memo:''}
+      {n:'社會公益-公益信託警察醫療及照護基金',u:'t',a:2000000,memo:''}
     ]},
   2017:{t:20755000,f:25050249,tf:32000000,
     note:'第一屆台灣奉獻獎舉辦；公益信託首次撥款給基金會；全台消防局心肺復甦機捐贈啟動（新北 2 台）。',
@@ -1200,13 +1200,13 @@ const DATA={
       {n:'堉璘台灣奉獻獎-第一屆',u:'f',a:9410274,memo:'獎金暨典禮活動費用',impact:'dedication_award'},
       {n:'基金會營運行政',u:'f',a:9255703,memo:''},
       {n:'堉璘台灣奉獻獎-第一屆',u:'f',a:6000000,memo:'鼓勵獎-天主教中華聖母、誠致教育、愚人之友'},
-      {n:'社會慈善-急難醫療救助',u:'t',a:5070000,memo:'門諾醫院、埔基、旗山、二林基督教、聖十字架療養院'},
+      {n:'社會公益-急難醫療救助',u:'t',a:5070000,memo:'門諾醫院、埔基、旗山、二林基督教、聖十字架療養院'},
       {n:'利他人才培育',u:'t',a:5015000,memo:'林建生文教基金會、哥倫比亞大學台北國際論壇'},
       {n:'醫療人才培育',u:'t',a:5000000,memo:'榮總相關醫學基金會',impact:'rongzong_talent'},
       {n:'消防急救教育（新北市消防局心肺復甦機 2 台）',u:'t',a:1500000,memo:'竹圍分隊、淡水分隊各 1 台',impact:'fire_rescue'},
-      {n:'社會慈善-台灣盲人重建院',u:'t',a:750000,memo:'學童交通車輛1輛'},
-      {n:'社會慈善-薛伯輝基金會',u:'t',a:420000,memo:'伯利恆早療暨融合教育中心多感官教室'},
-      {n:'社會慈善-緝毒因公殉職警察子女獎學金',u:'t',a:70000,memo:''}
+      {n:'社會公益-台灣盲人重建院',u:'t',a:750000,memo:'學童交通車輛1輛'},
+      {n:'社會公益-薛伯輝基金會',u:'t',a:420000,memo:'伯利恆早療暨融合教育中心多感官教室'},
+      {n:'社會公益-緝毒因公殉職警察子女獎學金',u:'t',a:70000,memo:''}
     ]},
   2018:{t:146450000,f:48237689,tf:51000000,
     note:'全台消防局捐贈自動心肺復甦機共 157 組（含離島）；第二屆奉獻獎舉辦；住宅用火警警報器捐贈全台低收入戶及獨居老人 19 萬顆。',
@@ -1325,7 +1325,7 @@ const DATA={
       {n:'ATCC 競賽與落實',u:'f',a:2800000,memo:'',impact:'atcc_plan'},
       {n:'募款達人',u:'f',a:2476548,memo:'安寧 100 萬、第一社福 200 萬、看見齊柏林、磐石、立達等',impact:'fundraising_masters'},
       {n:'心理健康-Sky Campus校園快樂課程',u:'f',a:903000,memo:'大專生身心韌性強化計畫',impact:'sky_campus'},
-      {n:'社會慈善-屏東希望兒童合唱團',u:'f',a:650000,memo:'PUZANGALAN 排灣族合唱團，赴波蘭、斯洛伐克獲金獎',impact:'puzangalan'},
+      {n:'社會公益-屏東希望兒童合唱團',u:'f',a:650000,memo:'PUZANGALAN 排灣族合唱團，赴波蘭、斯洛伐克獲金獎',impact:'puzangalan'},
       {n:'竹林慈玄宮 & 淡水關懷弱勢協會',u:'f',a:5892450,memo:''},
       {n:'化育文教基金會—捐助佛學院建校',u:'f',a:2000000,memo:''}
     ]},
@@ -2028,7 +2028,7 @@ function renderItemTable(d,prefix){
     </div>`;
     // 群組定義
     const GRP_ORDER=['medical','award','talent','fundraising','charity','admin'];
-    const GRP_LABELS={medical:'醫療',award:'奉獻獎',talent:'人才培育',fundraising:'募款達人',charity:'社會慈善',admin:'行政營運'};
+    const GRP_LABELS={medical:'醫療',award:'奉獻獎',talent:'人才培育',fundraising:'募款達人',charity:'社會公益',admin:'行政營運'};
     // 子群組定義（同標籤前綴可再摺疊）
     const SG_LABELS={sg_rongzong:'榮總醫療',sg_award:'奉獻獎',sg_atcc_impl:'ATCC 競賽與落實',sg_fundraising:'募款達人'};
     // 按群組組織 items
@@ -3848,9 +3848,9 @@ function annualLoadFallback(){
   // 英文分類轉中文
   var catMap={
     medical:'醫療', award:'奉獻獎', talent:'人才培育',
-    fundraising:'募款達人', charity:'社會慈善', admin:'行政營運',
-    other:'社會慈善', sg_atcc_impl:'社會慈善', sg_rongzong:'醫療',
-    sg_atcc:'社會慈善', sg_award:'奉獻獎', sg_fundraising:'募款達人',
+    fundraising:'募款達人', charity:'社會公益', admin:'行政營運',
+    other:'社會公益', sg_atcc_impl:'社會公益', sg_rongzong:'醫療',
+    sg_atcc:'社會公益', sg_award:'奉獻獎', sg_fundraising:'募款達人',
     '募款達人':'募款達人', '榮總醫療':'醫療'
   };
   var srcMap={'t':['t'],'f':['f'],'tf':['tf']};
@@ -3896,14 +3896,14 @@ function annualCat(name, fallback){
     if(fallback==='醫療人才') return '醫療';
     if(fallback==='消防教育') return '消防教育';
     if(fallback==='人才培育') return '人才培育';
-    if(fallback==='社會慈善') return '社會慈善';
-    if(fallback==='社會公益') return '社會慈善';
+    if(fallback==='社會公益') return '社會公益';
+    if(fallback==='社會公益') return '社會公益';
     if(fallback==='營運行政') return '行政營運';
     if(fallback==='公益組織'){
       // 依名稱細分
       if(n.indexOf('奉獻獎')>=0) return '奉獻獎';
       if(n.indexOf('募款達人')>=0) return '募款達人';
-      return '社會慈善'; // 林建生、ATCC落實等
+      return '社會公益'; // 林建生、ATCC落實等
     }
   }
   // 備用（無 S 欄值時）
@@ -3913,7 +3913,7 @@ function annualCat(name, fallback){
   if(n.indexOf('ATCC競賽')>=0||n.indexOf('CM高中')>=0||n.indexOf('弱勢學童')>=0)return '人才培育';
   if(n.indexOf('消防')>=0)return '消防教育';
   if(n.indexOf('國泰')>=0||n.indexOf('公益信託還給')>=0||n.indexOf('行政')>=0||n.indexOf('營運')>=0)return '行政營運';
-  return '社會慈善';
+  return '社會公益';
 }
 
 function annualSrcFromFlags(row, base){var src=[]; if((row[base]||'').trim())src.push('t'); if((row[base+1]||'').trim())src.push('f'); if((row[base+2]||'').trim())src.push('tf'); return src;}
