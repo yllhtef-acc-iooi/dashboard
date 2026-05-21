@@ -475,7 +475,7 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 }
 .tl-show-sm{display:none}
 
-/* ── SHEETS 帳務資料 ── */
+/* ── SHEETS 歷年帳務紀錄 ── */
 #sheets-overlay{position:fixed;inset:0;background:rgba(20,15,0,.5);z-index:900;display:none;align-items:flex-start;justify-content:center;padding-top:56px}
 #sheets-panel{background:#ffffff;border-radius:10px;width:min(1560px,97vw);height:92vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #e0e0e0}
 #sheets-head{padding:12px 18px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;background:#ffffff}
@@ -810,7 +810,8 @@ function shakeInput(){
   <div class="logo-mark">林</div>
   <h1>林堉璘宏泰公益 <span>支出與成效儀表板</span></h1>
   <div class="nav-sep"></div>
-  <button onclick="sheetsOpen()" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span class="nav-btn-label">搜尋</span></button>
+  <button onclick="sheetsOpen()" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nav-btn-label">歷年帳務紀錄</span></button>
+  <a href="https://docs.google.com/spreadsheets/d/16XDSWBRMITGFa4LW3vjMWlKns2s1JAxd/edit?gid=616342953#gid=616342953" class="nav-btn" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg><span class="nav-btn-label">當年度公益支出預估</span></a>
   <button onclick="qaOpen()" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="nav-btn-label">提問</span></button>
   <div class="nav-spacer"></div>
   <a href="index.html" class="nav-btn active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-btn-label">首頁</span></a>
@@ -3088,7 +3089,7 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
     <div id="sheets-head">
       <div id="sheets-title">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555555" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        帳務資料 <span style="font-size:11px;font-weight:400;color:#a08820">— Google Sheets 即時同步</span>
+        歷年帳務紀錄 <span style="font-size:11px;font-weight:400;color:#a08820">— Google Sheets 即時同步</span>
         <span id="sheets-status" style="font-size:11px;color:#a08820"></span>
       </div>
       <div style="display:flex;gap:6px;align-items:center"><button onclick="sheetsRefresh()" title="重新從 Sheets 載入" style="padding:3px 10px;font-size:11px;border-radius:4px;border:1px solid #d4c460;background:#fffef8;color:#7a6400;cursor:pointer">↻ 重新整理</button><button id="sheets-x" onclick="sheetsClose()">×</button></div>
@@ -3097,7 +3098,7 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
       <div id="sheets-yr-filter"><span style="font-size:11px;color:#a08820">載入中…</span></div>
       <input id="sheets-search" type="text" placeholder="搜尋受贈單位、專案…" oninput="sheetsRender()">
     </div>
-    <div id="sheets-body" style="padding:32px;text-align:center;color:#a08820;font-size:13px">點擊「帳務資料」後自動載入…</div>
+    <div id="sheets-body" style="padding:32px;text-align:center;color:#a08820;font-size:13px">點擊「歷年帳務紀錄」後自動載入…</div>
     <div id="sheets-footer">
       <span id="sheets-count">—</span>
       <button id="sheets-expbtn" onclick="sheetsExport()">⬇ 匯出篩選結果</button>
@@ -3106,7 +3107,7 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 </div>
 
 <script>
-// ── Google Sheets 帳務資料即時同步 ──
+// ── Google Sheets 歷年帳務紀錄即時同步 ──
 var _SHEET_ID='1FapJWRqGIC9OuABmVQuBh2HPs3kvw4qVsPvG7e9mr9Q';
 var _SHEET_GID='232592658';
 var _SUMMARY_GID='1853532145'; // 儀表板彙總工作表
@@ -3533,8 +3534,8 @@ function sheetsExport(){
   _sheetsFiltered.forEach(function(r){aoa.push(keys.map(function(k){return r[k]||'';}));});
   var ws=XLSX.utils.aoa_to_sheet(aoa);
   var wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,'帳務資料',ws);
-  XLSX.writeFile(wb,'帳務資料_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  XLSX.utils.book_append_sheet(wb,'歷年帳務紀錄',ws);
+  XLSX.writeFile(wb,'歷年帳務紀錄_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 </script>
 
@@ -3600,7 +3601,7 @@ var QA_MOCK = {
   '蒙特梭利': '蒙特梭利教育推廣案承諾捐助總額 9,500 萬元，2025 年已全額撥付。先期完成師資培育中心營運計畫規劃，目標建立台灣本土蒙特梭利師資培育標準化體系。',
   '歷年': '2015–2026 年累計實際總支出（①公益信託＋②基金會執行）超過 20 億元。其中 2019 年支出最高（達 2.66 億），主要來自台大計畫啟動與消防教育大規模擴展。',
   '總支出': '以「①＋② 實際總支出」計算（不重複計算公捐基撥款）：2015–2025 年累計超過 20 億元，2026 年全年目標為 3 億元。',
-  'default': '感謝您的提問！根據儀表板資料，林堉璘宏泰公益基金會 2015–2026 年累計公益支出超過 20 億元，涵蓋醫療人才培育、消防急救教育、台灣奉獻獎、台大人才計畫等多項重點計畫。如需更詳細的資訊，歡迎點選「帳務資料」查閱明細，或透過本功能傳送問題給基金會行政組（operation@yllhtef.org）。'
+  'default': '感謝您的提問！根據儀表板資料，林堉璘宏泰公益基金會 2015–2026 年累計公益支出超過 20 億元，涵蓋醫療人才培育、消防急救教育、台灣奉獻獎、台大人才計畫等多項重點計畫。如需更詳細的資訊，歡迎點選「歷年帳務紀錄」查閱明細，或透過本功能傳送問題給基金會行政組（operation@yllhtef.org）。'
 };
 
 function qaMockAnswer(q) {
