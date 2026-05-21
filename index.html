@@ -367,6 +367,7 @@ html,body{min-height:100vh;background:var(--bg);font-family:Noto Sans TC,sans-se
 /* 年度選擇器在 section-hd 內時不需要額外 margin */
 .section-hd .sel{margin-bottom:0;flex:0 0 100%;}
 .section-hd-src{font-size:11px;font-weight:400;color:#a08820;margin-left:6px;letter-spacing:0}
+.section-hd-src{font-size:11px;font-weight:400;color:#a08820;margin-left:6px}
 .section-hd-title{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.2px}
 .section-hd-hint{font-size:11px;color:var(--ink2);margin-left:10px;font-weight:400}
 .section-sep{height:10px;background:var(--hover);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0}
@@ -578,6 +579,7 @@ mark{background:#fffde0;color:#111111;border-radius:2px;padding:0 1px;border:1px
 }
 
 /* ?? ????????? ?? */
+.annual-hide{display:none}
 #annual-overlay{position:fixed;inset:0;background:rgba(20,15,0,.5);z-index:940;display:none;align-items:flex-start;justify-content:center;padding:54px 10px 24px}
 #annual-panel{background:#fff;border-radius:10px;width:min(780px,98vw);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);overflow:hidden;border:1px solid #ddd}
 #annual-head{padding:12px 16px;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:space-between;background:#fff;flex-shrink:0}
@@ -838,7 +840,7 @@ function shakeInput(){
   <!-- ① 歷年對比矩陣 -->
   <div class="section-full" id="section-a">
     <div class="section-hd">
-      <span class="section-hd-title">歷年對比（5項財務指標）</span><span class="section-hd-src">— 手動更新自 Google Sheets</span>
+      <span class="section-hd-title">歷年對比（5項財務指標）</span><span class="section-hd-src">— 手動更新自 Google Sheets</span><span class="section-hd-src">— 手動更新自 Google Sheets</span>
       <span class="section-hd-hint">— 點選年份展開明細，可多選比較</span>
     </div>
     <div class="section-scroll" id="matrix-scroll-wrap">
@@ -879,7 +881,7 @@ function shakeInput(){
   <div class="section-full" id="section-b" style="display:none">
     <div class="section-hd">
       <span>
-        <span class="section-hd-title">年度明細</span><span class="section-hd-src" id="detail-src-note">— Google Sheets 同步中…</span>
+        <span class="section-hd-title">年度明細</span><span class="section-hd-src" id="detail-src-note">— Google Sheets 同步中…</span><span class="section-hd-src">— 手動更新自 Google Sheets</span>
         <span class="section-hd-hint" id="detail-hint2"></span>
       </span>
       <button onclick="selectedYrs.clear();openImpact={};render();" style="font-size:11px;padding:3px 10px;border:1px solid var(--border2);border-radius:4px;background:white;color:var(--ink2);cursor:pointer;flex-shrink:0">清除全部</button>
@@ -3828,62 +3830,7 @@ document.addEventListener('keydown',function(e){
 </div>
 <script>
 var ANNUAL_SHEET_ID='1OOaRnnMo9xO8wOtxmQNhGPwhItVyjbhhA5GDTp6rr7s';
-var ANNUAL_GID='616342953'; // ← GID 待確認新 Sheets 的正確 GID
-// ── 首頁 2026 年度明細即時同步 ──
-var _live26Loaded = false;
-var _live26GID = '616342953'; // 待確認新 Sheets 的正確工作表 GID
-
-function live26Load(){
-  var url='https://docs.google.com/spreadsheets/d/'+ANNUAL_SHEET_ID+'/export?format=csv&gid='+_live26GID+'&t='+Date.now();
-  fetch(url,{mode:'cors',credentials:'omit',cache:'no-store'})
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
-    .then(function(csv){
-      var parsed=annualParse(csv);
-      if(parsed&&parsed.length>0){
-        // 把 annualRows 格式轉換成 DATA[2026].items 格式
-        var items=parsed.map(function(it){
-          return {
-            n:it.name,
-            g:it.cat,
-            sg:it.subGroup||'',
-            u:it.srcA&&it.srcA[0]||it.srcB&&it.srcB[0]||'t',
-            e:it.a||0, c:it.b||0, p:it.c||0,
-            impact:it.impact||'',
-            memo:it.memo||''
-          };
-        });
-        if(DATA[2026]){
-          DATA[2026].items=items;
-          // 重新計算匯總
-          var et=0,ef=0,etf=0,ct=0,cf=0,ctf=0,pt=0,pf=0,ptf=0;
-          items.forEach(function(it){
-            var u=it.u;
-            if(u==='t'){et+=it.e;ct+=it.c;pt+=it.p;}
-            else if(u==='f'){ef+=it.e;cf+=it.c;pf+=it.p;}
-            else if(u==='tf'){etf+=it.e;ctf+=it.c;ptf+=it.p;}
-          });
-          DATA[2026].exec={t:et,f:ef,tf:etf};
-          DATA[2026].cert={t:ct,f:cf,tf:ctf};
-          DATA[2026].pend={t:pt,f:pf,tf:ptf};
-          DATA[2026].t=et+ct+pt;
-          DATA[2026].f=ef+cf+pf;
-          DATA[2026].tf=etf+ctf+ptf;
-        }
-        _live26Loaded=true;
-        // 如果目前正在看 2026，重新渲染
-        if(selectedYrs&&selectedYrs.has(2026)) render();
-        // 更新首頁標題說明
-        var note=document.getElementById('detail-src-note');
-        if(note) note.textContent='— Google Sheets 即時同步　已載入 '+items.length+' 筆';
-      }
-    })
-    .catch(function(err){
-      console.warn('2026 Sheets 載入失敗:', err.message);
-    });
-}
-// 頁面載入後自動 fetch
-setTimeout(function(){live26Load();},500);
-
+var ANNUAL_GID='616342953';
 var _annualRows=[];
 var _annualLoaded=false;
 var _annualSrc={t:true,f:true,tf:true};
@@ -3894,27 +3841,31 @@ function annualOpen(){
   if(!_annualLoaded) annualLoad(); else annualRender();
 }
 function annualLoadFallback(){
-  // 從 const DATA[2026].items 轉換成 annualRows 格式（備用）
   var d=DATA&&DATA[2026];
   if(!d||!d.items||!d.items.length){
-    document.getElementById('annual-body').innerHTML='<div style="padding:28px;text-align:center;color:#888">無備用資料</div>';
-    return;
+    document.getElementById('annual-body').innerHTML='<div style="padding:28px;text-align:center;color:#888">無備用資料</div>';return;
   }
+  // 英文分類轉中文
+  var catMap={
+    medical:'醫療', award:'奉獻獎', talent:'人才培育',
+    fundraising:'募款達人', charity:'社會慈善', admin:'行政營運',
+    other:'社會慈善', sg_atcc_impl:'社會慈善', sg_rongzong:'醫療',
+    sg_atcc:'社會慈善', sg_award:'奉獻獎', sg_fundraising:'募款達人',
+    '募款達人':'募款達人', '榮總醫療':'醫療'
+  };
   var srcMap={'t':['t'],'f':['f'],'tf':['tf']};
   _annualRows=d.items.map(function(it){
-    var sg=it.sg||'';
-    return {
-      name:it.n||'', cat:it.g||'其他', subGroup:sg,
-      a:it.e||0, b:it.c||0, c:it.p||0,
-      srcA:srcMap[it.u]||['f'], srcB:srcMap[it.u]||['f'], srcC:srcMap[it.u]||['f'],
-      u:it.u||'f', memo:it.memo||'', impact:it.impact||''
-    };
+    var cat=catMap[it.g]||(it.g&&it.g.length>3?it.g:null)||annualCat(it.n||'','');
+    var srcs=it.srcA&&it.srcA.length?it.srcA:srcMap[it.u||'f'];
+    return {name:it.n||'',cat:cat,subGroup:it.sg||'',
+      a:it.e||0,b:it.c||0,c:it.p||0,
+      srcA:it.srcA||srcs,srcB:it.srcB||srcs,srcC:it.srcC||srcs,
+      u:it.u||'f',memo:it.memo||'',impact:it.impact||''};
   });
   _annualLoaded=true;
-  var st=document.getElementById('annual-status');
-  if(st) st.textContent='— 使用本機快照資料（Sheets 連線設定後自動切換）';
   annualRender();
 }
+
 function annualClose(){document.getElementById('annual-overlay').style.display='none';}
 function annualLoad(){
   var body=document.getElementById('annual-body');
@@ -3925,19 +3876,13 @@ function annualLoad(){
     _annualLoaded=true;
     annualRender();
   }).catch(function(err){
-    var isNoAccess = err.message&&(err.message.indexOf('Failed')>=0||err.message.indexOf('403')>=0||err.message.indexOf('CORS')>=0);
-    body.innerHTML=
-      '<div style="padding:28px;text-align:center">'
-      +'<div style="font-size:16px;margin-bottom:10px">⚠ 無法連線至 Google Sheets</div>'
-      +'<div style="font-size:12px;color:#888;margin-bottom:18px;line-height:1.8">'
-        +(isNoAccess?'試算表尚未設為「知道連結的任何人可檢視」<br>請在 Google Sheets 右上角「共用」→「一般存取」→「知道連結的任何人・檢視者」':'錯誤：'+annualEsc(err.message||String(err)))
-      +'</div>'
-      +'<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
-        +'<button onclick="annualLoad()" style="padding:7px 16px;border:1px solid #ccc;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px">↺ 重試</button>'
-        +'<a href="https://docs.google.com/spreadsheets/d/'+ANNUAL_SHEET_ID+'/export?format=csv&gid='+ANNUAL_GID+'" target="_blank" style="padding:7px 16px;border:1px solid #1a7a1a;border-radius:5px;font-size:12px;color:#1a7a1a;text-decoration:none">↗ 測試 CSV 連結</a>'
-        +'<button onclick="annualLoadFallback()" style="padding:7px 16px;border:1px solid #a08820;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;color:#7a6400">使用上次快照資料</button>'
-      +'</div>'
-      +'</div>';
+    body.innerHTML='<div style="padding:28px;text-align:center">'+
+      '<div style="font-size:15px;margin-bottom:10px">⚠ 無法載入 Google Sheets</div>'+
+      '<div style="font-size:12px;color:#888;margin-bottom:16px;line-height:1.8">請確認試算表已設為「知道連結的任何人可檢視」<br>'+annualEsc(err.message||String(err))+'</div>'+
+      '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'+
+      '<button onclick="annualLoad()" style="padding:7px 16px;border:1px solid #ccc;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px">↺ 重試</button>'+
+      '<a href="https://docs.google.com/spreadsheets/d/'+ANNUAL_SHEET_ID+'/export?format=csv&gid='+ANNUAL_GID+'" target="_blank" style="padding:7px 14px;border:1px solid #1a7a1a;border-radius:5px;font-size:12px;color:#1a7a1a;text-decoration:none">↗ 測試 CSV</a>'+
+      '</div></div>';
   });
 }
 function annualCsvLine(line){var cells=[],cur='',inQ=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur);cur='';}else cur+=ch;}cells.push(cur);return cells;}
@@ -3945,143 +3890,273 @@ function annualNum(v){var n=parseFloat(String(v||'').replace(/,/g,'').replace(/\
 function annualEsc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function annualFmt(n){return n?Math.round(n).toLocaleString('en-US'):'—';}
 function annualCat(name, fallback){
-  // fallback 是 col18 的策略分類欄位，優先使用但需轉換
-  var n=name;
-  // 先用名稱判斷（比 col18 更精確）
-  if(n.indexOf('榮總')>=0||n.indexOf('KindShark')>=0) return '醫療';
-  if(n.indexOf('Histotripsy')>=0||n.indexOf('histotripsy')>=0||n.indexOf('癌症')>=0) return '醫療';
+  var n=name||'';
+  // S欄直接對應
+  if(fallback){
+    if(fallback==='醫療人才') return '醫療';
+    if(fallback==='消防教育') return '消防教育';
+    if(fallback==='人才培育') return '人才培育';
+    if(fallback==='社會慈善') return '社會慈善';
+    if(fallback==='社會公益') return '社會慈善';
+    if(fallback==='營運行政') return '行政營運';
+    if(fallback==='公益組織'){
+      // 依名稱細分
+      if(n.indexOf('奉獻獎')>=0) return '奉獻獎';
+      if(n.indexOf('募款達人')>=0) return '募款達人';
+      return '社會慈善'; // 林建生、ATCC落實等
+    }
+  }
+  // 備用（無 S 欄值時）
+  if(n.indexOf('榮總')>=0||n.indexOf('KindShark')>=0||n.indexOf('Histotripsy')>=0||n.indexOf('癌症')>=0)return '醫療';
   if(n.indexOf('奉獻獎')>=0) return '奉獻獎';
   if(n.indexOf('募款達人')>=0) return '募款達人';
-  if(n.indexOf('CM高中')>=0||n.indexOf('弱勢學童')>=0||n.indexOf('ATCC競賽')>=0) return '人才培育';
-  if(n.indexOf('ATCC落實')>=0||n.indexOf('弘道')>=0||n.indexOf('心路')>=0) return '社會慈善';
-  if(n.indexOf('SKY')>=0||n.indexOf('軍人之友')>=0||n.indexOf('林建生')>=0) return '社會慈善';
-  if(n.indexOf('消防')>=0) return '消防教育';
-  if(n.indexOf('國泰')>=0||n.indexOf('公益信託還給')>=0) return '行政營運';
-  if(n.indexOf('行政')>=0||n.indexOf('營運')>=0) return '行政營運';
-  // col18 的分類作為備選
-  if(fallback){
-    if(fallback.indexOf('醫療')>=0) return '醫療';
-    if(fallback.indexOf('人才')>=0) return '人才培育';
-    if(fallback.indexOf('慈善')>=0||fallback.indexOf('公益組織')>=0) return '社會慈善';
-    if(fallback.indexOf('行政')>=0) return '行政營運';
-  }
-  return '其他';
+  if(n.indexOf('ATCC競賽')>=0||n.indexOf('CM高中')>=0||n.indexOf('弱勢學童')>=0)return '人才培育';
+  if(n.indexOf('消防')>=0)return '消防教育';
+  if(n.indexOf('國泰')>=0||n.indexOf('公益信託還給')>=0||n.indexOf('行政')>=0||n.indexOf('營運')>=0)return '行政營運';
+  return '社會慈善';
 }
 
 function annualSrcFromFlags(row, base){var src=[]; if((row[base]||'').trim())src.push('t'); if((row[base+1]||'').trim())src.push('f'); if((row[base+2]||'').trim())src.push('tf'); return src;}
 function annualParse(csv){
   var lines=csv.replace(/\r/g,'').split('\n');
   var out=[];
-  // 資料從 index 2（第3列）開始，遇到 Total 或空白後全是匯總，不要
   for(var i=2;i<lines.length;i++){
     var r=annualCsvLine(lines[i]);
     var name=(r[1]||'').trim();
-    // 遇到合計列、空列或備注列就停
-    if(!name||/^Total$/i.test(name)||/^\(/.test(name)||
-       name.indexOf('http')>=0||name.indexOf('*')===0||
+    if(!name) continue;
+    if(/^Total$/i.test(name)||/^\(/.test(name)||
+       name.indexOf('http')===0||name.indexOf('*')===0||
        name.indexOf('公益信託總支出')>=0||name.indexOf('實際總支出')>=0||
        name.indexOf('115預計支出')>=0||name.indexOf('115董事會')>=0||
        name.indexOf('堉璘淡海')>=0||name.indexOf('蒙特梭利')>=0||
        name.indexOf('堉璘臺大')>=0||name.indexOf('公益信託捐基')>=0||
        name.indexOf('社會急難')>=0) continue;
-    // 略過明顯的匯總行（無金額且 name 包含特定字）
-    if(name.indexOf('公益信託還給基金會')>=0&&annualNum(r[5])+annualNum(r[9])+annualNum(r[13])>50000000) {
-      // 保留這列（公捐基重要項目）
-    }
     function v(idx){ return (r[idx]||'').trim(); }
-    var a  =annualNum(r[5]);   // 已執行合計
-    var b  =annualNum(r[9]);   // 確定合計
-    var c  =annualNum(r[13]);  // 待討論合計
-    if(a===0&&b===0&&c===0) continue;  // 沒有任何金額，略過
-    // 出帳來源（哪個 checkbox 有 v）
-    var srcA=[], srcB=[], srcC=[];
-    if(v(6)==='v')  srcA.push('t');   // 已執行_公益信託
-    if(v(7)==='v')  srcA.push('f');   // 已執行_基金會
-    if(v(8)==='v')  srcA.push('tf');  // 已執行_公捐基
-    if(v(10)==='v') srcB.push('t');
-    if(v(11)==='v') srcB.push('f');
-    if(v(12)==='v') srcB.push('tf');
-    if(v(14)==='v') srcC.push('t');
-    if(v(15)==='v') srcC.push('f');
-    if(v(16)==='v') srcC.push('tf');
-    // 如果 srcA/B/C 都空，從 col 2(基=基金會) / col 3(自) 判斷
-    function defaultSrc(){
-      if(v(2)==='x'||v(3)==='x') return 'tf'; // x 標記 = 公捐基
-      if(v(2)==='v') return 'f';
-      return 't';
-    }
-    if(!srcA.length&&a>0) srcA.push(defaultSrc());
-    if(!srcB.length&&b>0) srcB.push(defaultSrc());
-    if(!srcC.length&&c>0) srcC.push(defaultSrc());
-    // 主要出帳來源（用於篩選）
-    var allSrc=[].concat(srcA,srcB,srcC);
-    var uniq={};allSrc.forEach(function(s){uniq[s]=1;});
+    var a=annualNum(r[5]),b=annualNum(r[9]),c=annualNum(r[13]);
+    if(a===0&&b===0&&c===0) continue;
+    var srcA=[],srcB=[],srcC=[];
+    if(v(6)==='v')srcA.push('t'); if(v(7)==='v')srcA.push('f'); if(v(8)==='v')srcA.push('tf');
+    if(v(10)==='v')srcB.push('t'); if(v(11)==='v')srcB.push('f'); if(v(12)==='v')srcB.push('tf');
+    if(v(14)==='v')srcC.push('t'); if(v(15)==='v')srcC.push('f'); if(v(16)==='v')srcC.push('tf');
+    function defSrc(){return v(8)==='v'||v(12)==='v'||v(16)==='v'?'tf':v(2)==='v'?'f':v(3)==='v'?'tf':'t';}
+    if(!srcA.length&&a>0)srcA.push(defSrc());
+    if(!srcB.length&&b>0)srcB.push(defSrc());
+    if(!srcC.length&&c>0)srcC.push(defSrc());
+    var allSrc=srcA.concat(srcB,srcC),uniq={};
+    allSrc.forEach(function(s){uniq[s]=1;});
     var mainSrc=uniq.tf?'tf':uniq.f?'f':'t';
-    // 分類
     var cat18=(r[18]||'').trim();
     var cat=annualCat(name,cat18);
-    // 子群組（同分類下的細項）
     var sg='';
-    if(name.indexOf('榮總')>=0) sg='sg_rongzong';
-    else if(name.indexOf('奉獻獎')>=0) sg='sg_award';
-    else if(name.indexOf('ATCC')>=0||name.indexOf('atcc')>=0) sg='sg_atcc';
-    else if(name.indexOf('募款達人')>=0) sg='sg_fundraising';
-    out.push({
-      name:name, cat:cat, subGroup:sg,
-      a:a, b:b, c:c,
-      srcA:srcA, srcB:srcB, srcC:srcC,
-      u:mainSrc,
-      memo:(r[0]||'').trim(),
-      impact:''
-    });
+    if(name.indexOf('榮總')>=0)sg='sg_rongzong';
+    else if(name.indexOf('奉獻獎')>=0)sg='sg_award';
+    else if(name.indexOf('ATCC')>=0||name.indexOf('atcc')>=0)sg='sg_atcc';
+    else if(name.indexOf('募款達人')>=0)sg='sg_fundraising';
+    out.push({name:name,cat:cat,subGroup:sg,a:a,b:b,c:c,
+      srcA:srcA,srcB:srcB,srcC:srcC,u:mainSrc,memo:(r[0]||'').trim(),impact:''});
   }
   return out;
 }
+function annualRender(){
+  var body=document.getElementById('annual-body');
+  var q=((document.getElementById('annual-search')||{}).value||'').toLowerCase().trim();
+  var rows=_annualRows.filter(function(it){
+    return annualHasSrc(it)&&(!q||it.name.toLowerCase().indexOf(q)>=0||it.cat.toLowerCase().indexOf(q)>=0);
+  });
+  var groups={};
+  rows.forEach(function(it){(groups[it.cat]||(groups[it.cat]=[])).push(it);});
+  var cats=Object.keys(groups).sort(function(a,b){return a.localeCompare(b,'zh-Hant');});
+  var aTot=0,bTot=0,cTot=0;
+  rows.forEach(function(it){aTot+=annualVisibleAmount(it,'a');bTot+=annualVisibleAmount(it,'b');cTot+=annualVisibleAmount(it,'c');});
+  var grand=aTot+bTot+cTot;
+
+  function srcPillHtml(it){
+    var all=[].concat(it.srcA||[],it.srcB||[],it.srcC||[]),u={};
+    all.forEach(function(s){u[s]=1;});
+    if(u.tf)return '<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#d8d8d8;color:#222;font-weight:600;white-space:nowrap">公捐基</span>';
+    if(u.f) return '<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#e8e8e8;color:#333;font-weight:600;white-space:nowrap">基金會</span>';
+    if(u.t) return '<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#f0f0f0;color:#555;font-weight:600;white-space:nowrap">公益信託</span>';
+    return '';
+  }
+  function chip(k,label,isSt){
+    var on=isSt?_annualStatus[k]:_annualSrc[k];
+    var fn=isSt?'annualToggleStatus':'annualToggleSrc';
+    return '<button onclick="'+fn+'(\''+k+'\')" style="padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;font-family:inherit;border:1.5px solid '+(on?'#1a1a1a':'#ccc')+';background:'+(on?'#1a1a1a':'#fff')+';color:'+(on?'#fff':'#999')+';font-weight:500">'+label+'</button>';
+  }
+  var allOpen=cats.every(function(c){return _annualOpenCats[c];});
+  var taJs='(function(){var o='+(allOpen?'false':'true')+';';
+  cats.forEach(function(c){taJs+='_annualOpenCats['+JSON.stringify(c)+']=o;';});
+  taJs+='annualRender();})()';
+
+  var stTxt=''; var stEl=document.getElementById('annual-status'); if(stEl)stTxt=stEl.textContent||'';
+  var html='<div style="font-size:13px;font-weight:700;color:#111;margin-bottom:10px">2026 年度明細 — 預估中：A B C<span id="annual-status" style="font-size:11px;font-weight:400;color:#a08820;margin-left:6px">'+annualEsc(stTxt)+'</span></div>';
+
+  html+='<div class="annual-card"><table class="annual-table">';
+  html+='<colgroup><col style="width:24px"><col><col style="width:72px"><col style="width:104px"><col style="width:104px"><col style="width:104px"><col style="width:108px"></colgroup>';
+  html+='<thead>';
+  html+='<tr style="background:#f8f8f8;border-bottom:1px solid #e0e0e0">';
+  html+='<th style="padding:4px;text-align:center"><button onclick="'+annualEsc(taJs)+'" style="width:16px;height:16px;border:1px solid #ccc;border-radius:2px;background:#fff;color:#777;font-size:11px;cursor:pointer;line-height:14px;text-align:center">'+(allOpen?'−':'+')+'</button></th>';
+  html+='<th style="padding:4px 8px">'+chip('t','① 信託',false)+' '+chip('f','② 基金會',false)+' '+chip('tf','③ 公捐基',false)+'</th>';
+  html+='<th style="padding:4px 8px;font-size:11px;font-weight:600;color:#888;text-align:center">出帳</th>';
+  html+='<th style="padding:4px 8px;text-align:right">'+chip('a','A 已執行',true)+'</th>';
+  html+='<th style="padding:4px 8px;text-align:right">'+chip('b','B 確定',true)+'</th>';
+  html+='<th style="padding:4px 8px;text-align:right">'+chip('c','C 待討論',true)+'</th>';
+  html+='<th style="padding:4px 8px;text-align:right"><input id="annual-search" style="border:1px solid #ccc;border-radius:5px;padding:3px 7px;font-size:12px;width:95px;font-family:inherit;outline:none" placeholder="搜尋…" value="'+annualEsc(q)+'" oninput="annualRender()"></th>';
+  html+='</tr>';
+  html+='<tr style="background:#f3f3f3">';
+  html+='<th></th>';
+  html+='<th style="text-align:left;padding:5px 8px;font-size:11px;font-weight:600">分類</th>';
+  html+='<th style="text-align:center;padding:5px 8px;font-size:11px;font-weight:600;color:#888">出帳</th>';
+  html+='<th class="r" style="color:#2d6a2d;font-size:11px;font-weight:700;padding:5px 8px">A 已執行</th>';
+  html+='<th class="r" style="color:#555;font-size:11px;font-weight:700;padding:5px 8px">B 確定</th>';
+  html+='<th class="r" style="color:#888;font-size:11px;font-weight:700;padding:5px 8px">C 待討論</th>';
+  html+='<th class="r" style="font-size:11px;font-weight:700;padding:5px 8px">小計</th>';
+  html+='</tr>';
+  html+='</thead><tbody>';
+
+  cats.forEach(function(cat){
+    var list=groups[cat],ca=0,cb=0,cc=0;
+    list.forEach(function(it){ca+=annualVisibleAmount(it,'a');cb+=annualVisibleAmount(it,'b');cc+=annualVisibleAmount(it,'c');});
+    var tot=ca+cb+cc, pct=grand>0?Math.round(tot/grand*100):0;
+    var open=!!_annualOpenCats[cat];
+    var ck=cat.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    html+='<tr style="background:#fafafa;border-bottom:1px solid #e8e8e8">';
+    html+='<td style="text-align:center;padding:4px"><button onclick="annualToggleCat(\''+ck+'\')" style="width:16px;height:16px;border:1px solid #c8c8c8;border-radius:2px;background:#fff;color:#777;font-size:11px;line-height:14px;text-align:center;cursor:pointer">'+(open?'−':'+')+'</button></td>';
+    html+='<td style="font-weight:700;color:#111;padding:5px 8px">'+annualEsc(cat)+' <span style="color:#aaa;font-weight:400;font-size:11px">('+list.length+'項)</span>'+(pct>0?' <span style="font-size:10px;padding:1px 5px;border-radius:3px;background:#f0ede0;color:#7a6400;font-weight:600">'+pct+'%</span>':'')+'</td>';
+    html+='<td></td>';
+    html+='<td class="r green">'+annualFmt(ca)+'</td>';
+    html+='<td class="r">'+annualFmt(cb)+'</td>';
+    html+='<td class="r muted">'+annualFmt(cc)+'</td>';
+    html+='<td class="r strong">'+annualFmt(tot)+'</td>';
+    html+='</tr>';
+    var subGroups={},subOrder=[];
+    list.forEach(function(it){var sg=it.subGroup||'';if(!subGroups[sg]){subGroups[sg]=[];subOrder.push(sg);}subGroups[sg].push(it);});
+    subOrder.forEach(function(sg){
+      var items=subGroups[sg];
+      if(sg){
+        var sca=0,scb=0,scc=0;
+        items.forEach(function(it){sca+=annualVisibleAmount(it,'a');scb+=annualVisibleAmount(it,'b');scc+=annualVisibleAmount(it,'c');});
+        html+='<tr class="'+(open?'':'annual-hide')+'" style="background:#fff;border-bottom:0.5px solid #eee">';
+        html+='<td></td><td style="padding:5px 8px 5px 22px;font-size:12px;font-weight:600;color:#333">'+annualEsc(sg)+' <span style="color:#aaa;font-weight:400">('+items.length+')</span></td>';
+        html+='<td></td>';
+        html+='<td class="r green" style="font-size:11px">'+annualFmt(sca)+'</td>';
+        html+='<td class="r" style="font-size:11px">'+annualFmt(scb)+'</td>';
+        html+='<td class="r muted" style="font-size:11px">'+annualFmt(scc)+'</td>';
+        html+='<td class="r strong" style="font-size:11px">'+annualFmt(sca+scb+scc)+'</td>';
+        html+='</tr>';
+      }
+      items.forEach(function(it){
+        var indent=sg?38:22;
+        html+='<tr class="'+(open?'':'annual-hide')+'" style="border-bottom:0.5px solid #f0f0f0">';
+        html+='<td></td>';
+        html+='<td style="padding:4px 8px 4px '+indent+'px;font-size:12px;color:#333">'+annualEsc(it.name)+'</td>';
+        html+='<td style="text-align:center;padding:4px 6px">'+srcPillHtml(it)+'</td>';
+        html+='<td class="r green" style="font-size:12px">'+annualFmt(annualVisibleAmount(it,'a'))+'</td>';
+        html+='<td class="r" style="font-size:12px">'+annualFmt(annualVisibleAmount(it,'b'))+'</td>';
+        html+='<td class="r muted" style="font-size:12px">'+annualFmt(annualVisibleAmount(it,'c'))+'</td>';
+        html+='<td class="r strong" style="font-size:12px">'+annualFmt(annualVisibleAmount(it,'a')+annualVisibleAmount(it,'b')+annualVisibleAmount(it,'c'))+'</td>';
+        html+='</tr>';
+      });
+    });
+  });
+  html+='</tbody></table></div>';
+
+  var srcTotals={t:{a:0,b:0,c:0},f:{a:0,b:0,c:0},tf:{a:0,b:0,c:0}};
+  rows.forEach(function(it){
+    ['a','b','c'].forEach(function(k){
+      if(!_annualStatus[k])return;
+      var val=it[k],srcs=k==='a'?it.srcA:k==='b'?it.srcB:it.srcC;
+      if(!val||!srcs||!srcs.length)return;
+      srcs.forEach(function(s){if(_annualSrc[s])srcTotals[s][k]+=val/srcs.length;});
+    });
+  });
+  function rnd(o){return{a:Math.round(o.a),b:Math.round(o.b),c:Math.round(o.c)};}
+  var st=rnd(srcTotals.t),sf=rnd(srcTotals.f),stf=rnd(srcTotals.tf);
+  var tcnt=0,fcnt=0,tfcnt=0;
+  rows.forEach(function(it){if(it.u==='t')tcnt++;else if(it.u==='f')fcnt++;else tfcnt++;});
+
+  function sumRow(lbl,o,bold){
+    var tot=o.a+o.b+o.c,fw=bold?'font-weight:700':'';
+    return '<tr'+(bold?' style="border-top:2px solid #ccc;background:#fafafa"':'')+'>'+
+      '<td style="padding:6px 8px;'+fw+'">'+lbl+'</td>'+
+      '<td class="r green" style="'+fw+'">'+annualFmt(o.a)+'</td>'+
+      '<td class="r" style="'+fw+'">'+annualFmt(o.b)+'</td>'+
+      '<td class="r muted" style="'+fw+'">'+annualFmt(o.c)+'</td>'+
+      '<td class="r strong" style="'+fw+'">'+annualFmt(tot)+'</td></tr>';
+  }
+  var colg4='<colgroup><col><col style="width:104px"><col style="width:104px"><col style="width:104px"><col style="width:108px"></colgroup>';
+  var ths4='<thead><tr style="background:#f3f3f3"><th style="text-align:left;padding:6px 8px">{L}</th><th class="r" style="color:#2d6a2d">A 已執行</th><th class="r" style="color:#555">B 確定</th><th class="r" style="color:#888">C 待討論</th><th class="r">合計</th></tr></thead>';
+  var tblS='width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed';
+
+  html+='<div class="annual-card" style="margin-top:8px"><table style="'+tblS+'">'+colg4+ths4.replace('{L}','篩選小計');
+  html+='<tbody><tr><td style="padding:5px 8px;font-size:11px;color:#555">共 '+rows.length+' 項　信託 '+tcnt+' ‧ 基金會 '+fcnt+' ‧ 公捐基 '+tfcnt+'</td>';
+  html+='<td class="r green">'+annualFmt(aTot)+'</td><td class="r">'+annualFmt(bTot)+'</td><td class="r muted">'+annualFmt(cTot)+'</td><td class="r strong">'+annualFmt(grand)+'</td></tr></tbody></table></div>';
+
+  html+='<div class="annual-card" style="margin-top:8px"><table style="'+tblS+'">'+colg4+ths4.replace('{L}','匯總');
+  html+='<tbody>'+sumRow('① 公益信託',st,false)+sumRow('② 基金會',sf,false)+sumRow('③ 公捐基',stf,false);
+  html+=sumRow('①＋③ 信託總',{a:st.a+stf.a,b:st.b+stf.b,c:st.c+stf.c},true);
+  html+=sumRow('①＋② 實際總',{a:st.a+sf.a,b:st.b+sf.b,c:st.c+sf.c},true);
+  html+='</tbody></table></div>';
+  html+='<div class="annual-note">2026 年度實際總支出目標 3 億（①＋②）。資料來源：115年度公益支出及預估表。</div>';
+  body.innerHTML=html;
+  var inp=document.getElementById('annual-search');if(inp)inp.value=q;
+}
 function annualHasSrc(it){
+  // 有任何啟用的欄（a/b/c）且該欄有金額時，只要出帳來源符合就顯示
+  // 若該欄的 src 陣列為空（無 v 標記），用主來源 it.u 判斷
+  function srcMatch(srcs){
+    if(!srcs||!srcs.length) return _annualSrc[it.u||'f'];
+    return srcs.some(function(s){return _annualSrc[s];});
+  }
   var ok=false;
-  if(_annualStatus.a&&it.a) ok=ok||it.srcA.some(function(s){return _annualSrc[s];});
-  if(_annualStatus.b&&it.b) ok=ok||it.srcB.some(function(s){return _annualSrc[s];});
-  if(_annualStatus.c&&it.c) ok=ok||it.srcC.some(function(s){return _annualSrc[s];});
+  if(_annualStatus.a&&it.a) ok=ok||srcMatch(it.srcA);
+  if(_annualStatus.b&&it.b) ok=ok||srcMatch(it.srcB);
+  if(_annualStatus.c&&it.c) ok=ok||srcMatch(it.srcC);
   return ok;
 }
 function annualVisibleAmount(it,key){
   if(!_annualStatus[key])return 0;
   var srcs=key==='a'?it.srcA:key==='b'?it.srcB:it.srcC;
-  return srcs.some(function(s){return _annualSrc[s];})?it[key]:0;
+  var match=(!srcs||!srcs.length)?_annualSrc[it.u||'f']:srcs.some(function(s){return _annualSrc[s];});
+  return match?it[key]:0;
 }
 function annualToggleSrc(k){_annualSrc[k]=!_annualSrc[k]; annualRender();}
 function annualToggleStatus(k){_annualStatus[k]=!_annualStatus[k]; annualRender();}
 function annualToggleCat(cat){_annualOpenCats[cat]=!_annualOpenCats[cat]; annualRender();}
-function annualRender(){
-  var body=document.getElementById('annual-body');
-  var q=((document.getElementById('annual-search')||{}).value||'').toLowerCase().trim();
-  var rows=_annualRows.filter(function(it){return annualHasSrc(it)&&(!q||it.name.toLowerCase().indexOf(q)>=0||it.cat.toLowerCase().indexOf(q)>=0);});
-  var groups={}; rows.forEach(function(it){(groups[it.cat]||(groups[it.cat]=[])).push(it);});
-  var cats=Object.keys(groups).sort(function(a,b){return a.localeCompare(b,'zh-Hant');});
-  var count=rows.length, aTot=0,bTot=0,cTot=0;
-  rows.forEach(function(it){aTot+=annualVisibleAmount(it,'a');bTot+=annualVisibleAmount(it,'b');cTot+=annualVisibleAmount(it,'c');});
-  var srcLabel=function(k,t){return '<button class="annual-chip '+(_annualSrc[k]?'on':'')+'" onclick="annualToggleSrc(\''+k+'\')">'+t+'</button>';};
-  var stLabel=function(k,t){return '<button class="annual-chip '+(_annualStatus[k]?'on':'')+'" onclick="annualToggleStatus(\''+k+'\')">'+t+'</button>';};
-  var html='<div class="annual-subtitle">2026 年度明細 <span class="annual-source">— 預估中：A B C　資料來源：115年度公益支出及預估表</span></div>'+
-    '<div class="annual-controls">'+srcLabel('t','① 信託')+srcLabel('f','② 基金會')+srcLabel('tf','③ 公捐基')+stLabel('a','A 已執行')+stLabel('b','B 確定')+stLabel('c','C 待討論')+'<input id="annual-search" class="annual-search" placeholder="搜尋專案、分類…" value="'+annualEsc(q)+'" oninput="annualRender()"></div>';
-  html+='<div class="annual-card"><table class="annual-table"><colgroup><col style="width:36px"><col><col style="width:92px"><col style="width:92px"><col style="width:92px"><col style="width:96px"></colgroup><thead><tr><th></th><th>分類</th><th class="r">A 已執行</th><th class="r">B 確定</th><th class="r">C 待討論</th><th class="r">小計</th></tr></thead><tbody>';
-  cats.forEach(function(cat){
-    var list=groups[cat], ca=0,cb=0,cc=0;
-    list.forEach(function(it){ca+=annualVisibleAmount(it,'a');cb+=annualVisibleAmount(it,'b');cc+=annualVisibleAmount(it,'c');});
-    var open=!!_annualOpenCats[cat];
-    html+='<tr><td class="c"><button class="annual-toggle" onclick="annualToggleCat(\''+cat.replace(/\\/g,'\\\\').replace(/'/g,'\\\'')+'\')">'+(open?'−':'+')+'</button></td><td class="annual-cat">'+annualEsc(cat)+' <span class="muted">('+list.length+'項)</span></td><td class="r green">'+annualFmt(ca)+'</td><td class="r">'+annualFmt(cb)+'</td><td class="r muted">'+annualFmt(cc)+'</td><td class="r strong">'+annualFmt(ca+cb+cc)+'</td></tr>';
-    list.forEach(function(it){html+='<tr class="annual-item '+(open?'':'hide')+'"><td></td><td class="annual-item-name">'+annualEsc(it.name)+'</td><td class="r green">'+annualFmt(annualVisibleAmount(it,'a'))+'</td><td class="r">'+annualFmt(annualVisibleAmount(it,'b'))+'</td><td class="r muted">'+annualFmt(annualVisibleAmount(it,'c'))+'</td><td class="r strong">'+annualFmt(annualVisibleAmount(it,'a')+annualVisibleAmount(it,'b')+annualVisibleAmount(it,'c'))+'</td></tr>';});
-  });
-  html+='</tbody></table></div>';
-  var srcTotals={t:{a:0,b:0,c:0,count:0},f:{a:0,b:0,c:0,count:0},tf:{a:0,b:0,c:0,count:0}};
-  rows.forEach(function(it){['a','b','c'].forEach(function(k){if(!_annualStatus[k])return;var val=it[k];if(!val)return;var srcs=k==='a'?it.srcA:k==='b'?it.srcB:it.srcC;srcs.forEach(function(s){if(_annualSrc[s]){srcTotals[s][k]+=val;srcTotals[s].count++;}});});});
-  var rowSum=function(label,o){var sum=o.a+o.b+o.c;return '<tr><td class="annual-sum-label">'+label+'</td><td class="c muted">'+(o.count||'—')+'筆</td><td class="r green">'+annualFmt(o.a)+'</td><td class="r">'+annualFmt(o.b)+'</td><td class="r muted">'+annualFmt(o.c)+'</td><td class="r strong">'+annualFmt(sum)+'</td></tr>';};
-  html+='<div class="annual-card"><table class="annual-table"><thead><tr><th>篩選小計</th><th class="c">筆數</th><th class="r">A 已執行</th><th class="r">B 確定</th><th class="r">C 待討論</th><th class="r">合計</th></tr></thead><tbody><tr><td class="annual-sum-label">共 '+count+' 項</td><td class="c muted">—</td><td class="r green">'+annualFmt(aTot)+'</td><td class="r">'+annualFmt(bTot)+'</td><td class="r muted">'+annualFmt(cTot)+'</td><td class="r strong">'+annualFmt(aTot+bTot+cTot)+'</td></tr></tbody></table></div>';
-  html+='<div class="annual-card"><table class="annual-table"><thead><tr><th>匯總</th><th class="c">項數</th><th class="r">A 已執行</th><th class="r">B 確定</th><th class="r">C 待討論</th><th class="r">合計</th></tr></thead><tbody>'+rowSum('① 公益信託',srcTotals.t)+rowSum('② 基金會',srcTotals.f)+rowSum('③ 公捐基',srcTotals.tf)+rowSum('①＋③ 信託總',{a:srcTotals.t.a+srcTotals.tf.a,b:srcTotals.t.b+srcTotals.tf.b,c:srcTotals.t.c+srcTotals.tf.c,count:srcTotals.t.count+srcTotals.tf.count})+rowSum('①＋② 實際總',{a:srcTotals.t.a+srcTotals.f.a,b:srcTotals.t.b+srcTotals.f.b,c:srcTotals.t.c+srcTotals.f.c,count:srcTotals.t.count+srcTotals.f.count})+'</tbody></table></div>';
-  html+='<div class="annual-note">2026 年度實際總支出目標 3 億（①＋②）。資料來源：115年度公益支出及預估表。</div>';
-  body.innerHTML=html;
-  var inp=document.getElementById('annual-search'); if(inp){inp.value=q;}
+// ── 首頁 2026 年度明細即時同步 ──
+var _live26Loaded = false;
+var _live26GID = '616342953';
+function live26Load(){
+  var url='https://docs.google.com/spreadsheets/d/'+ANNUAL_SHEET_ID+'/export?format=csv&gid='+_live26GID+'&t='+Date.now();
+  fetch(url,{mode:'cors',credentials:'omit',cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+    .then(function(csv){
+      var parsed=annualParse(csv);
+      if(!parsed||!parsed.length)return;
+      var items=parsed.map(function(it){return {n:it.name,g:it.cat,sg:it.subGroup||'',u:it.u,srcA:it.srcA,srcB:it.srcB,srcC:it.srcC,e:it.a||0,c:it.b||0,p:it.c||0,impact:'',memo:''};}); 
+      if(DATA[2026]){
+        DATA[2026].items=items;
+        var et=0,ef=0,etf=0,ct=0,cf=0,ctf=0,pt=0,pf=0,ptf=0;
+        items.forEach(function(it){
+          var a=it.e||0,b=it.c||0,p=it.p||0;
+          (it.srcA||[]).forEach(function(s){var sh=a/((it.srcA||[]).length||1);if(s==='t')et+=sh;else if(s==='f')ef+=sh;else etf+=sh;});
+          (it.srcB||[]).forEach(function(s){var sh=b/((it.srcB||[]).length||1);if(s==='t')ct+=sh;else if(s==='f')cf+=sh;else ctf+=sh;});
+          (it.srcC||[]).forEach(function(s){var sh=p/((it.srcC||[]).length||1);if(s==='t')pt+=sh;else if(s==='f')pf+=sh;else ptf+=sh;});
+        });
+        DATA[2026].exec={t:Math.round(et),f:Math.round(ef),tf:Math.round(etf)};
+        DATA[2026].cert={t:Math.round(ct),f:Math.round(cf),tf:Math.round(ctf)};
+        DATA[2026].pend={t:Math.round(pt),f:Math.round(pf),tf:Math.round(ptf)};
+        DATA[2026].t=Math.round(et+ct+pt); DATA[2026].f=Math.round(ef+cf+pf); DATA[2026].tf=Math.round(etf+ctf+ptf);
+      }
+      _live26Loaded=true;
+      var note=document.getElementById('detail-src-note');
+      if(note)note.textContent='— Google Sheets 即時同步　已載入 '+items.length+' 筆';
+      if(selectedYrs&&selectedYrs.has(2026))render();
+    })
+    .catch(function(err){console.warn('2026 Sheets 載入失敗:',err.message);});
 }
+setTimeout(function(){live26Load();},600);
+
 </script>
 
 </body>
