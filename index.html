@@ -825,12 +825,12 @@ function shakeInput(){
   <div class="nav-sep"></div>
   <button onclick="sheetsOpen()" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nav-btn-label">歷年帳務紀錄</span></button>
   <button onclick="annualOpen()" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg><span class="nav-btn-label">當年度公益支出預估</span></button>
-  <a href="trust_detail.html" class="nav-btn" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nav-btn-label">信託歷年明細</span></a>
   <div class="nav-spacer"></div>
   <a href="index.html" class="nav-btn active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-btn-label">首頁</span></a>
-  <button onclick="qaOpen()" class="nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="nav-btn-label">提問</span></button>
-  <a href="guide.html" class="nav-btn" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nav-btn-label">作業說明</span></a>
-  <a href="asking_claude.html" class="nav-btn" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span class="nav-btn-label">Claude 使用筆記</span></a>
+  <a href="trust_detail.html" class="nav-btn " target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nav-btn-label">信託歷年明細</span></a>
+  <button onclick="qaOpen()" class="nav-btn "><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="nav-btn-label">提問</span></button>
+  <a href="guide.html" class="nav-btn " target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nav-btn-label">作業說明</span></a>
+  <a href="asking_claude.html" class="nav-btn " target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span class="nav-btn-label">Claude 使用筆記</span></a>
 </div>
 
 <div class="main">
@@ -3893,6 +3893,28 @@ function annualOpen(){
   document.getElementById('annual-overlay').style.display='flex';
   if(!_annualLoaded) annualLoad(); else annualRender();
 }
+function annualLoadFallback(){
+  // 從 const DATA[2026].items 轉換成 annualRows 格式（備用）
+  var d=DATA&&DATA[2026];
+  if(!d||!d.items||!d.items.length){
+    document.getElementById('annual-body').innerHTML='<div style="padding:28px;text-align:center;color:#888">無備用資料</div>';
+    return;
+  }
+  var srcMap={'t':['t'],'f':['f'],'tf':['tf']};
+  _annualRows=d.items.map(function(it){
+    var sg=it.sg||'';
+    return {
+      name:it.n||'', cat:it.g||'其他', subGroup:sg,
+      a:it.e||0, b:it.c||0, c:it.p||0,
+      srcA:srcMap[it.u]||['f'], srcB:srcMap[it.u]||['f'], srcC:srcMap[it.u]||['f'],
+      u:it.u||'f', memo:it.memo||'', impact:it.impact||''
+    };
+  });
+  _annualLoaded=true;
+  var st=document.getElementById('annual-status');
+  if(st) st.textContent='— 使用本機快照資料（Sheets 連線設定後自動切換）';
+  annualRender();
+}
 function annualClose(){document.getElementById('annual-overlay').style.display='none';}
 function annualLoad(){
   var body=document.getElementById('annual-body');
@@ -3903,7 +3925,19 @@ function annualLoad(){
     _annualLoaded=true;
     annualRender();
   }).catch(function(err){
-    body.innerHTML='<div class="annual-error">無法載入 Google Sheets 資料<br><span style="font-size:11px;color:#888">'+annualEsc(err.message||String(err))+'</span><br><br><a href="https://docs.google.com/spreadsheets/d/'+ANNUAL_SHEET_ID+'/edit?gid='+ANNUAL_GID+'#gid='+ANNUAL_GID+'" target="_blank" rel="noopener" style="color:#7a6400">開啟原始試算表</a></div>';
+    var isNoAccess = err.message&&(err.message.indexOf('Failed')>=0||err.message.indexOf('403')>=0||err.message.indexOf('CORS')>=0);
+    body.innerHTML=
+      '<div style="padding:28px;text-align:center">'
+      +'<div style="font-size:16px;margin-bottom:10px">⚠ 無法連線至 Google Sheets</div>'
+      +'<div style="font-size:12px;color:#888;margin-bottom:18px;line-height:1.8">'
+        +(isNoAccess?'試算表尚未設為「知道連結的任何人可檢視」<br>請在 Google Sheets 右上角「共用」→「一般存取」→「知道連結的任何人・檢視者」':'錯誤：'+annualEsc(err.message||String(err)))
+      +'</div>'
+      +'<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
+        +'<button onclick="annualLoad()" style="padding:7px 16px;border:1px solid #ccc;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px">↺ 重試</button>'
+        +'<a href="https://docs.google.com/spreadsheets/d/'+ANNUAL_SHEET_ID+'/export?format=csv&gid='+ANNUAL_GID+'" target="_blank" style="padding:7px 16px;border:1px solid #1a7a1a;border-radius:5px;font-size:12px;color:#1a7a1a;text-decoration:none">↗ 測試 CSV 連結</a>'
+        +'<button onclick="annualLoadFallback()" style="padding:7px 16px;border:1px solid #a08820;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;color:#7a6400">使用上次快照資料</button>'
+      +'</div>'
+      +'</div>';
   });
 }
 function annualCsvLine(line){var cells=[],cur='',inQ=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur);cur='';}else cur+=ch;}cells.push(cur);return cells;}
@@ -4003,4 +4037,52 @@ function annualParse(csv){
   }
   return out;
 }
+function annualHasSrc(it){
+  var ok=false;
+  if(_annualStatus.a&&it.a) ok=ok||it.srcA.some(function(s){return _annualSrc[s];});
+  if(_annualStatus.b&&it.b) ok=ok||it.srcB.some(function(s){return _annualSrc[s];});
+  if(_annualStatus.c&&it.c) ok=ok||it.srcC.some(function(s){return _annualSrc[s];});
+  return ok;
+}
+function annualVisibleAmount(it,key){
+  if(!_annualStatus[key])return 0;
+  var srcs=key==='a'?it.srcA:key==='b'?it.srcB:it.srcC;
+  return srcs.some(function(s){return _annualSrc[s];})?it[key]:0;
+}
+function annualToggleSrc(k){_annualSrc[k]=!_annualSrc[k]; annualRender();}
+function annualToggleStatus(k){_annualStatus[k]=!_annualStatus[k]; annualRender();}
+function annualToggleCat(cat){_annualOpenCats[cat]=!_annualOpenCats[cat]; annualRender();}
+function annualRender(){
+  var body=document.getElementById('annual-body');
+  var q=((document.getElementById('annual-search')||{}).value||'').toLowerCase().trim();
+  var rows=_annualRows.filter(function(it){return annualHasSrc(it)&&(!q||it.name.toLowerCase().indexOf(q)>=0||it.cat.toLowerCase().indexOf(q)>=0);});
+  var groups={}; rows.forEach(function(it){(groups[it.cat]||(groups[it.cat]=[])).push(it);});
+  var cats=Object.keys(groups).sort(function(a,b){return a.localeCompare(b,'zh-Hant');});
+  var count=rows.length, aTot=0,bTot=0,cTot=0;
+  rows.forEach(function(it){aTot+=annualVisibleAmount(it,'a');bTot+=annualVisibleAmount(it,'b');cTot+=annualVisibleAmount(it,'c');});
+  var srcLabel=function(k,t){return '<button class="annual-chip '+(_annualSrc[k]?'on':'')+'" onclick="annualToggleSrc(\''+k+'\')">'+t+'</button>';};
+  var stLabel=function(k,t){return '<button class="annual-chip '+(_annualStatus[k]?'on':'')+'" onclick="annualToggleStatus(\''+k+'\')">'+t+'</button>';};
+  var html='<div class="annual-subtitle">2026 年度明細 <span class="annual-source">— 預估中：A B C　資料來源：115年度公益支出及預估表</span></div>'+
+    '<div class="annual-controls">'+srcLabel('t','① 信託')+srcLabel('f','② 基金會')+srcLabel('tf','③ 公捐基')+stLabel('a','A 已執行')+stLabel('b','B 確定')+stLabel('c','C 待討論')+'<input id="annual-search" class="annual-search" placeholder="搜尋專案、分類…" value="'+annualEsc(q)+'" oninput="annualRender()"></div>';
+  html+='<div class="annual-card"><table class="annual-table"><colgroup><col style="width:36px"><col><col style="width:92px"><col style="width:92px"><col style="width:92px"><col style="width:96px"></colgroup><thead><tr><th></th><th>分類</th><th class="r">A 已執行</th><th class="r">B 確定</th><th class="r">C 待討論</th><th class="r">小計</th></tr></thead><tbody>';
+  cats.forEach(function(cat){
+    var list=groups[cat], ca=0,cb=0,cc=0;
+    list.forEach(function(it){ca+=annualVisibleAmount(it,'a');cb+=annualVisibleAmount(it,'b');cc+=annualVisibleAmount(it,'c');});
+    var open=!!_annualOpenCats[cat];
+    html+='<tr><td class="c"><button class="annual-toggle" onclick="annualToggleCat(\''+cat.replace(/\\/g,'\\\\').replace(/'/g,'\\\'')+'\')">'+(open?'−':'+')+'</button></td><td class="annual-cat">'+annualEsc(cat)+' <span class="muted">('+list.length+'項)</span></td><td class="r green">'+annualFmt(ca)+'</td><td class="r">'+annualFmt(cb)+'</td><td class="r muted">'+annualFmt(cc)+'</td><td class="r strong">'+annualFmt(ca+cb+cc)+'</td></tr>';
+    list.forEach(function(it){html+='<tr class="annual-item '+(open?'':'hide')+'"><td></td><td class="annual-item-name">'+annualEsc(it.name)+'</td><td class="r green">'+annualFmt(annualVisibleAmount(it,'a'))+'</td><td class="r">'+annualFmt(annualVisibleAmount(it,'b'))+'</td><td class="r muted">'+annualFmt(annualVisibleAmount(it,'c'))+'</td><td class="r strong">'+annualFmt(annualVisibleAmount(it,'a')+annualVisibleAmount(it,'b')+annualVisibleAmount(it,'c'))+'</td></tr>';});
+  });
+  html+='</tbody></table></div>';
+  var srcTotals={t:{a:0,b:0,c:0,count:0},f:{a:0,b:0,c:0,count:0},tf:{a:0,b:0,c:0,count:0}};
+  rows.forEach(function(it){['a','b','c'].forEach(function(k){if(!_annualStatus[k])return;var val=it[k];if(!val)return;var srcs=k==='a'?it.srcA:k==='b'?it.srcB:it.srcC;srcs.forEach(function(s){if(_annualSrc[s]){srcTotals[s][k]+=val;srcTotals[s].count++;}});});});
+  var rowSum=function(label,o){var sum=o.a+o.b+o.c;return '<tr><td class="annual-sum-label">'+label+'</td><td class="c muted">'+(o.count||'—')+'筆</td><td class="r green">'+annualFmt(o.a)+'</td><td class="r">'+annualFmt(o.b)+'</td><td class="r muted">'+annualFmt(o.c)+'</td><td class="r strong">'+annualFmt(sum)+'</td></tr>';};
+  html+='<div class="annual-card"><table class="annual-table"><thead><tr><th>篩選小計</th><th class="c">筆數</th><th class="r">A 已執行</th><th class="r">B 確定</th><th class="r">C 待討論</th><th class="r">合計</th></tr></thead><tbody><tr><td class="annual-sum-label">共 '+count+' 項</td><td class="c muted">—</td><td class="r green">'+annualFmt(aTot)+'</td><td class="r">'+annualFmt(bTot)+'</td><td class="r muted">'+annualFmt(cTot)+'</td><td class="r strong">'+annualFmt(aTot+bTot+cTot)+'</td></tr></tbody></table></div>';
+  html+='<div class="annual-card"><table class="annual-table"><thead><tr><th>匯總</th><th class="c">項數</th><th class="r">A 已執行</th><th class="r">B 確定</th><th class="r">C 待討論</th><th class="r">合計</th></tr></thead><tbody>'+rowSum('① 公益信託',srcTotals.t)+rowSum('② 基金會',srcTotals.f)+rowSum('③ 公捐基',srcTotals.tf)+rowSum('①＋③ 信託總',{a:srcTotals.t.a+srcTotals.tf.a,b:srcTotals.t.b+srcTotals.tf.b,c:srcTotals.t.c+srcTotals.tf.c,count:srcTotals.t.count+srcTotals.tf.count})+rowSum('①＋② 實際總',{a:srcTotals.t.a+srcTotals.f.a,b:srcTotals.t.b+srcTotals.f.b,c:srcTotals.t.c+srcTotals.f.c,count:srcTotals.t.count+srcTotals.f.count})+'</tbody></table></div>';
+  html+='<div class="annual-note">2026 年度實際總支出目標 3 億（①＋②）。資料來源：115年度公益支出及預估表。</div>';
+  body.innerHTML=html;
+  var inp=document.getElementById('annual-search'); if(inp){inp.value=q;}
+}
+</script>
 
+</body>
+</html>
